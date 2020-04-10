@@ -13,9 +13,9 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 
-@Entity
-@Table(name="employee",schema="aims")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+//@Entity
+//@Table(name="employee",schema="aims")
+//@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 
 public class Employee {
 	
@@ -131,15 +131,15 @@ public class Employee {
 		this.grade = grade;
 	}
 
-	@Id 
-	@Column(name="id")
+//	@Id 
+//	@Column(name="id")
 	private int employeeId;
 	
 	
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "empId")
+//	@OneToMany(fetch = FetchType.LAZY, mappedBy = "empId")
 	private List<EmployeeAllocation> employeeAllocations;
 	
-	@OneToOne(fetch = FetchType.LAZY, mappedBy = "employeeId")
+//	@OneToOne(fetch = FetchType.LAZY, mappedBy = "employeeId")
 	private EmployeeAllocationPercentage employeeAllocationPercentage;
 
 	
@@ -193,49 +193,49 @@ public class Employee {
 		super();
 	}
 
-	@Column(name="employee_type")
+//	@Column(name="employee_type")
     private String employeeType;
 
-    @Column(name="current_location")
+//    @Column(name="current_location")
     private String currentLocation;
     
-    @Column(name="first_name")
+//    @Column(name="first_name")
     private String firstName;
     
-    @Column(name="last_name")
+//    @Column(name="last_name")
     private String lastName;
     
-    @Column(name="base_branch")
+//    @Column(name="base_branch")
     private String baseBranch;
     
-    @Column(name="dob")
+//    @Column(name="dob")
     private String dob;
     
-    @Column(name="gender")
+//    @Column(name="gender")
     private String gender;
     
-    @Column(name="overall_exp")
+//    @Column(name="overall_exp")
     private String overallExp;
     
-    @Column(name="aims_exp")
+//    @Column(name="aims_exp")
     private String aimsExp;
     
-    @Column(name="base_country")
+//    @Column(name="base_country")
     private String baseCountry;
     
-    @Column(name="base_dc")
+//    @Column(name="base_dc")
     private String baseDc;
     
-    @Column(name="category_name")
+//    @Column(name="category_name")
     private String categoryName;
     
-    @Column(name="grade")
+//    @Column(name="grade")
     private String grade;
     
-    @Column(name="created_at")
+//    @Column(name="created_at")
     private Date createdAt;
     
-    @Column(name="status")
+//    @Column(name="status")
     private String status;
 
 

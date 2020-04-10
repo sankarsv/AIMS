@@ -14,24 +14,24 @@ import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@Entity
-@Table(name="employee_allocation_percentage",schema="aims")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+//@Entity
+//@Table(name="employee_allocation_percentage",schema="aims")
+//@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class EmployeeAllocationPercentage {
 
-	@Column(name="id" )
-	@NotNull
-	@Id
+//	@Column(name="id" )
+//	@NotNull
+//	@Id
     private Integer employeeAllocationPercentage;
 	
 	
-	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "employee_id")
+//	@OneToOne(fetch = FetchType.LAZY)
+//	@JoinColumn(name = "employee_id")
     private EmployeeAllocation employeeId;
 	
 	
-	@Column(name="percentage_allocation" )
-	@NotNull
+//	@Column(name="percentage_allocation" )
+//	@NotNull
     private Integer percentageAllocation;
 
 

@@ -8,46 +8,46 @@ import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@Entity
-@Table(name="portfolio",schema="aims")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+//@Entity
+//@Table(name="portfolio",schema="aims")
+//@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Portfolio {
 	
-	@Column(name="id" )
-	@NotNull
-	@Id
+//	@Column(name="id" )
+//	@NotNull
+//	@Id
     private Integer portfolioId;
 	
-	@Column(name="portfolio_name" )
-	@NotNull
+//	@Column(name="portfolio_name" )
+//	@NotNull
     private String portfolioName;
 
-	@Column(name="portfolio_type" )
-	@NotNull
+//	@Column(name="portfolio_type" )
+//	@NotNull
     private String portfolioType;
 	
-	@Column(name="brm_empid" )
-	@NotNull
+//	@Column(name="brm_empid" )
+//	@NotNull
     private Integer brmEmpId;
 	
-	@Column(name="onsite_lead_empid" )
-	@NotNull
+//	@Column(name="onsite_lead_empid" )
+//	@NotNull
     private Integer onsiteLeadEmpId;
 	
-	@Column(name="dm_emp_id" )
-	@NotNull
+//	@Column(name="dm_emp_id" )
+//	@NotNull
     private Integer dmEmpId;
 	
-	@Column(name="offshore_lead_emp_id" )
-	@NotNull
+//	@Column(name="offshore_lead_emp_id" )
+//	@NotNull
     private Integer offshoreLeadEmpId;
 	
-	@Column(name="billing_emp_id" )
-	@NotNull
+//	@Column(name="billing_emp_id" )
+//	@NotNull
     private Integer billingEmpId;
 	
-	@Column(name="description" )
-	@NotNull
+//	@Column(name="description" )
+//	@NotNull
     private Integer description;
 
 	public Integer getPortfolioId() {
