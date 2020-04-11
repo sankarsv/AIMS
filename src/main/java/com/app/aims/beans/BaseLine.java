@@ -13,9 +13,9 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@Entity
-@Table(name="base_line",schema="public")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+//@Entity
+//@Table(name="base_line",schema="public")
+//@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class BaseLine {
 
 	/**
@@ -60,8 +60,8 @@ public class BaseLine {
 		this.baseLineNo = baseLineNo;
 	}
 
-	@Id 
-	@Column(name="id")
+//	@Id 
+//	@Column(name="id")
 	private int employeeId;
 	
 	public BaseLine(int employeeId, Date date, Integer baseLineNo) {
@@ -73,10 +73,10 @@ public class BaseLine {
 
 	
 	
-	@Column(name="date")
+//	@Column(name="date")
     private Date date;
 
-	@Column(name="base_line_no")
+//	@Column(name="base_line_no")
     private Integer baseLineNo;
 	
 	public BaseLine() {}

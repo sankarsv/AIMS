@@ -2,6 +2,7 @@ package com.app.aims.beans;
 
 import java.util.Date;
 
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 
@@ -13,7 +14,7 @@ import javax.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
-@Table(name = "USER", schema = "public")
+@Table(name = "USER", schema = "AIMS")
 @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 
 public class UserDetail {
@@ -30,7 +31,7 @@ public class UserDetail {
 	@Column(name = "CHANGED_DATE")
 	private Date changedDate;
 
-	public UserDetail(int userID, String pwd, Date changedDate) {
+	public UserDetail(Integer userID, String pwd, Date changedDate) {
 		super();
 		this.userID = userID;
 		this.pwd = pwd;
@@ -42,11 +43,11 @@ public class UserDetail {
 		super();
 	}
 
-	public int getUserID() {
+	public Integer getUserID() {
 		return userID;
 	}
 
-	public void setUserID(int userID) {
+	public void setUserID(Integer userID) {
 		this.userID = userID;
 	}
 

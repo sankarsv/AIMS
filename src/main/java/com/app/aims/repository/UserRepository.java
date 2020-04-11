@@ -7,5 +7,7 @@ import com.app.aims.beans.UserDetail;
 
 @Repository
 public interface UserRepository extends JpaRepository<UserDetail, Integer> {
+
+	public UserDetail findByUserID(Integer userID);
  
 }
