@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
-@Table(name="portfolio",schema="aims")
+@Table(name="portfolio",schema="public")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Portfolio {
 	

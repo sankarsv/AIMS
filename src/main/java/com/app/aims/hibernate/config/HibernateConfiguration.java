@@ -45,7 +45,7 @@ public class HibernateConfiguration {
     private String SCHEMA_NAME;
 
     
-    @Bean
+    @Bean(name="entityManagerFactory")
     public LocalSessionFactoryBean sessionFactory() {
         LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
         sessionFactory.setDataSource(dataSource());
@@ -54,7 +54,7 @@ public class HibernateConfiguration {
         hibernateProperties.put("hibernate.dialect", HIBERNATE_DIALECT);
         hibernateProperties.put("hibernate.show_sql", HIBERNATE_SHOW_SQL);
         hibernateProperties.put("hibernate.hbm2ddl.auto", HIBERNATE_HBM2DDL_AUTO);
-        hibernateProperties.put("hibernate.default_schema","aims");
+        hibernateProperties.put("hibernate.default_schema","public");
         hibernateProperties.put("spring.jpa.properties.hibernate.jdbc.lob.non_contextual_creation",true);
         hibernateProperties.put("spring.jpa.database-platform","org.hibernate.dialect.PostgreSQL9Dialect");
         hibernateProperties.put("spring.jpa.properties.hibernate.temp.use_jdbc_metadata_defaults",false);

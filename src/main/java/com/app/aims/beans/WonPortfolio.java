@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 
 @Entity
-@Table(name="won_portfolio_mapping",schema="aims")
+@Table(name="won_portfolio_mapping",schema="public")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class WonPortfolio {
 
