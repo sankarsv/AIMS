@@ -16,16 +16,16 @@ import javax.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 
-@Entity
-@Table(name="employee_merged_details",schema="public")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+//@Entity
+//@Table(name="employee_merged_details",schema="public")
+//@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class EmployeeMergedDetails {
 	
-	@Id 
-	@Column(name="id")
+//	@Id 
+//	@Column(name="id")
 	private int employeeId;
 
-    @Column(name="employee_type")
+//    @Column(name="employee_type")
     private String employeeType;
 
     public EmployeeMergedDetails() {}
@@ -109,112 +109,112 @@ public class EmployeeMergedDetails {
 		this.baseLine = baseLine;
 	}
 
-	@Column(name="current_location")
+//	@Column(name="current_location")
     private String currentLocation;
     
-    @Column(name="first_name")
+//    @Column(name="first_name")
     private String firstName;
     
-    @Column(name="last_name")
+//    @Column(name="last_name")
     private String lastName;
     
-    @Column(name="base_branch")
+//    @Column(name="base_branch")
     private String baseBranch;
     
-    @Column(name="dob")
+//    @Column(name="dob")
     private String dob;
     
-    @Column(name="gender")
+//    @Column(name="gender")
     private String gender;
     
-    @Column(name="overall_exp")
+//    @Column(name="overall_exp")
     private String overallExp;
     
-    @Column(name="aims_exp")
+//    @Column(name="aims_exp")
     private String aimsExp;
     
-    @Column(name="base_country")
+//    @Column(name="base_country")
     private String baseCountry;
     
-    @Column(name="base_dc")
+//    @Column(name="base_dc")
     private String baseDc;
     
-    @Column(name="category_name")
+//    @Column(name="category_name")
     private String categoryName;
     
-    @Column(name="grade")
+//    @Column(name="grade")
     private String grade;
 
-	@Column(name="won_id"  )
-	@NotNull
+//	@Column(name="won_id"  )
+//	@NotNull
     private Integer wonId;
 
-	@Column(name="portfolio_id"  )
-	@NotNull
+//	@Column(name="portfolio_id"  )
+//	@NotNull
     private Integer portfolioId;
 	
-	@Column(name="start_date"  )
-	@NotNull
+//	@Column(name="start_date"  )
+//	@NotNull
     private LocalDate startDate;
 	
-	@Column(name="end_date"  )
-	@NotNull
+//	@Column(name="end_date"  )
+//	@NotNull
     private LocalDate endDate;
 	
-	@Column(name="travel_type"  )
-	@NotNull
+//	@Column(name="travel_type"  )
+//	@NotNull
     private String travelType;
 	
-	@Column(name="employee_travel_country")
-	@NotNull
+//	@Column(name="employee_travel_country")
+//	@NotNull
     private String employeeTravelCountry;
 	
-	@Column(name="team_role")
-	@NotNull
+//	@Column(name="team_role")
+//	@NotNull
     private String teamRole;
 	
-	@Column(name="employee_active_client_id")
-	@NotNull
+//	@Column(name="employee_active_client_id")
+//	@NotNull
     private String employeeActiveClientId;
 	
-	@Column(name="depute_branch")
-	@NotNull
+//	@Column(name="depute_branch")
+//	@NotNull
     private String deputeBranch;
 	
-	@Column(name="depute_dc")
-	@NotNull
+//	@Column(name="depute_dc")
+//	@NotNull
     private String deputeDc;
 	
-	@Column(name="employee_location_id")
-	@NotNull
+//	@Column(name="employee_location_id")
+//	@NotNull
     private String employeeLocationId;
 	
-	@Column(name="percentage_allocation" )
-	@NotNull
+//	@Column(name="percentage_allocation" )
+//	@NotNull
     private Integer percentageAllocation;
 
-	@Column(name="portfolio_name" )
-	@NotNull
+//	@Column(name="portfolio_name" )
+//	@NotNull
     private String portfolioName;
 
-	@Column(name="portfolio_type" )
-	@NotNull
+//	@Column(name="portfolio_type" )
+//	@NotNull
     private String portfolioType;
 	
-	@Column(name="brm_empId" )
-	@NotNull
+//	@Column(name="brm_empId" )
+//	@NotNull
     private Integer brmEmpId;
 	
-	@Column(name="onsite_lead_empid" )
-	@NotNull
+//	@Column(name="onsite_lead_empid" )
+//	@NotNull
     private Integer onsiteLeadEmpId;
 	
-	@Column(name="dm_emp_id" )
-	@NotNull
+//	@Column(name="dm_emp_id" )
+//	@NotNull
     private Integer dmEmpId;
 	
-	@Column(name="mapp_designation" )
-	@NotNull
+//	@Column(name="mapp_designation" )
+//	@NotNull
     private String mappDesignation;
 	
 	public String getMappDesignation() {
@@ -225,85 +225,85 @@ public class EmployeeMergedDetails {
 		this.mappDesignation = mappDesignation;
 	}
 
-	@Column(name="offshore_lead_emp_id" )
-	@NotNull
+//	@Column(name="offshore_lead_emp_id" )
+//	@NotNull
     private Integer offshoreLeadEmpId;
 	
-	@Column(name="billing_emp_id" )
-	@NotNull
+//	@Column(name="billing_emp_id" )
+//	@NotNull
     private Integer billingEmpId;
 	
-	@Column(name="description" )
-	@NotNull
+//	@Column(name="description" )
+//	@NotNull
     private String description;
 	
 	
-	@Column(name="project_id" )
-	@NotNull
+//	@Column(name="project_id" )
+//	@NotNull
     private Integer projectId;
 	
-	@Column(name="project_name" )
-	@NotNull
+//	@Column(name="project_name" )
+//	@NotNull
     private String projectName;
 	
-	@Column(name="project_location" )
-	@NotNull
+//	@Column(name="project_location" )
+//	@NotNull
     private String projectLocation;
 	
-	@Column(name="project_change_date" )
-	@NotNull
+//	@Column(name="project_change_date" )
+//	@NotNull
     private LocalDate projectChangeDate;
 	
-	@Column(name="work_geography" )
-	@NotNull
+//	@Column(name="work_geography" )
+//	@NotNull
     private String workGeography;
 	
-	@Column(name="work_country" )
-	@NotNull
+//	@Column(name="work_country" )
+//	@NotNull
     private String workCountry;
 	
-	@Column(name="work_location" )
-	@NotNull
+//	@Column(name="work_location" )
+//	@NotNull
     private String workLocation;
 	
-	@Column(name="client_geography" )
-	@NotNull
+//	@Column(name="client_geography" )
+//	@NotNull
     private String clientGeography;
 	
-	@Column(name="client_country" )
-	@NotNull
+//	@Column(name="client_country" )
+//	@NotNull
     private String clientCountry;
 	
-	@Column(name="ip" )
-	@NotNull
+//	@Column(name="ip" )
+//	@NotNull
     private String ip;
 	
-	@Column(name="customer" )
-	@NotNull
+//	@Column(name="customer" )
+//	@NotNull
     private String customer;
 	
-	@Column(name="group_customer" )
-	@NotNull
+//	@Column(name="group_customer" )
+//	@NotNull
     private String groupCustomer;
 	
-	@Column(name="project_hash" )
-	@NotNull
+//	@Column(name="project_hash" )
+//	@NotNull
     private String projectHash;
 	
-	@Column(name="project_location_wrt_india" )
-	@NotNull
+//	@Column(name="project_location_wrt_india" )
+//	@NotNull
     private String projectLocationWrtIndia;
 	
-	@Column(name="project_type" )
-	@NotNull
+//	@Column(name="project_type" )
+//	@NotNull
     private String projectType;
 	
-	@Column(name="pure_turnkey_flag" )
-	@NotNull
+//	@Column(name="pure_turnkey_flag" )
+//	@NotNull
     private String pureTurnkeyFlag;
 	
-	@Column(name="swon_category" )
-	@NotNull
+//	@Column(name="swon_category" )
+//	@NotNull
     private String swonCategory;
 	
 	
@@ -763,32 +763,32 @@ public class EmployeeMergedDetails {
 		this.bfsCluster = bfsCluster;
 	}
 
-	@Column(name="project_cluster" )
-	@NotNull
+//	@Column(name="project_cluster" )
+//	@NotNull
     private String projectCluster;
 	
-	@Column(name="iou" )
-	@NotNull
+//	@Column(name="iou" )
+//	@NotNull
     private String iou;
 	
-	@Column(name="sub_iou" )
-	@NotNull
+//	@Column(name="sub_iou" )
+//	@NotNull
     private String subIou;
 	
-	@Column(name="parent_iou_name" )
-	@NotNull
+//	@Column(name="parent_iou_name" )
+//	@NotNull
     private String parentIou;
 	
-	@Column(name="child_iou_name" )
-	@NotNull
+//	@Column(name="child_iou_name" )
+//	@NotNull
     private String childIou;
 	
-	@Column(name="bfs_cluster" )
-	@NotNull
+//	@Column(name="bfs_cluster" )
+//	@NotNull
     private String bfsCluster;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="base_line"  )
+//	@ManyToOne(fetch = FetchType.LAZY)
+//	@JoinColumn(name="base_line")
     private BaseLine baseLine;
 
 	public BaseLine getBaseLine() {

@@ -9,13 +9,13 @@ import javax.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 
-@Entity
-@Table(name="won_portfolio_mapping",schema="public")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+//@Entity
+//@Table(name="won_portfolio_mapping",schema="public")
+//@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class WonPortfolio {
 
-	@Column(name="project_id" )
-	@NotNull
+//	@Column(name="project_id" )
+//	@NotNull
     private Integer projectId;
 	
 	
@@ -43,13 +43,13 @@ public class WonPortfolio {
 		this.wonId = wonId;
 	}
 
-	@Column(name="portfolio_id" )
-	@NotNull
+//	@Column(name="portfolio_id" )
+//	@NotNull
     private Integer portfolioId;
 	
-	@Column(name="won_id" )
-	@NotNull
-	@Id
+//	@Column(name="won_id" )
+//	@NotNull
+//	@Id
     private Integer wonId;
 	
 }
