@@ -10,6 +10,6 @@ import com.app.aims.beans.UserDetail;
 public interface UserDao {
 
 	    public void addUserDetail(UserDetail user);
-	    public UserDetail findById(int userId);
+	    public UserDetail findById(Integer userId);
 	    
 }
