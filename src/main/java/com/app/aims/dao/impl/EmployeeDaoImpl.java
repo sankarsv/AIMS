@@ -14,6 +14,7 @@ import com.app.aims.beans.EditRequest;
 import com.app.aims.beans.Employee;
 import com.app.aims.beans.EmployeeAllocation;
 import com.app.aims.beans.Portfolio;
+import com.app.aims.beans.VersionInfo;
 import com.app.aims.dao.EmployeeDao;
 
 @Repository
@@ -117,5 +118,15 @@ public class EmployeeDaoImpl implements EmployeeDao {
 			// TODO Auto-generated method stub
 			return null;
 		}
+
+		@Override
+		public List<VersionInfo> getVersionInfo() {
+			// TODO Auto-generated method stub
+			Session session = sessionFactory.getCurrentSession();
+	        @SuppressWarnings("unchecked")
+	        List<VersionInfo> list= session.createCriteria(VersionInfo.class).list();
+	        return list;
+		}
 	    
+		
 }

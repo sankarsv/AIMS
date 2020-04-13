@@ -10,10 +10,12 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.client.HttpComponentsAsyncClientHttpRequestFactory;
 import org.springframework.stereotype.Repository;
 
 import com.app.aims.beans.Employee;
 import com.app.aims.beans.EmployeeMergedDetails;
+import com.app.aims.beans.HCDetails;
 import com.app.aims.dao.EmployeeMergedDetailsDao;
 
 @Repository
@@ -23,10 +25,10 @@ public class EmployeeMergedDetailsDaoImpl implements EmployeeMergedDetailsDao {
 	    private SessionFactory sessionFactory;
 	
 	@Override
-	public List<EmployeeMergedDetails> findByBaseLine(int baseLine) {
+	public List<HCDetails> findByVersionNo(int versionNo) {
 		 Session session = sessionFactory.getCurrentSession();
-	        Criteria cr = session.createCriteria(EmployeeMergedDetails.class);
-	        cr.add(Restrictions.eq("baseLine", baseLine));
+	        Criteria cr = session.createCriteria(HCDetails.class);
+	        //cr.add(Restrictions.eq("versionNo", new Integer(versionNo)));
 	        return cr.list();
 	}
 

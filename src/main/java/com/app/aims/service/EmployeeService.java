@@ -9,6 +9,7 @@ import com.app.aims.Exceptions.InvalidRequestException;
 import com.app.aims.beans.EditRequest;
 import com.app.aims.beans.Employee;
 import com.app.aims.beans.GenerateBaseLineRequest;
+import com.app.aims.beans.VersionInfo;
 
 public interface EmployeeService {
 
@@ -18,6 +19,8 @@ public interface EmployeeService {
     public boolean update(EditRequest editRequest);
     public boolean deleteUserById(String id);
     public void generateBaseLine( GenerateBaseLineRequest generateBaseLineRequest)  throws ParseException, InvalidRequestException;
+
+    public List<VersionInfo> getVersionInfo();
     
     
 

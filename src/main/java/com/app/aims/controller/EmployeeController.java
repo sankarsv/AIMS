@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.app.aims.Exceptions.InvalidRequestException;
@@ -24,8 +26,11 @@ import com.app.aims.beans.EditRequest;
 import com.app.aims.beans.Employee;
 import com.app.aims.beans.ExportXlsRequest;
 import com.app.aims.beans.GenerateBaseLineRequest;
+import com.app.aims.beans.VersionInfo;
+import com.app.aims.security.model.UploadXlsRequest;
 import com.app.aims.service.EmployeeService;
 import com.app.aims.service.ExportXlsService;
+import com.app.aims.service.UploadXlsService;
 
 
 @RestController
@@ -37,16 +42,19 @@ public class EmployeeController {
     
     @Autowired
     ExportXlsService exportXlsService;
+    
+    @Autowired
+    UploadXlsService uploadXlsService;
 
-    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Employee> getUserById(@PathVariable("id") int id) {
-        System.out.println("Fetching User with id " + id);
-        Employee user = employeeService.findById(id);
-        if (user == null) {
-            return new ResponseEntity<Employee>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<Employee>(user, HttpStatus.OK);
-    }
+//    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+//    public ResponseEntity<Employee> getUserById(@PathVariable("id") int id) {
+//        System.out.println("Fetching User with id " + id);
+//        Employee user = employeeService.findById(id);
+//        if (user == null) {
+//            return new ResponseEntity<Employee>(HttpStatus.NOT_FOUND);
+//        }
+//        return new ResponseEntity<Employee>(user, HttpStatus.OK);
+//    }
 
 //    @PostMapping(value="/create",headers="Accept=application/json")
 //    public ResponseEntity<Void> createUser(@RequestBody Employee user, UriComponentsBuilder ucBuilder){
@@ -56,13 +64,20 @@ public class EmployeeController {
 //        return new ResponseEntity<Void>(headers, HttpStatus.CREATED);
 //    }
     
-//    @PostMapping(value="/upload-xls",headers="Accept=application/json")
-//    public ResponseEntity<Void> uploadXls(@RequestBody UploadXlsRequest uploadXlsRequest){
-//    	 System.out.println("Token cehck passed");
-//    	 System.out.println(uploadXlsRequest.getXlsBytes());
-//    	 uploadXlsService.uploadXls(uploadXlsRequest);
-//        return new ResponseEntity<Void>(HttpStatus.OK);
-//    }
+    @PostMapping(value="/upload-xls",headers="Accept=application/vnd.ms-excel")
+    public ResponseEntity<Void> uploadXls(@RequestParam("file") MultipartFile file){
+    	try {
+    		
+    	
+       	 System.out.println("Token cehck passed");
+       	 //System.out.println(uploadXlsRequest.getXlsBytes());
+       	 uploadXlsService.uploadXls(file.getBytes());
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+        return new ResponseEntity<Void>(HttpStatus.OK);
+    }
     
     @GetMapping(value="/get", headers="Accept=application/json")
     public List<Employee> downloadxls() {
@@ -79,6 +94,13 @@ public class EmployeeController {
 	    
     }
     
+    @GetMapping(value="/versioninfo", headers="Accept=application/json")
+    public ResponseEntity<List<VersionInfo>>  generateBaseline() throws InvalidRequestException, ParseException {
+    	
+    	List<VersionInfo> list = employeeService.getVersionInfo();
+	   return new ResponseEntity<>(list, HttpStatus.OK);
+	    
+    }
     
     @PostMapping(value="/export-xls", headers="Accept=application/json")
     public ResponseEntity<byte[]>  getAllUser(@RequestBody ExportXlsRequest exportXlsRequest) throws InvalidRequestException {
