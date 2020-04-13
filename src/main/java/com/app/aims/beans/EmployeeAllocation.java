@@ -14,69 +14,69 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@Entity
-@Table(name="employee_allocation",schema="public")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+//@Entity
+//@Table(name="employee_allocation",schema="public")
+//@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class EmployeeAllocation {
 	
-	@Id 
-	@Column(name="id")
+//	@Id 
+//	@Column(name="id")
 	private int id;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "employee_id")
+//	@ManyToOne(fetch = FetchType.LAZY)
+//	@JoinColumn(name = "employee_id")
     private Employee empId;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="project_id"  )
+//	@ManyToOne(fetch = FetchType.LAZY)
+//	@JoinColumn(name="project_id"  )
     private Project project;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="won_id")
+//	@ManyToOne(fetch = FetchType.LAZY)
+//	@JoinColumn(name="won_id")
     private WonPortfolio won;
 	
-	@Column(name="project_change_date"  )
-	@NotNull
+//	@Column(name="project_change_date"  )
+//	@NotNull
     private LocalDate projectChangeDate;
 		
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="portfolio_id")
+//	@ManyToOne(fetch = FetchType.LAZY)
+//	@JoinColumn(name="portfolio_id")
     private Portfolio portfolioId;
 	
-	@Column(name="start_date"  )
-	@NotNull
+//	@Column(name="start_date"  )
+//	@NotNull
     private LocalDate startDate;
 	
-	@Column(name="end_date"  )
-	@NotNull
+//	@Column(name="end_date"  )
+//	@NotNull
     private LocalDate endDate;
 	
-	@Column(name="travel_type"  )
-	@NotNull
+//	@Column(name="travel_type"  )
+//	@NotNull
     private String travelType;
 	
-	@Column(name="employee_travel_country")
-	@NotNull
+//	@Column(name="employee_travel_country")
+//	@NotNull
     private String employeeTravelCountry;
 	
-	@Column(name="team_role")
-	@NotNull
+//	@Column(name="team_role")
+//	@NotNull
     private String teamRole;
 	
-	@Column(name="employee_active_client_id")
-	@NotNull
+//	@Column(name="employee_active_client_id")
+//	@NotNull
     private String employeeActiveClientInd;
 	
-	@Column(name="depute_branch")
-	@NotNull
+//	@Column(name="depute_branch")
+//	@NotNull
     private String deputeBranch;
 	
-	@Column(name="depute_dc")
-	@NotNull
+//	@Column(name="depute_dc")
+//	@NotNull
     private String deputeDc;
 	
-	@Column(name="employee_location_id")
-	@NotNull
+//	@Column(name="employee_location_id")
+//	@NotNull
     private String employeeLocationId;
 
 	public int getId() {
