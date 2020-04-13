@@ -4,7 +4,7 @@ import com.app.aims.security.model.UploadXlsRequest;
 
 public interface UploadXlsService {
 
-    public void uploadXls(UploadXlsRequest uploadXlsRequest);
+    public void uploadXls(byte[] byteStream);
 
 
 
