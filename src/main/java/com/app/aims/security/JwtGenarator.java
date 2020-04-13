@@ -1,5 +1,6 @@
 package com.app.aims.security;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.app.aims.security.model.JwtUser;
@@ -9,6 +10,9 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 @Component
 public class JwtGenarator {
+	
+	@Value("${jwt.token.secret}")
+	private String secret;
 
 	public String generate(JwtUser jwtUser) {
 
@@ -16,7 +20,7 @@ public class JwtGenarator {
 		claims.put("userId", String.valueOf(jwtUser.getId()));
 		claims.put("role", jwtUser.getRole());
 
-		return Jwts.builder().setClaims(claims).signWith(SignatureAlgorithm.HS512, "muthu").compact();
+		return Jwts.builder().setClaims(claims).signWith(SignatureAlgorithm.HS512, secret).compact();
 	}
 
 }

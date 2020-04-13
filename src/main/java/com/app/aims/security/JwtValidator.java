@@ -2,6 +2,10 @@ package com.app.aims.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.app.aims.security.model.JwtUser;
@@ -9,8 +13,8 @@ import com.app.aims.security.model.JwtUser;
 @Component
 public class JwtValidator {
 
-
-    private String secret = "muthu";
+	@Value("${jwt.token.secret}")
+    private String secret;
 
     public JwtUser validate(String token) {
 
