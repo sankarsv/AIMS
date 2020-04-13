@@ -24,6 +24,7 @@ import com.app.aims.beans.EditRequest;
 import com.app.aims.beans.Employee;
 import com.app.aims.beans.ExportXlsRequest;
 import com.app.aims.beans.GenerateBaseLineRequest;
+import com.app.aims.beans.VersionInfo;
 import com.app.aims.service.EmployeeService;
 import com.app.aims.service.ExportXlsService;
 
@@ -38,15 +39,15 @@ public class EmployeeController {
     @Autowired
     ExportXlsService exportXlsService;
 
-    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Employee> getUserById(@PathVariable("id") int id) {
-        System.out.println("Fetching User with id " + id);
-        Employee user = employeeService.findById(id);
-        if (user == null) {
-            return new ResponseEntity<Employee>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<Employee>(user, HttpStatus.OK);
-    }
+//    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+//    public ResponseEntity<Employee> getUserById(@PathVariable("id") int id) {
+//        System.out.println("Fetching User with id " + id);
+//        Employee user = employeeService.findById(id);
+//        if (user == null) {
+//            return new ResponseEntity<Employee>(HttpStatus.NOT_FOUND);
+//        }
+//        return new ResponseEntity<Employee>(user, HttpStatus.OK);
+//    }
 
 //    @PostMapping(value="/create",headers="Accept=application/json")
 //    public ResponseEntity<Void> createUser(@RequestBody Employee user, UriComponentsBuilder ucBuilder){
@@ -79,6 +80,13 @@ public class EmployeeController {
 	    
     }
     
+    @GetMapping(value="/versioninfo", headers="Accept=application/json")
+    public ResponseEntity<List<VersionInfo>>  generateBaseline() throws InvalidRequestException, ParseException {
+    	
+    	List<VersionInfo> list = employeeService.getVersionInfo();
+	   return new ResponseEntity<>(list, HttpStatus.OK);
+	    
+    }
     
     @PostMapping(value="/export-xls", headers="Accept=application/json")
     public ResponseEntity<byte[]>  getAllUser(@RequestBody ExportXlsRequest exportXlsRequest) throws InvalidRequestException {

@@ -2,23 +2,25 @@ package com.app.aims.beans;
 
 public class ExportXlsRequest {
 
-	private Integer baseLine;
+	private Integer versionNo;
 
 	public ExportXlsRequest() {
 		super();
 	}
 
-	public ExportXlsRequest(Integer baseLine) {
+	public ExportXlsRequest(Integer versionNo) {
 		super();
-		this.baseLine = baseLine;
+		this.versionNo = versionNo;
 	}
 
-	public Integer getBaseLine() {
-		return baseLine;
+	public Integer getVersionNo() {
+		return versionNo;
 	}
 
-	public void setBaseLine(Integer baseLine) {
-		this.baseLine = baseLine;
+	public void setVersionNo(Integer versionNo) {
+		this.versionNo = versionNo;
 	}
+
+	
 	
 }
