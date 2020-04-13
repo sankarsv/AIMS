@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.security.InvalidParameterException;
 import java.util.Base64;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -20,30 +21,38 @@ import com.app.aims.service.UploadXlsService;
 @Service
 public  class UploadXlsServiceImpl implements UploadXlsService {
 
+	
+
+    @Value("${filepath}")
+    private String filePath;
+
 	@Override
-	public void uploadXls(UploadXlsRequest uploadXlsRequest) {
+	public void uploadXls(byte[] byteStream) {
 		
-		if(null == uploadXlsRequest || StringUtils.isNullOrEmpty(uploadXlsRequest.getXlsBytes()) ) {
+		//if(null == uploadXlsRequest || StringUtils.isNullOrEmpty(uploadXlsRequest.getXlsBytes()) ) {
 			//throw new InvalidParameterException("Please provide valid xls data.");
-		}
+		//}
 		
 		 try {
-		
-		   File savedFile = new File(getClass().getClassLoader().getResource("uploadedFiles/testing.xls").getFile());
-		   System.out.println(savedFile.getName() +" file name");
-		   byte[] bytesArray = null;		
-		   bytesArray = Files.readAllBytes(savedFile.toPath());
+//		
+//		   File savedFile = new File(getClass().getClassLoader().getResource("uploadedFiles/testing.xls").getFile());
+//		   System.out.println(savedFile.getName() +" file name");
+//		   byte[] bytesArray = null;		
+//		   bytesArray = Files.readAllBytes(savedFile.toPath());
+//		   
+//		 
+//		   
+//		   String encodedString = Base64.getEncoder().encodeToString(bytesArray);
+//		   
+//		   System.out.println(" Encoded");
 		   
-		 
-		   
-		   String encodedString = Base64.getEncoder().encodeToString(bytesArray);
-		   
-		   System.out.println(" Encoded");
-		   
-		   File file = new File("src/main/resources/uploadedFiles/nidhi4.xls");		
+		   //File file = new File("src/main/resources/uploadedFiles/nidhi4.xls");
+			 
+			 File file = new File(filePath +"hcdetails.xlsx");
+			 
 		   OutputStream os = new FileOutputStream(file);            
-		   byte[] byteArr =  Base64.getDecoder().decode(encodedString);       
-			os.write(byteArr); 
+		//   byte[] byteArr =  Base64.getDecoder().decode(encodedString);       
+			os.write(byteStream); 
 			os.close(); 
 		   
 		 }
