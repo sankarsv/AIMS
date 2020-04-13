@@ -15,7 +15,7 @@ import java.io.IOException;
 public class JwtAuthenticationTokenFilter extends AbstractAuthenticationProcessingFilter {
 
     public JwtAuthenticationTokenFilter() {
-        super("/aims1/**");
+        super("/user/**");
     }
 
     @Override
@@ -23,12 +23,12 @@ public class JwtAuthenticationTokenFilter extends AbstractAuthenticationProcessi
 
         String header = httpServletRequest.getHeader("Authorisation");
 
-
-        if (header == null || !header.startsWith("Token ")) {
+        String tokenStr = "Token ";
+        if (header == null || !header.startsWith(tokenStr)) {
             throw new RuntimeException("JWT Token is missing");
         }
 
-        String authenticationToken = "Testingtoken";
+        String authenticationToken = header.substring(tokenStr.length());
         
         JwtAuthenticationToken token = new JwtAuthenticationToken(authenticationToken);  
 

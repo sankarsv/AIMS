@@ -47,8 +47,10 @@ public class AimsSecurityConfig extends WebSecurityConfigurerAdapter{
 	 protected void configure(HttpSecurity http) throws Exception {
 
 	        http.csrf().disable()
-	                .authorizeRequests().antMatchers("**/aims/**").authenticated()
-	                .and()
+	        		.authorizeRequests().antMatchers("/login", "/register").permitAll()
+					.anyRequest().authenticated().and()
+//	                .authorizeRequests().antMatchers("**/aims/**").authenticated()
+//	                .and()
 	                .exceptionHandling().authenticationEntryPoint(entryPoint)
 	                .and()
 	                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);

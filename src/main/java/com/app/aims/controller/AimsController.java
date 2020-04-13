@@ -20,7 +20,7 @@ import com.app.aims.service.EmployeeService;
 import com.app.aims.service.UserService;
 
 @RestController
-@RequestMapping("/aims")
+//@RequestMapping("/aims")
 public class AimsController {
 	
 	@Autowired
@@ -48,7 +48,7 @@ public class AimsController {
         
     }
 	
-	@GetMapping("/getDetails")
+	@GetMapping("/user/getDetails")
 	public String getAimsDetails() {
 		return "Success Folks!!!";
 	}

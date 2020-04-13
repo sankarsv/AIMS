@@ -17,55 +17,55 @@ import javax.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
-@Table(name = "USER", schema = "AIMS", uniqueConstraints = {
-		@UniqueConstraint(columnNames = "USERID")})
+@Table(name = "ROLE", schema = "AIMS", uniqueConstraints = {
+		@UniqueConstraint(columnNames = "ROLEID")})
 @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 
-public class UserDetail {
+public class Role {
 
 	@Id
-	@Column(name = "USERID" , unique = true)
+	@Column(name = "ROLEID" , unique = true)
 	@NotNull
-	private Integer userID;
+	private Integer roleID;
 
-	@Column(name = "PASSWORD")
+	@Column(name = "ROLENAME")
 	@NotNull
-	private String pwd;
+	private String roleName;
 
 	@Column(name = "CHANGED_DATE")
 	private Date changedDate;
 	
-
-	@OneToMany(fetch=FetchType.EAGER, cascade = {CascadeType.ALL})
-    @JoinColumn(name="USERID")
-    private Set<UserRole> userRoles;
 	
-	public UserDetail(Integer userID, String pwd, Date changedDate) {
+	@OneToMany(fetch=FetchType.EAGER, cascade = {CascadeType.ALL})
+    @JoinColumn(name="ROLEID")
+    private Set<UserRole> userRoles;
+
+	public Role(Integer roleID, String roleName, Date changedDate) {
 		super();
-		this.userID = userID;
-		this.pwd = pwd;
+		this.roleID = roleID;
+		this.roleName = roleName;
 		this.changedDate = changedDate;
 
 	}
 
-	public UserDetail() {
+	public Role() {
 		super();
 	}
 
-	public Integer getUserID() {
-		return userID;
+	public Integer getRoleID() {
+		return roleID;
 	}
 
-	public void setUserID(Integer userID) {
-		this.userID = userID;
+	public void setRoleID(Integer roleID) {
+		this.roleID = roleID;
 	}
 
-	public String getPwd() {
-		return pwd;
+	public String getRoleName() {
+		return roleName;
 	}
 
-	public void setPwd(String pwd) {
-		this.pwd = pwd;
+	public void setRoleName(String roleName) {
+		this.roleName = roleName;
 	}
 
 	public Date getChangedDate() {
@@ -76,6 +76,7 @@ public class UserDetail {
 		this.changedDate = changedDate;
 	}
 
+	
 	public Set<UserRole> getUserRoles() {
 		return userRoles;
 	}
@@ -86,7 +87,7 @@ public class UserDetail {
 
 	@Override
 	public String toString() {
-		return "UserDetail [userID=" + userID + ", pwd=" + pwd + ", changedDate=" + changedDate + "]";
+		return "Role [roleID=" + roleID + ", roleName=" + roleName + ", changedDate=" + changedDate + "]";
 	}
 
 }
