@@ -18,6 +18,7 @@ import com.app.aims.beans.Employee;
 import com.app.aims.beans.EmployeeAllocation;
 import com.app.aims.beans.EmployeeMergedDetails;
 import com.app.aims.beans.GenerateBaseLineRequest;
+import com.app.aims.beans.VersionInfo;
 import com.app.aims.dao.BaseLineDao;
 import com.app.aims.dao.EmployeeDao;
 import com.app.aims.dao.EmployeeMergedDetailsDao;
@@ -172,6 +173,14 @@ public class EmployeeServiceImpl implements EmployeeService {
 			}
 			
 
+	}
+
+	@Override
+	public List<VersionInfo> getVersionInfo() {
+		
+		return userDao.getVersionInfo();
+		
+		
 	}
 
 
