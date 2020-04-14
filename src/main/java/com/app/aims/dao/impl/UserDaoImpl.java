@@ -38,7 +38,7 @@ public class UserDaoImpl implements UserDao {
 	}
 
 	@Override
-	public UserDetail findById(int userId) {
+	public UserDetail findById(Integer userId) {
 		// TODO Auto-generated method stub
 		System.out.println(" Printing userId in findById Method in UserDaoImpl " + userId);
 		Optional<UserDetail> userDtl = userRepository.findById(userId).isPresent() ? userRepository.findById(userId)

@@ -1,6 +1,8 @@
 package com.app.aims.controller;
 
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.app.aims.Exceptions.InvalidRequestException;
 import com.app.aims.beans.UserDetail;
+import com.app.aims.beans.UserRole;
 import com.app.aims.repository.UserRepository;
 import com.app.aims.security.JwtGenarator;
 import com.app.aims.security.model.JwtUser;
@@ -38,7 +41,7 @@ public class LoginController {
 
     }
     
-    @PostMapping(value="aims/login")
+    @PostMapping(value="/login")
     public ResponseEntity<Object>  login(@RequestBody (required = true) LoginReq loginReq) throws InvalidRequestException, ParseException {
     	
     	if(loginReq.getUserId() != null && loginReq.getUserId() > 5 
@@ -54,8 +57,19 @@ public class LoginController {
 				if (validUser) {
 					final JwtUser jwtUser = new JwtUser();
 					jwtUser.setUserName(userCredTest.getUserID().toString());
-					jwtUser.setRole("admin");
-					jwtUser.setId((long)Math.random());
+					String userRoleNames = "";
+					if(userCredTest.getUserRoles() != null && userCredTest.getUserRoles().size() > 0 ) {
+						for (UserRole userDet : userCredTest.getUserRoles()) {
+							if(userDet.getRole() != null) {
+								userRoleNames = userRoleNames+userDet.getRole().getRoleName()+",";
+							}
+						}
+						if(userRoleNames.endsWith(",")) {
+							userRoleNames = userRoleNames.substring(0,userRoleNames.length()-1);
+						}
+					}
+					jwtUser.setRole(userRoleNames);
+					jwtUser.setId(System.currentTimeMillis());
 					token = generate(jwtUser);
 					LoginResp loginResp = new LoginResp();
 					loginResp.setToken(token);
