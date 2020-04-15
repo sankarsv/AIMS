@@ -1,82 +1,93 @@
 package com.app.aims.beans;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
-//@Entity
-//@Table(name="employee_allocation",schema="public")
-//@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class EmployeeAllocation {
+@Entity
+@Table(name="allocation",schema="aims")
+
+public class EmployeeAllocation implements Serializable{
 	
-//	@Id 
-//	@Column(name="id")
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	@Id 
+	@Column(name="id")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	
-//	@ManyToOne(fetch = FetchType.LAZY)
-//	@JoinColumn(name = "employee_id")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "employee_id",insertable = false, updatable = false)
+	@Fetch(FetchMode.JOIN)
     private Employee empId;
 	
-//	@ManyToOne(fetch = FetchType.LAZY)
-//	@JoinColumn(name="project_id"  )
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="project_id" ,insertable = false, updatable = false )
+	@Fetch(FetchMode.JOIN)
     private Project project;
 	
-//	@ManyToOne(fetch = FetchType.LAZY)
-//	@JoinColumn(name="won_id")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="won_id",insertable = false, updatable = false)
+	@Fetch(FetchMode.JOIN)
     private WonPortfolio won;
 	
-//	@Column(name="project_change_date"  )
-//	@NotNull
+	@Column(name="project_change_date"  )
+	@NotNull
     private LocalDate projectChangeDate;
 		
-//	@ManyToOne(fetch = FetchType.LAZY)
-//	@JoinColumn(name="portfolio_id")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="portfolio_id")
+	@Fetch(FetchMode.JOIN)
     private Portfolio portfolioId;
 	
-//	@Column(name="start_date"  )
-//	@NotNull
+	@Column(name="start_date"  )
+	@NotNull
     private LocalDate startDate;
 	
-//	@Column(name="end_date"  )
-//	@NotNull
+	@Column(name="end_date"  )
+	@NotNull
     private LocalDate endDate;
 	
-//	@Column(name="travel_type"  )
-//	@NotNull
+	@Column(name="travel_type"  )
+	@NotNull
     private String travelType;
 	
-//	@Column(name="employee_travel_country")
-//	@NotNull
+	@Column(name="employee_travel_country")
+	@NotNull
     private String employeeTravelCountry;
 	
-//	@Column(name="team_role")
-//	@NotNull
+	@Column(name="team_role")
+	@NotNull
     private String teamRole;
 	
-//	@Column(name="employee_active_client_id")
-//	@NotNull
+	@Column(name="employee_active_client_id")
+	@NotNull
     private String employeeActiveClientInd;
 	
-//	@Column(name="depute_branch")
-//	@NotNull
+	@Column(name="depute_branch")
+	@NotNull
     private String deputeBranch;
 	
-//	@Column(name="depute_dc")
-//	@NotNull
+	@Column(name="depute_dc")
+	@NotNull
     private String deputeDc;
 	
-//	@Column(name="employee_location_id")
-//	@NotNull
+	@Column(name="employee_location_id")
+	@NotNull
     private String employeeLocationId;
 
 	public int getId() {
@@ -105,13 +116,11 @@ public class EmployeeAllocation {
 		this.project = project;
 	}
 
-	public WonPortfolio getWon() {
-		return won;
-	}
-
-	public void setWonId(WonPortfolio won) {
-		this.won = won;
-	}
+	
+	 public WonPortfolio getWon() { return won; }
+	 
+	 public void setWonId(WonPortfolio won) { this.won = won; }
+	 
 
 	public LocalDate getProjectChangeDate() {
 		return projectChangeDate;

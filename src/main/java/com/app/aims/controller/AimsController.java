@@ -1,8 +1,10 @@
 package com.app.aims.controller;
 
+import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,7 @@ import com.app.aims.beans.UserDetailRequest;
 import com.app.aims.beans.UserDetailResponse;
 import com.app.aims.service.EmployeeService;
 import com.app.aims.service.UserService;
+import com.app.aims.beans.SearchResponse;
 
 @RestController
 //@RequestMapping("/aims")
@@ -27,6 +30,9 @@ public class AimsController {
 
 	@Autowired
 	UserService userService;
+	
+	@Autowired
+	EmployeeService employeeService;
 
 	@PostMapping(value = "/register", produces = MediaType.APPLICATION_JSON_VALUE)
 	public UserDetailResponse registerUser(@RequestBody @Valid UserDetailRequest userDtl) {
@@ -78,6 +84,12 @@ public class AimsController {
 	@GetMapping("/getAccountSpending")
 	public String getAccountSpending() {
 		return "{\"January\":{\"total\":300,\"new\":1000},\"February\":{\"total\":500,\"new\":1000},\"March\":{\"total\":450,\"new\":1000}}";
+	}
+	
+	@GetMapping("/getEmployeeDetails")
+	public ResponseEntity<List<SearchResponse>> getLeftJoinData(@Param("empId")  Integer empId) {
+		return new ResponseEntity<List<SearchResponse>>(employeeService.leftJoinData(empId), HttpStatus.OK);
+		
 	}
 
 }
