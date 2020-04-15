@@ -19,6 +19,7 @@ import com.app.aims.beans.UserRole;
 import com.app.aims.repository.UserRepository;
 import com.app.aims.security.JwtGenarator;
 import com.app.aims.security.model.JwtUser;
+import com.app.aims.util.CommonUtil;
 import com.app.aims.vo.LoginReq;
 import com.app.aims.vo.LoginResp;
 
@@ -53,7 +54,7 @@ public class LoginController {
 			// boolean validUser = loginService.findByUser(userCred);
 			UserDetail userCredTest = repository.findByUserID(loginReq.getUserId());
 			if (userCredTest != null) {
-				boolean validUser = loginReq.getPassword().equals(userCredTest.getPwd());
+				boolean validUser = CommonUtil.isPasswordMatch(loginReq.getPassword(),userCredTest.getPwd());
 				if (validUser) {
 					final JwtUser jwtUser = new JwtUser();
 					jwtUser.setUserName(userCredTest.getUserID().toString());
