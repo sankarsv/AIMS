@@ -23,6 +23,8 @@ public interface EmployeeService {
 
     public List<VersionInfo> getVersionInfo();
     public List<SearchResponse> leftJoinData(Integer empId);
+    public List<SearchResponse> leftJoinDataByDM(Integer empId, Integer dmEmpId);
+    public List<SearchResponse> leftJoinDataByBrm(Integer empId, Integer dmEmpId, Integer brmEmpId);
     
     
 

@@ -8,29 +8,25 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import com.app.aims.Exceptions.InvalidRequestException;
 import com.app.aims.beans.EditRequest;
 import com.app.aims.beans.Employee;
 import com.app.aims.beans.ExportXlsRequest;
 import com.app.aims.beans.GenerateBaseLineRequest;
+import com.app.aims.beans.SearchResponse;
 import com.app.aims.beans.VersionInfo;
-import com.app.aims.security.model.UploadXlsRequest;
 import com.app.aims.service.EmployeeService;
 import com.app.aims.service.ExportXlsService;
 import com.app.aims.service.UploadXlsService;
+import com.app.aims.vo.SearchRequest;
 
 
 @RestController
@@ -79,6 +75,7 @@ public class EmployeeController {
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
     
+    
     @GetMapping(value="/get", headers="Accept=application/json")
     public List<Employee> downloadxls() {
         List<Employee> tasks=employeeService.getUser();
@@ -114,7 +111,17 @@ public class EmployeeController {
 	    return new ResponseEntity<byte[]>(output, responseHeaders, HttpStatus.OK);
 	    
     }
-
+    
+    @PostMapping(value="/getEmployeeDetails")
+    public ResponseEntity<Object> getEmployeeDetails(@RequestBody SearchRequest req){
+    	System.out.println("Request is inside");
+    	List<SearchResponse> searchResponseList = employeeService.leftJoinData(req.getEmpId());
+    	List<SearchResponse> searchResponseList1 = employeeService.leftJoinDataByBrm(req.getEmpId(),req.getDmEmpId(),req.getBrmEmpid());
+    	List<SearchResponse> searchResponseList2 = employeeService.leftJoinDataByDM(req.getEmpId(),req.getDmEmpId());
+		return new ResponseEntity<Object>(searchResponseList, HttpStatus.OK);
+    	
+    }
+ 
     @GetMapping(value="/update", headers="Accept=application/json")
     public ResponseEntity<String> updateUser(@RequestBody EditRequest editRequest)
     {

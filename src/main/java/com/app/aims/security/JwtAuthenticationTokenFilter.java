@@ -21,9 +21,9 @@ public class JwtAuthenticationTokenFilter extends AbstractAuthenticationProcessi
     @Override
     public Authentication attemptAuthentication(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws AuthenticationException, IOException, ServletException {
 
-        String header = httpServletRequest.getHeader("Authorisation");
+        String header = httpServletRequest.getHeader("Authorization");
 
-        String tokenStr = "token ";
+        String tokenStr = "Bearer ";
         if (header == null || !header.startsWith(tokenStr)) {
             throw new RuntimeException("JWT Token is missing");
         }
