@@ -9,6 +9,7 @@ import com.app.aims.Exceptions.InvalidRequestException;
 import com.app.aims.beans.EditRequest;
 import com.app.aims.beans.Employee;
 import com.app.aims.beans.GenerateBaseLineRequest;
+import com.app.aims.beans.SearchResponse;
 import com.app.aims.beans.VersionInfo;
 
 public interface EmployeeService {
@@ -21,6 +22,7 @@ public interface EmployeeService {
     public void generateBaseLine( GenerateBaseLineRequest generateBaseLineRequest)  throws ParseException, InvalidRequestException;
 
     public List<VersionInfo> getVersionInfo();
+    public List<SearchResponse> leftJoinData(Integer empId);
     
     
 

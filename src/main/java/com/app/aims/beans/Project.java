@@ -1,113 +1,120 @@
 package com.app.aims.beans;
 
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-//@Entity
-//@Table(name="PROJECT",schema="public")
-//@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class Project {
+@Entity
+@Table(name="PROJECT",schema="aims")
+public class Project implements Serializable {
 
-//	@Column(name="id" )
-//	@NotNull
-//	@Id
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	@Column(name="id" )
+	@NotNull
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer projectId;
 	
-//	@Column(name="project_name" )
-//	@NotNull
+	@Column(name="project_name" )
+	@NotNull
     private String projectName;
 	
-//	@Column(name="project_location" )
-//	@NotNull
+	@Column(name="project_location" )
+	@NotNull
     private String projectLocation;
 	
-//	@Column(name="project_change_date" )
-//	@NotNull
+	@Column(name="project_change_date" )
+	@NotNull
     private LocalDate projectChangeDate;
 	
-//	@Column(name="work_geography" )
-//	@NotNull
+	@Column(name="work_geography" )
+	@NotNull
     private String workGeography;
-//	
-//	@Column(name="work_country" )
-//	@NotNull
+	
+	@Column(name="work_country" )
+	@NotNull
     private String workCountry;
 	
-//	@Column(name="work_location" )
-//	@NotNull
+	@Column(name="work_location" )
+	@NotNull
     private String workLocation;
 	
-//	@Column(name="client_geography" )
-//	@NotNull
+	@Column(name="client_geography" )
+	@NotNull
     private String clientGeography;
 	
-//	@Column(name="client_country" )
-//	@NotNull
+	@Column(name="client_country" )
+	@NotNull
     private String clientCountry;
 	
-//	@Column(name="ip" )
-//	@NotNull
+	@Column(name="ip" )
+	@NotNull
     private String ip;
 	
-//	@Column(name="customer" )
-//	@NotNull
+	@Column(name="customer" )
+	@NotNull
     private String customer;
 	
-//	@Column(name="group_customer" )
-//	@NotNull
+	@Column(name="group_customer" )
+	@NotNull
     private String groupCustomer;
 	
-//	@Column(name="project_hash" )
-//	@NotNull
+	@Column(name="project_hash" )
+	@NotNull
     private String projectHash;
 	
-//	@Column(name="project_location_wrt_india" )
-//	@NotNull
+	@Column(name="project_location_wrt_india" )
+	@NotNull
     private String projectLocationWrtIndia;
 	
-//	@Column(name="project_type" )
-//	@NotNull
+	@Column(name="project_type" )
+	@NotNull
     private String projectType;
 	
-//	@Column(name="pure_turnkey_flag" )
-//	@NotNull
+	@Column(name="pure_turnkey_flag" )
+	@NotNull
     private String pureTurnkeyFlag;
 	
-//	@Column(name="swon_category" )
-//	@NotNull
+	@Column(name="swon_category" )
+	@NotNull
     private String swonCategory;
 	
 	
-//	@Column(name="project_cluster" )
-//	@NotNull
+	@Column(name="project_cluster" )
+	@NotNull
     private String projectCluster;
 	
-//	@Column(name="iou" )
-//	@NotNull
+	@Column(name="iou" )
+	@NotNull
     private String iou;
 	
-//	@Column(name="sub_iou" )
-//	@NotNull
+	@Column(name="sub_iou" )
+	@NotNull
     private String subIou;
 	
-//	@Column(name="parent_iou_name" )
-//	@NotNull
+	@Column(name="parent_iou_name" )
+	@NotNull
     private String parentIou;
 	
-//	@Column(name="child_iou_name" )
-//	@NotNull
+	@Column(name="child_iou_name" )
+	@NotNull
     private String childIou;
 	
-//	@Column(name="bfs_cluster" )
-//	@NotNull
+	@Column(name="bfs_cluster" )
+	@NotNull
     private String bfsCluster;
 
 	public Integer getProjectId() {

@@ -18,10 +18,12 @@ import com.app.aims.beans.Employee;
 import com.app.aims.beans.EmployeeAllocation;
 import com.app.aims.beans.EmployeeMergedDetails;
 import com.app.aims.beans.GenerateBaseLineRequest;
+import com.app.aims.beans.SearchResponse;
 import com.app.aims.beans.VersionInfo;
 import com.app.aims.dao.BaseLineDao;
 import com.app.aims.dao.EmployeeDao;
 import com.app.aims.dao.EmployeeMergedDetailsDao;
+import com.app.aims.repository.SearchRepository;
 import com.app.aims.service.EmployeeService;
 import com.app.aims.util.DateUtil;
 
@@ -36,6 +38,95 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Autowired
     EmployeeMergedDetailsDao employeeMergedDetailsDao;
+    
+    
+    
+    @Autowired
+	private SearchRepository searchRepository;
+
+	public List<SearchResponse> leftJoinData(Integer empId) {
+		List<SearchResponse> searchEmpList = new ArrayList<SearchResponse>();
+		List<Employee> emplist = searchRepository.fetchDataLeftJoin(empId);
+
+		for (Employee employee : emplist) {
+			for (EmployeeAllocation employeeAllocation : employee.getEmployeeAllocations()) {
+
+				SearchResponse searchResponse = new SearchResponse();
+				
+				 searchResponse.setEmployeeId(employee.getEmployeeId());
+	    		 System.out.println("employeeID value is " + employee.getEmployeeId());
+	    		 searchResponse.setEmployeeType(employee.getEmployeeType());
+	    		 searchResponse.setCurrentLocation(employee.getCurrentLocation());
+	    		 searchResponse.setFirstName(employee.getFirstName());
+	    		 System.out.println("FirstName value is " + employee.getFirstName());
+	    		 searchResponse.setLastName(employee.getLastName());
+	    		 searchResponse.setBaseBranch(employee.getBaseBranch());
+	    		 searchResponse.setDob(employee.getDob());
+	    		 searchResponse.setGender(employee.getGender());
+	    		 searchResponse.setOverallExp(employee.getOverallExp());
+	    		 searchResponse.setAimsExp(employee.getAimsExp());
+	    		 searchResponse.setBaseCountry(employee.getBaseCountry());
+	    		 searchResponse.setBaseDc(employee.getBaseDc());
+	    		 searchResponse.setCategoryName(employee.getCategoryName());
+	    		 searchResponse.setGrade(employee.getGrade());
+	    		 
+	    		 searchResponse.setWonId(employeeAllocation.getWon().getWonId());
+	    		 searchResponse.setPortfolioId(employeeAllocation.getPortfolioId().getPortfolioId());
+	    		 searchResponse.setStartDate(employeeAllocation.getStartDate());
+	    		 searchResponse.setEndDate(employeeAllocation.getEndDate());
+	    		 searchResponse.setTravelType(employeeAllocation.getTravelType());
+	    		 searchResponse.setEmployeeTravelCountry(employeeAllocation.getEmployeeTravelCountry());
+	    		 searchResponse.setTeamRole(employeeAllocation.getTeamRole());
+			     searchResponse.setEmployeeActiveBMOId(employeeAllocation.getEmployeeActiveClientInd());
+				 searchResponse.setDeputeBranch(employeeAllocation.getDeputeBranch());
+				 searchResponse.setDeputeDc(employeeAllocation.getDeputeDc());
+				 searchResponse.setEmployeeLocationId(employeeAllocation.getEmployeeLocationId()); 
+				 
+				 
+				 searchResponse.setPortfolioName(employeeAllocation.getPortfolioId().getPortfolioName());
+				 searchResponse.setPortfolioType(employeeAllocation.getPortfolioId().getPortfolioType());
+				 searchResponse.setBrmEmpId(employeeAllocation.getPortfolioId().getBrmEmpId());
+				 searchResponse.setOnsiteLeadEmpId(employeeAllocation.getPortfolioId().getOnsiteLeadEmpId());
+				 searchResponse.setDmEmpId(employeeAllocation.getPortfolioId().getDmEmpId());
+				 searchResponse.setOffshoreLeadEmpId(employeeAllocation.getPortfolioId().getOffshoreLeadEmpId());
+				 searchResponse.setBillingEmpId(employeeAllocation.getPortfolioId().getBillingEmpId());
+				 
+				 
+				 searchResponse.setProjectId(employeeAllocation.getProject().getProjectId());
+				 searchResponse.setProjectName(employeeAllocation.getProject().getProjectName());
+				 searchResponse.setProjectLocation(employeeAllocation.getProject().getProjectLocation());
+				 searchResponse.setProjectChangeDate(employeeAllocation.getProject().getProjectChangeDate());
+				 searchResponse.setWorkGeography(employeeAllocation.getProject().getWorkGeography());
+				 searchResponse.setWorkCountry(employeeAllocation.getProject().getWorkCountry());
+				 searchResponse.setWorkLocation(employeeAllocation.getProject().getWorkLocation());
+				 searchResponse.setClientGeography(employeeAllocation.getProject().getClientGeography());
+				 searchResponse.setClientCountry(employeeAllocation.getProject().getClientCountry());
+				 searchResponse.setIp(employeeAllocation.getProject().getIp());
+				 searchResponse.setCustomer(employeeAllocation.getProject().getCustomer());
+				 searchResponse.setGroupCustomer(employeeAllocation.getProject().getGroupCustomer());
+				 searchResponse.setProjectHash(employeeAllocation.getProject().getProjectHash());
+				 searchResponse.setProjectLocationWrtIndia(employeeAllocation.getProject().getProjectLocationWrtIndia());
+				 searchResponse.setProjectType(employeeAllocation.getProject().getProjectType());
+				 searchResponse.setPureTurnkeyFlag(employeeAllocation.getProject().getPureTurnkeyFlag());
+				 searchResponse.setSwonCategory(employeeAllocation.getProject().getSwonCategory());
+				 searchResponse.setProjectCluster(employeeAllocation.getProject().getProjectCluster());
+				 searchResponse.setIou(employeeAllocation.getProject().getIou());
+				 searchResponse.setSubIou(employeeAllocation.getProject().getSubIou());
+				 searchResponse.setParentIou(employeeAllocation.getProject().getParentIou());
+				 searchResponse.setChildIou(employeeAllocation.getProject().getChildIou());
+				 searchResponse.setBfsCluster(employeeAllocation.getProject().getBfsCluster());
+
+				 
+				 searchEmpList.add(searchResponse);	
+
+			}
+
+		}
+
+		return searchEmpList;
+
+	}
+    
     
     @Override
     public List<Employee> getUser() {

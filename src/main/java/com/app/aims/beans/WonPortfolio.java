@@ -2,6 +2,8 @@ package com.app.aims.beans;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -9,13 +11,14 @@ import javax.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 
-//@Entity
-//@Table(name="won_portfolio_mapping",schema="public")
+@Entity
+@Table(name="won_portfolio_mapping",schema="aims")
 //@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class WonPortfolio {
 
-//	@Column(name="project_id" )
-//	@NotNull
+	@Column(name="project_id" )
+	@NotNull
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer projectId;
 	
 	
@@ -43,13 +46,13 @@ public class WonPortfolio {
 		this.wonId = wonId;
 	}
 
-//	@Column(name="portfolio_id" )
-//	@NotNull
+	@Column(name="portfolio_id" )
+	@NotNull
     private Integer portfolioId;
 	
-//	@Column(name="won_id" )
-//	@NotNull
-//	@Id
+	@Column(name="won_id" )
+	@NotNull
+	@Id
     private Integer wonId;
 	
 }

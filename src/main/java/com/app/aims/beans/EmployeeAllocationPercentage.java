@@ -5,6 +5,8 @@ package com.app.aims.beans;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -14,24 +16,25 @@ import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-//@Entity
-//@Table(name="employee_allocation_percentage",schema="public")
+@Entity
+@Table(name="employee_allocation_percentage",schema="AIMS")
 //@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class EmployeeAllocationPercentage {
 
-//	@Column(name="id" )
-//	@NotNull
-//	@Id
+	@Column(name="id" )
+	@NotNull
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer employeeAllocationPercentage;
 	
 	
-//	@OneToOne(fetch = FetchType.LAZY)
-//	@JoinColumn(name = "employee_id")
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "employee_id")
     private EmployeeAllocation employeeId;
 	
 	
-//	@Column(name="percentage_allocation" )
-//	@NotNull
+	@Column(name="percentage_allocation" )
+	@NotNull
     private Integer percentageAllocation;
 
 
