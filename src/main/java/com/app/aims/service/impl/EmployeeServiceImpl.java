@@ -47,10 +47,16 @@ public class EmployeeServiceImpl implements EmployeeService {
 	public List<SearchResponse> leftJoinData(Integer empId) {
 		List<SearchResponse> searchEmpList = new ArrayList<SearchResponse>();
 		List<Employee> emplist = searchRepository.fetchDataLeftJoin(empId);
+		
+		List<Integer>  empexistlist = new ArrayList<Integer>();	
 
 		for (Employee employee : emplist) {
+			
+			if(empexistlist.contains(employee.getEmployeeId())) {
+				continue;
+			}
 			for (EmployeeAllocation employeeAllocation : employee.getEmployeeAllocations()) {
-
+				
 				SearchResponse searchResponse = new SearchResponse();
 				
 				 searchResponse.setEmployeeId(employee.getEmployeeId());
@@ -118,6 +124,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 				 
 				 searchEmpList.add(searchResponse);	
+				 empexistlist.add(employee.getEmployeeId());
 
 			}
 
@@ -279,8 +286,14 @@ public class EmployeeServiceImpl implements EmployeeService {
 	public List<SearchResponse> leftJoinDataByDM(Integer dmEmpId) {
 		List<SearchResponse> searchEmpList = new ArrayList<SearchResponse>();
 		List<Employee> emplist = searchRepository.fetchDataLeftJoinByDm(dmEmpId);
+		
+		List<Integer>  empexistlist = new ArrayList<Integer>();
 
 		for (Employee employee : emplist) {
+			if(empexistlist.contains(employee.getEmployeeId())) {
+				continue;
+			}
+			
 			for (EmployeeAllocation employeeAllocation : employee.getEmployeeAllocations()) {
 
 				SearchResponse searchResponse = new SearchResponse();
@@ -350,6 +363,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 				 
 				 searchEmpList.add(searchResponse);	
+				 empexistlist.add(employee.getEmployeeId());
 
 			}
 
@@ -364,8 +378,14 @@ public class EmployeeServiceImpl implements EmployeeService {
 	public List<SearchResponse> leftJoinDataByBrm(Integer brmEmpId) {
 		List<SearchResponse> searchEmpList = new ArrayList<SearchResponse>();
 		List<Employee> emplist = searchRepository.fetchDataLeftJoinByBrm(brmEmpId);
+		
+		List<Integer>  empexistlist = new ArrayList<Integer>();
 
 		for (Employee employee : emplist) {
+			
+			if(empexistlist.contains(employee.getEmployeeId())) {
+				continue;
+			}
 			for (EmployeeAllocation employeeAllocation : employee.getEmployeeAllocations()) {
 
 				SearchResponse searchResponse = new SearchResponse();
@@ -432,9 +452,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 				 searchResponse.setParentIou(employeeAllocation.getProject().getParentIou());
 				 searchResponse.setChildIou(employeeAllocation.getProject().getChildIou());
 				 searchResponse.setBfsCluster(employeeAllocation.getProject().getBfsCluster());
-
-				 
-				 searchEmpList.add(searchResponse);	
+		 
+				 searchEmpList.add(searchResponse);
+				 empexistlist.add(employee.getEmployeeId());
 
 			}
 
