@@ -276,9 +276,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 
 	@Override
-	public List<SearchResponse> leftJoinDataByDM(Integer empId, Integer dmEmpId) {
+	public List<SearchResponse> leftJoinDataByDM(Integer dmEmpId) {
 		List<SearchResponse> searchEmpList = new ArrayList<SearchResponse>();
-		List<Employee> emplist = searchRepository.fetchDataLeftJoinByDm(empId, dmEmpId);
+		List<Employee> emplist = searchRepository.fetchDataLeftJoinByDm(dmEmpId);
 
 		for (Employee employee : emplist) {
 			for (EmployeeAllocation employeeAllocation : employee.getEmployeeAllocations()) {
@@ -361,9 +361,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 
 	@Override
-	public List<SearchResponse> leftJoinDataByBrm(Integer empId, Integer dmEmpId, Integer brmEmpId) {
+	public List<SearchResponse> leftJoinDataByBrm(Integer brmEmpId) {
 		List<SearchResponse> searchEmpList = new ArrayList<SearchResponse>();
-		List<Employee> emplist = searchRepository.fetchDataLeftJoinByBrmAndDm(empId, dmEmpId, brmEmpId);
+		List<Employee> emplist = searchRepository.fetchDataLeftJoinByBrm(brmEmpId);
 
 		for (Employee employee : emplist) {
 			for (EmployeeAllocation employeeAllocation : employee.getEmployeeAllocations()) {

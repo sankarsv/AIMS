@@ -115,9 +115,18 @@ public class EmployeeController {
     @PostMapping(value="/getEmployeeDetails")
     public ResponseEntity<Object> getEmployeeDetails(@RequestBody SearchRequest req){
     	System.out.println("Request is inside");
-    	List<SearchResponse> searchResponseList = employeeService.leftJoinData(req.getEmpId());
-    	List<SearchResponse> searchResponseList1 = employeeService.leftJoinDataByBrm(req.getEmpId(),req.getDmEmpId(),req.getBrmEmpid());
-    	List<SearchResponse> searchResponseList2 = employeeService.leftJoinDataByDM(req.getEmpId(),req.getDmEmpId());
+    	List<SearchResponse> searchResponseList = null;
+    	
+    	if(req.getEmpId() != null) {
+    		searchResponseList = employeeService.leftJoinData(req.getEmpId());
+    	} else if(req.getGlId() != null) {
+    		searchResponseList = employeeService.leftJoinDataByBrm(req.getGlId());
+    	} else if (req.getDmId() != null) {
+    		searchResponseList = employeeService.leftJoinDataByDM(req.getDmId());
+    	} else {
+    	 return new ResponseEntity<>("Bad Request", HttpStatus.BAD_REQUEST);
+    	}
+    	
 		return new ResponseEntity<Object>(searchResponseList, HttpStatus.OK);
     	
     }

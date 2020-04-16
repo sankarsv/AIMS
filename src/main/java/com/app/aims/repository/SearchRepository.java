@@ -16,11 +16,11 @@ public interface SearchRepository extends JpaRepository<Employee,Integer>{
 	@Query("SELECT e,pr,p,ea FROM Employee e,Project pr,Portfolio p,EmployeeAllocation ea WHERE e.employeeId = :empId")
 	List<Employee> fetchDataLeftJoin(@Param("empId")  Integer empId);
 	
-	@Query("SELECT e,pr,p,ea FROM Employee e,Project pr,Portfolio p,EmployeeAllocation ea WHERE e.employeeId = :empId AND p.dmEmpId = :dmEmpId")
-	List<Employee> fetchDataLeftJoinByDm(@Param("empId")  Integer empId, @Param("dmEmpId")  Integer dmEmpId);
+	@Query("SELECT e,pr,p,ea FROM Employee e,Project pr,Portfolio p,EmployeeAllocation ea WHERE p.dmEmpId = :dmEmpId")
+	List<Employee> fetchDataLeftJoinByDm(@Param("dmEmpId")  Integer dmEmpId);
 	
-	@Query("SELECT e,pr,p,ea FROM Employee e,Project pr,Portfolio p,EmployeeAllocation ea WHERE e.employeeId = :empId AND p.dmEmpId = :dmEmpId AND p.brmEmpId = :brmEmpId")
-	List<Employee> fetchDataLeftJoinByBrmAndDm(@Param("empId")  Integer empId, @Param("dmEmpId")  Integer dmEmpId, @Param("brmEmpId")  Integer brmEmpId);
+	@Query("SELECT e,pr,p,ea FROM Employee e,Project pr,Portfolio p,EmployeeAllocation ea WHERE p.brmEmpId = :brmEmpId")
+	List<Employee> fetchDataLeftJoinByBrm(@Param("brmEmpId")  Integer brmEmpId);
 	
 
 }
