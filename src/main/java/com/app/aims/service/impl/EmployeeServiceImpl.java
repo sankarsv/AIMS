@@ -1,8 +1,6 @@
 package com.app.aims.service.impl;
 
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -48,11 +46,11 @@ public class EmployeeServiceImpl implements EmployeeService {
 		List<SearchResponse> searchEmpList = new ArrayList<SearchResponse>();
 		List<Employee> emplist = searchRepository.fetchDataLeftJoin(empId);
 		
-		List<Integer>  empexistlist = new ArrayList<Integer>();	
+		List<Integer>  empExistList = new ArrayList<Integer>();	
 
 		for (Employee employee : emplist) {
 			
-			if(empexistlist.contains(employee.getEmployeeId())) {
+			if(empExistList.contains(employee.getEmployeeId())) {
 				continue;
 			}
 			for (EmployeeAllocation employeeAllocation : employee.getEmployeeAllocations()) {
@@ -124,7 +122,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 				 
 				 searchEmpList.add(searchResponse);	
-				 empexistlist.add(employee.getEmployeeId());
+				 empExistList.add(employee.getEmployeeId());
 
 			}
 
@@ -287,10 +285,10 @@ public class EmployeeServiceImpl implements EmployeeService {
 		List<SearchResponse> searchEmpList = new ArrayList<SearchResponse>();
 		List<Employee> emplist = searchRepository.fetchDataLeftJoinByDm(dmEmpId);
 		
-		List<Integer>  empexistlist = new ArrayList<Integer>();
+		List<Integer>  empExistList = new ArrayList<Integer>();
 
 		for (Employee employee : emplist) {
-			if(empexistlist.contains(employee.getEmployeeId())) {
+			if(empExistList.contains(employee.getEmployeeId())) {
 				continue;
 			}
 			
@@ -363,7 +361,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 				 
 				 searchEmpList.add(searchResponse);	
-				 empexistlist.add(employee.getEmployeeId());
+				 empExistList.add(employee.getEmployeeId());
 
 			}
 
@@ -379,11 +377,11 @@ public class EmployeeServiceImpl implements EmployeeService {
 		List<SearchResponse> searchEmpList = new ArrayList<SearchResponse>();
 		List<Employee> emplist = searchRepository.fetchDataLeftJoinByBrm(brmEmpId);
 		
-		List<Integer>  empexistlist = new ArrayList<Integer>();
+		List<Integer>  empExistList = new ArrayList<Integer>();
 
 		for (Employee employee : emplist) {
 			
-			if(empexistlist.contains(employee.getEmployeeId())) {
+			if(empExistList.contains(employee.getEmployeeId())) {
 				continue;
 			}
 			for (EmployeeAllocation employeeAllocation : employee.getEmployeeAllocations()) {
@@ -454,7 +452,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 				 searchResponse.setBfsCluster(employeeAllocation.getProject().getBfsCluster());
 		 
 				 searchEmpList.add(searchResponse);
-				 empexistlist.add(employee.getEmployeeId());
+				 empExistList.add(employee.getEmployeeId());
 
 			}
 
