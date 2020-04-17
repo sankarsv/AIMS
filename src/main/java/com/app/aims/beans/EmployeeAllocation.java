@@ -40,10 +40,13 @@ public class EmployeeAllocation implements Serializable{
 	@Fetch(FetchMode.JOIN)
     private Project project;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="won_id",insertable = false, updatable = false)
-	@Fetch(FetchMode.JOIN)
-    private WonPortfolio won;
+	/*
+	 * @ManyToOne(fetch = FetchType.LAZY)
+	 * 
+	 * @JoinColumn(name="won_id",insertable = false, updatable = false)
+	 * 
+	 * @Fetch(FetchMode.JOIN) private WonPortfolio won;
+	 */
 	
 	@Column(name="project_change_date"  )
 	@NotNull
@@ -117,9 +120,11 @@ public class EmployeeAllocation implements Serializable{
 	}
 
 	
-	 public WonPortfolio getWon() { return won; }
-	 
-	 public void setWonId(WonPortfolio won) { this.won = won; }
+	/*
+	 * public WonPortfolio getWon() { return won; }
+	 * 
+	 * public void setWonId(WonPortfolio won) { this.won = won; }
+	 */
 	 
 
 	public LocalDate getProjectChangeDate() {

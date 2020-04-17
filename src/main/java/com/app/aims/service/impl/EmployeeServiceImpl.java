@@ -74,7 +74,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 	    		 searchResponse.setCategoryName(employee.getCategoryName());
 	    		 searchResponse.setGrade(employee.getGrade());
 	    		 
-	    		 searchResponse.setWonId(employeeAllocation.getWon().getWonId());
+	    		// searchResponse.setWonId(employeeAllocation.getWon().getWonId());
 	    		 searchResponse.setPortfolioId(employeeAllocation.getPortfolioId().getPortfolioId());
 	    		 searchResponse.setStartDate(employeeAllocation.getStartDate());
 	    		 searchResponse.setEndDate(employeeAllocation.getEndDate());
@@ -204,7 +204,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 					employeeMergedDetails.setBaseDc (employee.getBaseDc());
 					employeeMergedDetails.setCategoryName(employee.getCategoryName());
 					employeeMergedDetails.setGrade  (employee.getGrade());
-					employeeMergedDetails.setWonId (employeeAllocation.getWon().getWonId());
+					//employeeMergedDetails.setWonId (employeeAllocation.getWon().getWonId());
 					employeeMergedDetails.setPortfolioId  (employeeAllocation.getPortfolioId().getPortfolioId());
 					employeeMergedDetails.setStartDate (employeeAllocation.getStartDate());
 					employeeMergedDetails.setEndDate(employeeAllocation.getEndDate());
@@ -313,7 +313,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 	    		 searchResponse.setCategoryName(employee.getCategoryName());
 	    		 searchResponse.setGrade(employee.getGrade());
 	    		 
-	    		 searchResponse.setWonId(employeeAllocation.getWon().getWonId());
+	    		// searchResponse.setWonId(employeeAllocation.getWon().getWonId());
 	    		 searchResponse.setPortfolioId(employeeAllocation.getPortfolioId().getPortfolioId());
 	    		 searchResponse.setStartDate(employeeAllocation.getStartDate());
 	    		 searchResponse.setEndDate(employeeAllocation.getEndDate());
@@ -405,7 +405,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 	    		 searchResponse.setCategoryName(employee.getCategoryName());
 	    		 searchResponse.setGrade(employee.getGrade());
 	    		 
-	    		 searchResponse.setWonId(employeeAllocation.getWon().getWonId());
+	    		// searchResponse.setWonId(employeeAllocation.getWon().getWonId());
 	    		 searchResponse.setPortfolioId(employeeAllocation.getPortfolioId().getPortfolioId());
 	    		 searchResponse.setStartDate(employeeAllocation.getStartDate());
 	    		 searchResponse.setEndDate(employeeAllocation.getEndDate());
