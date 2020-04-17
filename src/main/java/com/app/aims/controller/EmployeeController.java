@@ -60,7 +60,7 @@ public class EmployeeController {
 //        return new ResponseEntity<Void>(headers, HttpStatus.CREATED);
 //    }
     
-    @PostMapping(value="/upload-xls",headers="Accept=application/vnd.ms-excel")
+    @PostMapping(value="/upload",headers="Accept=application/vnd.ms-excel")
     public ResponseEntity<Void> uploadXls(@RequestParam("file") MultipartFile file){
     	try {
     		
@@ -99,7 +99,7 @@ public class EmployeeController {
 	    
     }
     
-    @PostMapping(value="/export-xls", headers="Accept=application/json")
+    @PostMapping(value="/download", headers="Accept=application/json")
     public ResponseEntity<byte[]>  getAllUser(@RequestBody ExportXlsRequest exportXlsRequest) throws InvalidRequestException {
     	
 	    byte[] output =	exportXlsService.downloadXlsReportOfEmployees(exportXlsRequest);
