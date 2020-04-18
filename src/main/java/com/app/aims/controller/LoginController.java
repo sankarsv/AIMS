@@ -67,6 +67,8 @@ public class LoginController {
 						}
 						if(userRoleNames.endsWith(",")) {
 							userRoleNames = userRoleNames.substring(0,userRoleNames.length()-1);
+						} else {
+							userRoleNames = "DEV";
 						}
 					}
 					jwtUser.setRole(userRoleNames);

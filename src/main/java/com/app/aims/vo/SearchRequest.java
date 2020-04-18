@@ -4,9 +4,15 @@ public class SearchRequest {
 
 	private Integer empId;
 	
-	private Integer dmEmpId;
+	private Integer dmId;
 	
-	private Integer brmEmpid;
+	private Integer glId;
+	
+	private String empName;
+	
+	private String teamRole;
+	
+	private String baseBranch;
 
 	public Integer getEmpId() {
 		return empId;
@@ -16,20 +22,46 @@ public class SearchRequest {
 		this.empId = empId;
 	}
 
-	public Integer getDmEmpId() {
-		return dmEmpId;
+	public Integer getDmId() {
+		return dmId;
 	}
 
-	public void setDmEmpId(Integer dmEmpId) {
-		this.dmEmpId = dmEmpId;
+	public void setDmId(Integer dmId) {
+		this.dmId = dmId;
 	}
 
-	public Integer getBrmEmpid() {
-		return brmEmpid;
+	public Integer getGlId() {
+		return glId;
 	}
 
-	public void setBrmEmpid(Integer brmEmpid) {
-		this.brmEmpid = brmEmpid;
+	public void setGlId(Integer glId) {
+		this.glId = glId;
 	}
+
+	public String getEmpName() {
+		return empName;
+	}
+
+	public void setEmpName(String empName) {
+		this.empName = empName;
+	}
+
+	public String getTeamRole() {
+		return teamRole;
+	}
+
+	public void setTeamRole(String teamRole) {
+		this.teamRole = teamRole;
+	}
+
+	public String getBaseBranch() {
+		return baseBranch;
+	}
+
+	public void setBaseBranch(String baseBranch) {
+		this.baseBranch = baseBranch;
+	}
+
+	
 	
 }

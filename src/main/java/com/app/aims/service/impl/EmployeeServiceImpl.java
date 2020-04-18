@@ -1,8 +1,6 @@
 package com.app.aims.service.impl;
 
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -47,10 +45,16 @@ public class EmployeeServiceImpl implements EmployeeService {
 	public List<SearchResponse> leftJoinData(Integer empId) {
 		List<SearchResponse> searchEmpList = new ArrayList<SearchResponse>();
 		List<Employee> emplist = searchRepository.fetchDataLeftJoin(empId);
+		
+		List<Integer>  empExistList = new ArrayList<Integer>();	
 
 		for (Employee employee : emplist) {
+			
+			if(empExistList.contains(employee.getEmployeeId())) {
+				continue;
+			}
 			for (EmployeeAllocation employeeAllocation : employee.getEmployeeAllocations()) {
-
+				
 				SearchResponse searchResponse = new SearchResponse();
 				
 				 searchResponse.setEmployeeId(employee.getEmployeeId());
@@ -70,7 +74,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 	    		 searchResponse.setCategoryName(employee.getCategoryName());
 	    		 searchResponse.setGrade(employee.getGrade());
 	    		 
-	    		 searchResponse.setWonId(employeeAllocation.getWon().getWonId());
+	    		// searchResponse.setWonId(employeeAllocation.getWon().getWonId());
 	    		 searchResponse.setPortfolioId(employeeAllocation.getPortfolioId().getPortfolioId());
 	    		 searchResponse.setStartDate(employeeAllocation.getStartDate());
 	    		 searchResponse.setEndDate(employeeAllocation.getEndDate());
@@ -118,6 +122,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 				 
 				 searchEmpList.add(searchResponse);	
+				 empExistList.add(employee.getEmployeeId());
 
 			}
 
@@ -199,7 +204,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 					employeeMergedDetails.setBaseDc (employee.getBaseDc());
 					employeeMergedDetails.setCategoryName(employee.getCategoryName());
 					employeeMergedDetails.setGrade  (employee.getGrade());
-					employeeMergedDetails.setWonId (employeeAllocation.getWon().getWonId());
+					//employeeMergedDetails.setWonId (employeeAllocation.getWon().getWonId());
 					employeeMergedDetails.setPortfolioId  (employeeAllocation.getPortfolioId().getPortfolioId());
 					employeeMergedDetails.setStartDate (employeeAllocation.getStartDate());
 					employeeMergedDetails.setEndDate(employeeAllocation.getEndDate());
@@ -276,11 +281,17 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 
 	@Override
-	public List<SearchResponse> leftJoinDataByDM(Integer empId, Integer dmEmpId) {
+	public List<SearchResponse> leftJoinDataByDM(Integer dmEmpId) {
 		List<SearchResponse> searchEmpList = new ArrayList<SearchResponse>();
-		List<Employee> emplist = searchRepository.fetchDataLeftJoinByDm(empId, dmEmpId);
+		List<Employee> emplist = searchRepository.fetchDataLeftJoinByDm(dmEmpId);
+		
+		List<Integer>  empExistList = new ArrayList<Integer>();
 
 		for (Employee employee : emplist) {
+			if(empExistList.contains(employee.getEmployeeId())) {
+				continue;
+			}
+			
 			for (EmployeeAllocation employeeAllocation : employee.getEmployeeAllocations()) {
 
 				SearchResponse searchResponse = new SearchResponse();
@@ -302,7 +313,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 	    		 searchResponse.setCategoryName(employee.getCategoryName());
 	    		 searchResponse.setGrade(employee.getGrade());
 	    		 
-	    		 searchResponse.setWonId(employeeAllocation.getWon().getWonId());
+	    		// searchResponse.setWonId(employeeAllocation.getWon().getWonId());
 	    		 searchResponse.setPortfolioId(employeeAllocation.getPortfolioId().getPortfolioId());
 	    		 searchResponse.setStartDate(employeeAllocation.getStartDate());
 	    		 searchResponse.setEndDate(employeeAllocation.getEndDate());
@@ -350,6 +361,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 				 
 				 searchEmpList.add(searchResponse);	
+				 empExistList.add(employee.getEmployeeId());
 
 			}
 
@@ -361,11 +373,17 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 
 	@Override
-	public List<SearchResponse> leftJoinDataByBrm(Integer empId, Integer dmEmpId, Integer brmEmpId) {
+	public List<SearchResponse> leftJoinDataByBrm(Integer brmEmpId) {
 		List<SearchResponse> searchEmpList = new ArrayList<SearchResponse>();
-		List<Employee> emplist = searchRepository.fetchDataLeftJoinByBrmAndDm(empId, dmEmpId, brmEmpId);
+		List<Employee> emplist = searchRepository.fetchDataLeftJoinByBrm(brmEmpId);
+		
+		List<Integer>  empExistList = new ArrayList<Integer>();
 
 		for (Employee employee : emplist) {
+			
+			if(empExistList.contains(employee.getEmployeeId())) {
+				continue;
+			}
 			for (EmployeeAllocation employeeAllocation : employee.getEmployeeAllocations()) {
 
 				SearchResponse searchResponse = new SearchResponse();
@@ -387,7 +405,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 	    		 searchResponse.setCategoryName(employee.getCategoryName());
 	    		 searchResponse.setGrade(employee.getGrade());
 	    		 
-	    		 searchResponse.setWonId(employeeAllocation.getWon().getWonId());
+	    		// searchResponse.setWonId(employeeAllocation.getWon().getWonId());
 	    		 searchResponse.setPortfolioId(employeeAllocation.getPortfolioId().getPortfolioId());
 	    		 searchResponse.setStartDate(employeeAllocation.getStartDate());
 	    		 searchResponse.setEndDate(employeeAllocation.getEndDate());
@@ -432,9 +450,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 				 searchResponse.setParentIou(employeeAllocation.getProject().getParentIou());
 				 searchResponse.setChildIou(employeeAllocation.getProject().getChildIou());
 				 searchResponse.setBfsCluster(employeeAllocation.getProject().getBfsCluster());
-
-				 
-				 searchEmpList.add(searchResponse);	
+		 
+				 searchEmpList.add(searchResponse);
+				 empExistList.add(employee.getEmployeeId());
 
 			}
 

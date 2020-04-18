@@ -60,12 +60,12 @@ public class EmployeeController {
 //        return new ResponseEntity<Void>(headers, HttpStatus.CREATED);
 //    }
     
-    @PostMapping(value="/upload",headers="Accept=application/vnd.ms-excel")
+    @PostMapping(value="/upload")
     public ResponseEntity<Void> uploadXls(@RequestParam("file") MultipartFile file){
     	try {
     		
     	
-       	 System.out.println("Token cehck passed");
+       	 System.out.println("Token check passed");
        	 //System.out.println(uploadXlsRequest.getXlsBytes());
        	 uploadXlsService.uploadXls(file.getBytes());
 			
@@ -115,9 +115,18 @@ public class EmployeeController {
     @PostMapping(value="/getEmployeeDetails")
     public ResponseEntity<Object> getEmployeeDetails(@RequestBody SearchRequest req){
     	System.out.println("Request is inside");
-    	List<SearchResponse> searchResponseList = employeeService.leftJoinData(req.getEmpId());
-    	List<SearchResponse> searchResponseList1 = employeeService.leftJoinDataByBrm(req.getEmpId(),req.getDmEmpId(),req.getBrmEmpid());
-    	List<SearchResponse> searchResponseList2 = employeeService.leftJoinDataByDM(req.getEmpId(),req.getDmEmpId());
+    	List<SearchResponse> searchResponseList = null;
+    	
+    	if(req.getEmpId() != null) {
+    		searchResponseList = employeeService.leftJoinData(req.getEmpId());
+    	} else if(req.getGlId() != null) {
+    		searchResponseList = employeeService.leftJoinDataByBrm(req.getGlId());
+    	} else if (req.getDmId() != null) {
+    		searchResponseList = employeeService.leftJoinDataByDM(req.getDmId());
+    	} else {
+    	 return new ResponseEntity<>("Bad Request", HttpStatus.BAD_REQUEST);
+    	}
+    	
 		return new ResponseEntity<Object>(searchResponseList, HttpStatus.OK);
     	
     }
