@@ -60,12 +60,12 @@ public class EmployeeController {
 //        return new ResponseEntity<Void>(headers, HttpStatus.CREATED);
 //    }
     
-    @PostMapping(value="/upload-xls",headers="Accept=application/vnd.ms-excel")
+    @PostMapping(value="/upload")
     public ResponseEntity<Void> uploadXls(@RequestParam("file") MultipartFile file){
     	try {
     		
     	
-       	 System.out.println("Token cehck passed");
+       	 System.out.println("Token check passed");
        	 //System.out.println(uploadXlsRequest.getXlsBytes());
        	 uploadXlsService.uploadXls(file.getBytes());
 			
@@ -99,7 +99,7 @@ public class EmployeeController {
 	    
     }
     
-    @PostMapping(value="/export-xls", headers="Accept=application/json")
+    @PostMapping(value="/export", headers="Accept=application/json")
     public ResponseEntity<byte[]>  getAllUser(@RequestBody ExportXlsRequest exportXlsRequest) throws InvalidRequestException {
     	
 	    byte[] output =	exportXlsService.downloadXlsReportOfEmployees(exportXlsRequest);
