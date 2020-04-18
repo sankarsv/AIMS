@@ -99,7 +99,7 @@ public class EmployeeController {
 	    
     }
     
-    @PostMapping(value="/export", headers="Accept=application/json")
+    @PostMapping(value="/download", headers="Accept=application/json")
     public ResponseEntity<byte[]>  getAllUser(@RequestBody ExportXlsRequest exportXlsRequest) throws InvalidRequestException {
     	
 	    byte[] output =	exportXlsService.downloadXlsReportOfEmployees(exportXlsRequest);
