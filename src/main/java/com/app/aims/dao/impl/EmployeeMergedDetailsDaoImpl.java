@@ -28,7 +28,7 @@ public class EmployeeMergedDetailsDaoImpl implements EmployeeMergedDetailsDao {
 	public List<HCDetails> findByVersionNo(int versionNo) {
 		 Session session = sessionFactory.getCurrentSession();
 	        Criteria cr = session.createCriteria(HCDetails.class);
-	        //cr.add(Restrictions.eq("versionNo", new Integer(versionNo)));
+	        cr.add(Restrictions.eq("versionNo", new Integer(versionNo)));
 	        return cr.list();
 	}
 
