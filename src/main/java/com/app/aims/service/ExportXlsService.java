@@ -6,6 +6,6 @@ import com.app.aims.beans.ExportXlsRequest;
 
 public interface ExportXlsService   {
 
-	public byte[] downloadXlsReportOfEmployees ( ExportXlsRequest exportXlsRequest) throws InvalidRequestException;
+	public byte[] downloadXlsReportOfEmployees ( ExportXlsRequest exportXlsRequest) throws Exception;
 	
 }

@@ -99,8 +99,8 @@ public class EmployeeController {
 	    
     }
     
-    @PostMapping(value="/download", headers="Accept=application/json")
-    public ResponseEntity<byte[]>  getAllUser(@RequestBody ExportXlsRequest exportXlsRequest) throws InvalidRequestException {
+    @PostMapping(value="/download")
+    public ResponseEntity<byte[]>  exportHCData(@RequestBody ExportXlsRequest exportXlsRequest) throws Exception {
     	
 	    byte[] output =	exportXlsService.downloadXlsReportOfEmployees(exportXlsRequest);
 	    HttpHeaders responseHeaders = new HttpHeaders();

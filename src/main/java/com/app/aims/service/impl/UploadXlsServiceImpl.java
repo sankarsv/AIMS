@@ -6,7 +6,9 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.security.InvalidParameterException;
 import java.util.Base64;
+import java.util.Date;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,8 @@ import java.io.File;
 import java.io.FileInputStream;
 
 import com.mysql.cj.util.StringUtils;
+import com.app.aims.beans.FileData;
+import com.app.aims.dao.EmployeeDao;
 import com.app.aims.security.model.UploadXlsRequest;
 import com.app.aims.service.UploadXlsService;
 
@@ -21,10 +25,19 @@ import com.app.aims.service.UploadXlsService;
 @Service
 public  class UploadXlsServiceImpl implements UploadXlsService {
 
-	
+	@Autowired
+    EmployeeDao userDao;
+    
 
-    @Value("${filepath}")
-    private String filePath;
+	public EmployeeDao getUserDao() {
+		return userDao;
+	}
+
+
+	public void setUserDao(EmployeeDao userDao) {
+		this.userDao = userDao;
+	}
+
 
 	@Override
 	public void uploadXls(byte[] byteStream) {
@@ -34,27 +47,11 @@ public  class UploadXlsServiceImpl implements UploadXlsService {
 		//}
 		
 		 try {
-//		
-//		   File savedFile = new File(getClass().getClassLoader().getResource("uploadedFiles/testing.xls").getFile());
-//		   System.out.println(savedFile.getName() +" file name");
-//		   byte[] bytesArray = null;		
-//		   bytesArray = Files.readAllBytes(savedFile.toPath());
-//		   
-//		 
-//		   
-//		   String encodedString = Base64.getEncoder().encodeToString(bytesArray);
-//		   
-//		   System.out.println(" Encoded");
-		   
-		   //File file = new File("src/main/resources/uploadedFiles/nidhi4.xls");
-			 
-			 File file = new File(filePath +"hcdetails.xlsx");
-			 
-		   OutputStream os = new FileOutputStream(file);            
-		//   byte[] byteArr =  Base64.getDecoder().decode(encodedString);       
-			os.write(byteStream); 
-			os.close(); 
-		   
+
+			 FileData fileData = new FileData();
+			 fileData.setUploadTime(new Date());
+			 fileData.setFileData(byteStream);
+			 userDao.uploadFile(fileData);
 		 }
 		catch (Exception e) { 
 			System.out.println("Error "+ e.getMessage());

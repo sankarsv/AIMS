@@ -9,14 +9,17 @@ import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.app.aims.beans.EditRequest;
 import com.app.aims.beans.Employee;
 import com.app.aims.beans.EmployeeAllocation;
+import com.app.aims.beans.FileData;
 import com.app.aims.beans.Portfolio;
 import com.app.aims.beans.VersionInfo;
 import com.app.aims.dao.EmployeeDao;
 
+@Transactional
 @Repository
 public class EmployeeDaoImpl implements EmployeeDao {
 
@@ -38,6 +41,24 @@ public class EmployeeDaoImpl implements EmployeeDao {
 	        @SuppressWarnings("unchecked")
 	        List<Employee> list= session.createCriteria(Employee.class).list();
 	        return list;
+	    }
+
+	    
+
+	    @Override
+	    public boolean uploadFile(FileData  fileData) {
+	        // TODO Auto-generated method stub
+	        try {
+			
+	        	Session session = sessionFactory.getCurrentSession();
+		        session.save(fileData);
+		        
+			} catch (Exception e) {
+				e.printStackTrace();
+				return false;
+			}
+	    	return true;
+	        
 	    }
 
 	    @Override
