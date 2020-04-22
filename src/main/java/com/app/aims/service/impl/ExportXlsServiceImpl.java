@@ -1,23 +1,22 @@
 package com.app.aims.service.impl;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.List;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.app.aims.Exceptions.InvalidRequestException;
-import com.app.aims.beans.Employee;
-import com.app.aims.beans.EmployeeMergedDetails;
 import com.app.aims.beans.ExportXlsRequest;
 import com.app.aims.beans.HCDetails;
 import com.app.aims.dao.EmployeeMergedDetailsDao;
@@ -51,12 +50,16 @@ public class ExportXlsServiceImpl implements ExportXlsService {
 //		Sheet sheet = workbook.createSheet("HC Details");
 		
 		try {
+			
+
+			Resource resource = new ClassPathResource("Template.xlsx");
+			InputStream input = resource.getInputStream();
 		
-			 FileInputStream inputStream = new FileInputStream(new File("c:\\rnr\\temp\\bmo_template.xls"));
-	         Workbook workbook = new HSSFWorkbook(inputStream);
-	         Sheet sheet = workbook.getSheetAt(1);
-	         if ("Raw File".equalsIgnoreCase(sheet.getSheetName())) {
-		
+			 //FileInputStream inputStream = new FileInputStream(new File("c:\\rnr\\temp\\bmo_template.xls"));
+			Workbook workbook = WorkbookFactory.create(input);
+			//XSSFWorkbook workbook = new XSSFWorkbook(input);
+	         if (workbook.getNumberOfSheets() > 1 && "Raw File".equalsIgnoreCase(workbook.getSheetAt(1).getSheetName())) {
+	        	 Sheet sheet = workbook.getSheetAt(1);
 //		String[] columns = {"VersionNo", "Employee No", "Work Geography", "Work Country", 
 //				"Work Location", "Client Geography", "Client Country", "SP", "Sub-SP" , "Customer", "Group Customer","RM#", "BRM#"
 //				, "GL#" , "AM#" , "AM" , "Project#", "PL", "Project Name" ,

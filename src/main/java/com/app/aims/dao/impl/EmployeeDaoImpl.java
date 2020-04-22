@@ -51,6 +51,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
 	        try {
 			
 	        	Session session = sessionFactory.getCurrentSession();
+	        	truncateTable(fileData.getClass().getSimpleName(),session);
 		        session.save(fileData);
 		        
 			} catch (Exception e) {
@@ -59,6 +60,12 @@ public class EmployeeDaoImpl implements EmployeeDao {
 			}
 	    	return true;
 	        
+	    }
+	    
+	    public int truncateTable(String myTable, Session session){
+	        String hql = String.format("delete from %s",myTable);
+	        Query query = session.createQuery(hql);
+	        return query.executeUpdate();
 	    }
 
 	    @Override
