@@ -28,7 +28,7 @@ public class FileData {
 	@NotNull
 	private Date uploadTime;
 
-	@Lob
+	
 	@Column(name = "FILEDATA")
 	@NotNull
 	private byte[] fileData;

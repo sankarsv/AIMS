@@ -26,6 +26,7 @@ public class HCDetails implements Serializable {
 	@Column(name="VERSION_NO")
 	private int versionNo;
 
+	@Id
 	@Column(name="EMPLOYEE_ID")
 	private int empNo;
 	
