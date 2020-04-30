@@ -16,7 +16,10 @@ import java.io.File;
 import java.io.FileInputStream;
 
 import com.mysql.cj.util.StringUtils;
+import com.app.aims.beans.BatchAuditDetails;
+import com.app.aims.beans.BillingFileData;
 import com.app.aims.beans.FileData;
+import com.app.aims.dao.BatchDao;
 import com.app.aims.dao.EmployeeDao;
 import com.app.aims.security.model.UploadXlsRequest;
 import com.app.aims.service.UploadXlsService;
@@ -28,6 +31,8 @@ public  class UploadXlsServiceImpl implements UploadXlsService {
 	@Autowired
     EmployeeDao userDao;
     
+	@Autowired
+	BatchDao batchDao;
 
 	public EmployeeDao getUserDao() {
 		return userDao;
@@ -49,9 +54,21 @@ public  class UploadXlsServiceImpl implements UploadXlsService {
 		 try {
 
 			 FileData fileData = new FileData();
-			 fileData.setUploadTime(new Date());
+			 long id = System.currentTimeMillis();
+			 Date date = new Date();
+			 fileData.setFileId(id);
+			 fileData.setUploadTime(date);
 			 fileData.setFileData(byteStream);
-			 userDao.uploadFile(fileData);
+			 batchDao.updateStatusIfAlreadyExistHC();
+			 boolean isSuccess = userDao.uploadFile(fileData);
+			 if(isSuccess) {
+				 BatchAuditDetails batchAuditDetails = new BatchAuditDetails();
+				 batchAuditDetails.setLoadDate(date);
+				 batchAuditDetails.setBatchStatus("U");
+				 batchAuditDetails.setFileId(id);
+				 batchAuditDetails.setFileType("HC");
+				 batchDao.saveFileProcessDetails(batchAuditDetails);
+			 }
 		 }
 		catch (Exception e) { 
 			System.out.println("Error "+ e.getMessage());
@@ -59,6 +76,37 @@ public  class UploadXlsServiceImpl implements UploadXlsService {
 
 	}
 
+	@Override
+	public void uploadBrXls(byte[] byteStream) {
+		
+		//if(null == uploadXlsRequest || StringUtils.isNullOrEmpty(uploadXlsRequest.getXlsBytes()) ) {
+			//throw new InvalidParameterException("Please provide valid xls data.");
+		//}
+		
+		 try {
+
+			 BillingFileData billingFileData = new BillingFileData();
+			 long id = System.currentTimeMillis();
+			 Date date = new Date();
+			 billingFileData.setFileId(id);
+			 billingFileData.setUploadTime(date);
+			 billingFileData.setFileData(byteStream);
+			 batchDao.updateStatusIfAlreadyExistBR();
+			 boolean isSuccess = userDao.uploadBrFile(billingFileData);
+			 if(isSuccess) {
+				 BatchAuditDetails batchAuditDetails = new BatchAuditDetails();
+				 batchAuditDetails.setLoadDate(date);
+				 batchAuditDetails.setBatchStatus("U");
+				 batchAuditDetails.setFileId(id);
+				 batchAuditDetails.setFileType("BR");
+				 batchDao.saveFileProcessDetails(batchAuditDetails);
+			 }
+		 }
+		catch (Exception e) { 
+			System.out.println("Error "+ e.getMessage());
+		} 
+
+	}
 
 	
 }

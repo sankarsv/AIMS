@@ -18,10 +18,10 @@ import javax.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
-@Table(name = "HC_INTERMEDIATE", schema = "aims")
+@Table(name = "BR_INTERMEDIATE", schema = "aims")
 @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 
-public class FileData {
+public class BillingFileData {
 
 	
 	@Id
@@ -39,7 +39,7 @@ public class FileData {
 	@NotNull
 	private byte[] fileData;
 
-	public FileData() {
+	public BillingFileData() {
 		super();
 	}
 

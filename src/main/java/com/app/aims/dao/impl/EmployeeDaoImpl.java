@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.app.aims.beans.BatchAuditDetails;
+import com.app.aims.beans.BillingFileData;
 import com.app.aims.beans.EditRequest;
 import com.app.aims.beans.Employee;
 import com.app.aims.beans.EmployeeAllocation;
@@ -18,6 +20,8 @@ import com.app.aims.beans.FileData;
 import com.app.aims.beans.Portfolio;
 import com.app.aims.beans.VersionInfo;
 import com.app.aims.dao.EmployeeDao;
+import com.app.aims.repository.BatchRepository;
+import com.app.aims.repository.FileDataRepository;
 
 @Transactional
 @Repository
@@ -26,7 +30,13 @@ public class EmployeeDaoImpl implements EmployeeDao {
 
 	    @Autowired
 	    private SessionFactory sessionFactory;
+	    
+	    @Autowired
+	    private FileDataRepository fdRepository;
 
+	    @Autowired
+	    private BatchRepository batchRepository;
+	    
 	    @Override
 	    public void addUser(Employee user) {
 	        // TODO Auto-generated method stub
@@ -49,7 +59,6 @@ public class EmployeeDaoImpl implements EmployeeDao {
 	    public boolean uploadFile(FileData  fileData) {
 	        // TODO Auto-generated method stub
 	        try {
-			
 	        	Session session = sessionFactory.getCurrentSession();
 	        	truncateTable(fileData.getClass().getSimpleName(),session);
 		        session.save(fileData);
@@ -155,6 +164,22 @@ public class EmployeeDaoImpl implements EmployeeDao {
 	        List<VersionInfo> list= session.createCriteria(VersionInfo.class).list();
 	        return list;
 		}
+
+		@Override
+		public boolean uploadBrFile(BillingFileData billingFileData) {
+	        // TODO Auto-generated method stub
+	        try {
+	        	Session session = sessionFactory.getCurrentSession();
+	        	truncateTable(billingFileData.getClass().getSimpleName(),session);
+		        session.save(billingFileData);
+		        
+			} catch (Exception e) {
+				e.printStackTrace();
+				return false;
+			}
+	    	return true;
+	        
+	    }
 	    
 		
 }

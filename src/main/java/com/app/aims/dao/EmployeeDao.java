@@ -3,6 +3,7 @@ package com.app.aims.dao;
 import java.util.Date;
 import java.util.List;
 
+import com.app.aims.beans.BillingFileData;
 import com.app.aims.beans.EditRequest;
 import com.app.aims.beans.Employee;
 import com.app.aims.beans.FileData;
@@ -18,4 +19,5 @@ public interface EmployeeDao {
 	    public List<Employee> getEmployeeDetailsByDate(Date date);
 	    public List<VersionInfo> getVersionInfo();
 	    public boolean uploadFile(FileData  fileData);
+		public boolean uploadBrFile(BillingFileData billingFileData);
 }

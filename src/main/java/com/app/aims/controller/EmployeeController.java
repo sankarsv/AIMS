@@ -75,6 +75,21 @@ public class EmployeeController {
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
     
+    @PostMapping(value="/upload/br")
+    public ResponseEntity<Void> uploadBrXls(@RequestParam("file") MultipartFile file){
+    	try {
+    		
+    	
+       	 System.out.println("Token check passed - BR Upload");
+       	 //System.out.println(uploadXlsRequest.getXlsBytes());
+       	 uploadXlsService.uploadBrXls(file.getBytes());
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+        return new ResponseEntity<Void>(HttpStatus.OK);
+    }
+    
     
     @GetMapping(value="/get", headers="Accept=application/json")
     public List<Employee> downloadxls() {

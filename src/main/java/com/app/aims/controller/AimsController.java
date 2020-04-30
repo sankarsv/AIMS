@@ -5,6 +5,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -16,12 +17,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.app.aims.beans.BatchAuditDetails;
 import com.app.aims.beans.Employee;
+import com.app.aims.beans.FileData;
 import com.app.aims.beans.UserDetail;
 import com.app.aims.beans.UserDetailRequest;
 import com.app.aims.beans.UserDetailResponse;
+import com.app.aims.dao.BatchDao;
+import com.app.aims.service.BatchDetailsService;
 import com.app.aims.service.EmployeeService;
 import com.app.aims.service.UserService;
+import com.app.aims.vo.FileStatus;
 import com.app.aims.beans.SearchResponse;
 
 @RestController
@@ -33,6 +39,9 @@ public class AimsController {
 	
 	@Autowired
 	EmployeeService employeeService;
+	
+	@Autowired
+	BatchDetailsService batchDetailsService;
 
 	@PostMapping(value = "/register", produces = MediaType.APPLICATION_JSON_VALUE)
 	public UserDetailResponse registerUser(@RequestBody @Valid UserDetailRequest userDtl) {
@@ -92,4 +101,11 @@ public class AimsController {
 		
 	}
 
+	@GetMapping("/user/getFileStatus")
+	public ResponseEntity<List<FileStatus>> getFileStatus() throws Exception {
+    	
+    	List<FileStatus> fileStatusList = batchDetailsService.findAllFileProcessDetails();
+	    return new ResponseEntity<List<FileStatus>>(fileStatusList, HttpStatus.OK);
+		
+	}
 }
