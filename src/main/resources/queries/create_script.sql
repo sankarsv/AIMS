@@ -1,13 +1,55 @@
+-- Table: aims.hc_intermediate
+
+-- DROP TABLE aims.hc_intermediate;
+
 CREATE TABLE aims.hc_intermediate
 (
     upload_time date NOT NULL,
     filedata bytea NOT NULL,
+    file_id bigint,
     CONSTRAINT hc_intermediate_pk PRIMARY KEY (upload_time)
 )
 
 TABLESPACE pg_default;
 
 ALTER TABLE aims.hc_intermediate
+    OWNER to postgres;
+
+-- Table: aims.br_intermediate
+
+-- DROP TABLE aims.br_intermediate;
+
+CREATE TABLE aims.br_intermediate
+(
+    file_id bigint NOT NULL,
+    filedata bytea NOT NULL,
+    upload_time timestamp without time zone NOT NULL,
+    CONSTRAINT br_intermediate_pkey PRIMARY KEY (file_id),
+    CONSTRAINT uk_aahwdwf337y6x7s4xyw7nn7x5 UNIQUE (upload_time)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE aims.br_intermediate
+    OWNER to postgres;
+
+-- Table: aims.batch_audit
+
+-- DROP TABLE aims.batch_audit;
+
+CREATE TABLE aims.batch_audit
+(
+    file_id bigint NOT NULL,
+    batch_status character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    changed_date timestamp without time zone,
+    file_type character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    added_date timestamp without time zone NOT NULL,
+    CONSTRAINT batch_audit_pkey PRIMARY KEY (file_id)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE aims.batch_audit
     OWNER to postgres;
 
  -- Table: aims.allocation
