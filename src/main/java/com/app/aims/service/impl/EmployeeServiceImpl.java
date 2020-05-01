@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.app.aims.Exceptions.InvalidRequestException;
+import com.app.aims.beans.BRMDetails;
 import com.app.aims.beans.BaseLine;
 import com.app.aims.beans.EditRequest;
 import com.app.aims.beans.Employee;
@@ -19,6 +20,7 @@ import com.app.aims.beans.GenerateBaseLineRequest;
 import com.app.aims.beans.SearchResponse;
 import com.app.aims.beans.VersionInfo;
 import com.app.aims.dao.BaseLineDao;
+import com.app.aims.dao.BillingDao;
 import com.app.aims.dao.EmployeeDao;
 import com.app.aims.dao.EmployeeMergedDetailsDao;
 import com.app.aims.repository.SearchRepository;
@@ -36,6 +38,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Autowired
     EmployeeMergedDetailsDao employeeMergedDetailsDao;
+    
+    @Autowired
+    BillingDao billingDao;
     
     
     
@@ -462,8 +467,6 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 	}
 
-
-	
 
 }
  	

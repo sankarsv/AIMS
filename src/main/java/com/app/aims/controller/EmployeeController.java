@@ -17,12 +17,14 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.app.aims.Exceptions.InvalidRequestException;
+import com.app.aims.beans.BRMDetails;
 import com.app.aims.beans.EditRequest;
 import com.app.aims.beans.Employee;
 import com.app.aims.beans.ExportXlsRequest;
 import com.app.aims.beans.GenerateBaseLineRequest;
 import com.app.aims.beans.SearchResponse;
 import com.app.aims.beans.VersionInfo;
+import com.app.aims.service.BillingService;
 import com.app.aims.service.EmployeeService;
 import com.app.aims.service.ExportXlsService;
 import com.app.aims.service.UploadXlsService;
@@ -41,25 +43,11 @@ public class EmployeeController {
     
     @Autowired
     UploadXlsService uploadXlsService;
-
-//    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-//    public ResponseEntity<Employee> getUserById(@PathVariable("id") int id) {
-//        System.out.println("Fetching User with id " + id);
-//        Employee user = employeeService.findById(id);
-//        if (user == null) {
-//            return new ResponseEntity<Employee>(HttpStatus.NOT_FOUND);
-//        }
-//        return new ResponseEntity<Employee>(user, HttpStatus.OK);
-//    }
-
-//    @PostMapping(value="/create",headers="Accept=application/json")
-//    public ResponseEntity<Void> createUser(@RequestBody Employee user, UriComponentsBuilder ucBuilder){
-//        employeeService.createUser(user);
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.setLocation(ucBuilder.path("/user/{id}").buildAndExpand(user.getEmpId()).toUri());
-//        return new ResponseEntity<Void>(headers, HttpStatus.CREATED);
-//    }
     
+
+    @Autowired
+    BillingService billingService;
+
     @PostMapping(value="/upload")
     public ResponseEntity<Void> uploadXls(@RequestParam("file") MultipartFile file){
     	try {
@@ -163,6 +151,15 @@ public class EmployeeController {
         
         employeeService.deleteUserById(editRequest.getEmpNo());
         return new ResponseEntity<Employee>(HttpStatus.NO_CONTENT);
+    }
+    
+    @GetMapping(value="/getBRMDetails", headers="Accept=application/json")
+    public ResponseEntity<Object> getBRMDetails()
+    {
+     
+    	List<BRMDetails> brmDetails = billingService.getBRMDetails();
+    	return new ResponseEntity<Object>(brmDetails, HttpStatus.OK);
+    	
     }
     
     

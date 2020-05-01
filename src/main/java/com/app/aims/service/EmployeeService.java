@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.app.aims.Exceptions.InvalidRequestException;
+import com.app.aims.beans.BRMDetails;
 import com.app.aims.beans.EditRequest;
 import com.app.aims.beans.Employee;
 import com.app.aims.beans.GenerateBaseLineRequest;
@@ -25,6 +26,9 @@ public interface EmployeeService {
     public List<SearchResponse> leftJoinData(Integer empId);
     public List<SearchResponse> leftJoinDataByDM(Integer dmEmpId);
     public List<SearchResponse> leftJoinDataByBrm(Integer brmEmpId);
+    
+
+
     
     
 

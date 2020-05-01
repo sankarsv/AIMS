@@ -21,7 +21,7 @@ public class Portfolio implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	@Column(name="id" )
+	@Column(name="portfolio_id" )
 	@NotNull
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
