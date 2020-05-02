@@ -45,9 +45,6 @@ public class EmployeeController {
     UploadXlsService uploadXlsService;
     
 
-    @Autowired
-    BillingService billingService;
-
     @PostMapping(value="/upload")
     public ResponseEntity<Void> uploadXls(@RequestParam("file") MultipartFile file){
     	try {
@@ -153,14 +150,6 @@ public class EmployeeController {
         return new ResponseEntity<Employee>(HttpStatus.NO_CONTENT);
     }
     
-    @GetMapping(value="/getBRMDetails", headers="Accept=application/json")
-    public ResponseEntity<Object> getBRMDetails()
-    {
-     
-    	List<BRMDetails> brmDetails = billingService.getBRMDetails();
-    	return new ResponseEntity<Object>(brmDetails, HttpStatus.OK);
-    	
-    }
     
     
 }
