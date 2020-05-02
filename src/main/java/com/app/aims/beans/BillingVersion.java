@@ -23,7 +23,7 @@ public class BillingVersion  implements Serializable{
 	
 	
 	@Column(name="periodmonth")	
-	private String periodMonth;
+	private String month;
 	
 	@Column(name="year")	
 	private String year;
@@ -47,12 +47,13 @@ public class BillingVersion  implements Serializable{
 		this.brmId = brmId;
 	}
 
-	public String getPeriodMonth() {
-		return periodMonth;
+
+	public String getMonth() {
+		return month;
 	}
 
-	public void setPeriodMonth(String periodMonth) {
-		this.periodMonth = periodMonth;
+	public void setMonth(String month) {
+		this.month = month;
 	}
 
 	public String getYear() {

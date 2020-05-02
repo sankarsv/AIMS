@@ -111,6 +111,22 @@ public class BillingServiceImpl implements BillingService {
 			return remark1;
 		}
 	}
+
+	@Override
+	public boolean updateFreeze(BillingVersion billingVer) {
+
+		try {
+		
+			billingDao.updateFreezeInd(billingVer);
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+	
+	}
+		return false;
+	}
+	
+	
 	
 
 }

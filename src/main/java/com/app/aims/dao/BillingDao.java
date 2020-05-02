@@ -24,4 +24,6 @@ public interface BillingDao {
 		
 		public void updateBillingDetails (Billing billing);
 		
+		public boolean updateFreezeInd (BillingVersion billingVer) throws Exception;
+		
 }

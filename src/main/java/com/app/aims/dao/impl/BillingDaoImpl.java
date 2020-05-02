@@ -8,6 +8,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Projections;
+import org.hibernate.query.Query;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
@@ -46,7 +47,7 @@ public class BillingDaoImpl implements BillingDao {
 	        @SuppressWarnings("unchecked")
 	        Criteria crit = session.createCriteria(BillingVersion.class).setProjection(
 	        	    Projections.distinct(Projections.projectionList()
-	        	    .add(Projections.property("type"), "type") ))
+	        	    .add(Projections.property("brmId"), "brmId") ))
 	        	.setResultTransformer(Transformers.aliasToBean(BillingVersion.class)); 
 
 	        List<BillingVersion> brmDetails = crit.list();
@@ -74,7 +75,7 @@ public class BillingDaoImpl implements BillingDao {
 		@Override
 		public BillingVersion getBillingVersion(BillingDetailsReq req) {
 			BillingVersion billingVersion = new BillingVersion();
-			billingVersion.setPeriodMonth(req.getMonth());
+			billingVersion.setMonth(req.getMonth());
 			billingVersion.setBrmId(req.getBrmId());
 			billingVersion.setYear(req.getYear());
 			Example<BillingVersion> billingVersionEx = Example.of(billingVersion);
@@ -94,5 +95,27 @@ public class BillingDaoImpl implements BillingDao {
 			session.save(billing);
 			
 		}
+
+		@Override
+		public boolean updateFreezeInd(BillingVersion billingVer) throws Exception {
+			Session session = sessionFactory.getCurrentSession();
+	        String queryStr = "UPDATE BillingVersion set freezeInd = :freezeInd where brmId = :brmId and "
+	        		+ "year = :year and month = :month and version = :version"; 
+	        
+	        Query query1 = session.createQuery(queryStr);
+	        System.out.println("Before Updating the Table");
+	        query1.setParameter("freezeInd", billingVer.getFreezeInd());
+	        query1.setParameter("brmId", billingVer.getBrmId());
+	        query1.setInteger("year",  Integer.parseInt(billingVer.getYear()));
+	        query1.setParameter("month", billingVer.getMonth());
+	        query1.setInteger("version", Integer.parseInt(billingVer.getVersion()));
+	    	//user.setEmpName(val.getEmpName());
+	        int status = query1.executeUpdate();
+
+	        
+		
+			return (status > 0 ? true:false);
+		}
+
 		
 }

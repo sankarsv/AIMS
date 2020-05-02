@@ -13,7 +13,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.app.aims.Exceptions.InvalidRequestException;
 import com.app.aims.beans.BRMDetails;
+import com.app.aims.beans.BillingVersion;
+import com.app.aims.beans.GenerateBaseLineRequest;
 import com.app.aims.service.BillingService;
 import com.app.aims.vo.BillingDetailsReq;
 import com.app.aims.vo.BillingDetailsResp;
@@ -25,7 +28,7 @@ public class BillingController {
 	@Autowired
     BillingService billingService;
 	
-	@GetMapping(value="/getBRMDetails", headers="Accept=application/json")
+	@PostMapping(value="/getBRMDetails", headers="Accept=application/json")
     public ResponseEntity<Object> getBRMDetails()
     {
      
@@ -33,6 +36,25 @@ public class BillingController {
     	return new ResponseEntity<Object>(brmDetails, HttpStatus.OK);
     	
     }
+	
+	
+
+	@PostMapping(value="/updateFreeze", headers="Accept=application/json")
+    public ResponseEntity<Object> updateFreezeInd(@RequestBody BillingVersion billingVersion) throws InvalidRequestException
+    {
+     
+		if(validReq(billingVersion)) {
+
+	    	boolean status = billingService.updateFreeze(billingVersion);
+	    	return new ResponseEntity<Object>(status, HttpStatus.OK);	
+		} 
+		else
+			return new ResponseEntity<>("Bad Request", HttpStatus.BAD_REQUEST);
+    	
+    }
+	
+	
+	
 	@PostMapping(value = "/getBillingDetails", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> getBillingDetailResponse(@RequestBody BillingDetailsReq billingDetailReq) {
 		if(validReq(billingDetailReq)) {
@@ -54,6 +76,10 @@ public class BillingController {
 	
 	private boolean validReq(BillingDetailsReq billingDetailReq) {
 		return (StringUtils.hasText(billingDetailReq.getBrmId()) && StringUtils.hasText(billingDetailReq.getMonth()) && StringUtils.hasText(billingDetailReq.getYear()));
+	}
+	
+	private boolean validReq(BillingVersion billingVersion) {
+		return (StringUtils.hasText(billingVersion.getBrmId()) && StringUtils.hasText(billingVersion.getMonth()) && StringUtils.hasText(billingVersion.getYear()) && StringUtils.hasText(billingVersion.getFreezeInd()));
 	}
 	
 }
