@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.app.aims.beans.BRMDetails;
 import com.app.aims.beans.BillingReportBean;
@@ -17,6 +18,7 @@ import com.app.aims.service.EmployeeService;
 import com.app.aims.vo.BillingDetailsReq;
 import com.app.aims.vo.BillingDetailsResp;
 
+@Service
 public class DashboardServiceImpl implements DashboardService {
 
     @Autowired
