@@ -5,6 +5,8 @@ public class BillingDetailsReq {
 	private String month;
 	private String year;
 	private String brmId;
+	private String freezeInd;
+	private String version;
 
 	public String getMonth() {
 		return month;
@@ -24,6 +26,17 @@ public class BillingDetailsReq {
 	public void setBrmId(String brmId) {
 		this.brmId = brmId;
 	}
-	
+	public String getFreezeInd() {
+		return freezeInd;
+	}
+	public void setFreezeInd(String freezeInd) {
+		this.freezeInd = freezeInd;
+	}
+	public String getVersion() {
+		return version;
+	}
+	public void setVersion(String version) {
+		this.version = version;
+	}
 	
 }

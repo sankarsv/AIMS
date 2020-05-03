@@ -1,15 +1,22 @@
 package com.app.aims.beans;
 
-import java.io.Serializable;
+import com.app.aims.beans.Billing.BillingId;
 
+import java.io.Serializable;
+import java.util.Objects;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 @Entity
 @Table(name="billingmaster",schema="aims",uniqueConstraints=@UniqueConstraint(columnNames= {"version", "employee_id"}))
+@IdClass(BillingId.class)
 public class Billing  implements Serializable{
 	
 	/**
@@ -21,6 +28,7 @@ public class Billing  implements Serializable{
 	private int version;
 	
 	private String projectId; //NA
+	
 	@Column(name="employee_id")
 	private String empId;
 	
@@ -73,6 +81,10 @@ public class Billing  implements Serializable{
 	
 	@Column(name="remarks")
 	private String remarks2;
+	
+	@OneToOne(mappedBy = "billing", cascade = CascadeType.ALL)
+    private BillingRate bilingRate;
+	
 	public int getVersion() {
 		return version;
 	}
@@ -189,4 +201,56 @@ public class Billing  implements Serializable{
 	public void setBrnname(String brnname) {
 		this.brnname = brnname;
 	}
+	public BillingRate getBilingRate() {
+		return bilingRate;
+	}
+	public void setBilingRate(BillingRate bilingRate) {
+		this.bilingRate = bilingRate;
+	}
+	
+	public class BillingId implements Serializable{
+		
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 5656532316206560404L;
+		private String empId;
+		private int version;
+		
+		public String getEmpId() {
+			return empId;
+		}
+		public void setEmpId(String empId) {
+			this.empId = empId;
+		}
+		public int getVersion() {
+			return version;
+		}
+		public void setVersion(int version) {
+			this.version = version;
+		}
+		
+		BillingId(String empId, int version) {
+			this.empId = empId;
+			this.version = version;
+		}
+		
+		@Override
+		public boolean equals(Object o) {
+			if(o == this ) {
+				return true;
+			}
+			if ( o == null || getClass() != o.getClass() ) {
+	            return false;
+	        }
+			BillingId id = (BillingId) o;
+			return id.getEmpId().equalsIgnoreCase(this.empId) && (id.getVersion() == this.version);
+		}
+		
+		@Override
+		public int hashCode() {
+			return Objects.hash(empId, version);
+		}
+	}
+	
 }
