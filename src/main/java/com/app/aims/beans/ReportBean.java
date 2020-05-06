@@ -5,6 +5,8 @@ public class ReportBean {
 	private String reportType;
 	private String month;
 	private String year;
+	private String brmName;
+	
 	public String getReportType() {
 		return reportType;
 	}

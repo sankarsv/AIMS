@@ -6,10 +6,17 @@ public class EmployeeRatioBean extends AbstractReportBean  {
 	private String jrCountTot;
 	private String srCountPerc;
 	private String jrCountPerc;
-	private String onsrCountTot;
-	private String onjrCountTot;
 	private String offsrCountPerc;
 	private String offjrCountPerc;
+	private String onsrCountPerc;
+	private String onjrCountPerc;
+	
+	private String onjrCountTot;
+	private String offsrCountTot;
+	private String offjrCountTot;
+	private String onsrCountTot;
+	
+	
 	public String getSrCountTot() {
 		return srCountTot;
 	}
@@ -57,6 +64,30 @@ public class EmployeeRatioBean extends AbstractReportBean  {
 	}
 	public void setOffjrCountPerc(String offjrCountPerc) {
 		this.offjrCountPerc = offjrCountPerc;
+	}
+	public String getOffsrCountTot() {
+		return offsrCountTot;
+	}
+	public void setOffsrCountTot(String offsrCountTot) {
+		this.offsrCountTot = offsrCountTot;
+	}
+	public String getOffjrCountTot() {
+		return offjrCountTot;
+	}
+	public void setOffjrCountTot(String offjrCountTot) {
+		this.offjrCountTot = offjrCountTot;
+	}
+	public String getOnsrCountPerc() {
+		return onsrCountPerc;
+	}
+	public void setOnsrCountPerc(String onsrCountPerc) {
+		this.onsrCountPerc = onsrCountPerc;
+	}
+	public String getOnjrCountPerc() {
+		return onjrCountPerc;
+	}
+	public void setOnjrCountPerc(String onjrCountPerc) {
+		this.onjrCountPerc = onjrCountPerc;
 	}
 	
 	

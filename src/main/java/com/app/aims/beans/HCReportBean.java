@@ -6,6 +6,7 @@ public class HCReportBean extends AbstractReportBean implements Serializable {
 
 	private String offTot;
 	private String onsiteTot;
+	private String totalCnt;
 	private String offPerc;
 	private String onsitePerc;
 	public String getOffTot() {
@@ -20,6 +21,12 @@ public class HCReportBean extends AbstractReportBean implements Serializable {
 	public void setOnsiteTot(String onsiteTot) {
 		this.onsiteTot = onsiteTot;
 	}
+	public String getTotalCnt() {
+		return totalCnt;
+	}
+	public void setTotalCnt(String totalCnt) {
+		this.totalCnt = totalCnt;
+	}
 	public String getOffPerc() {
 		return offPerc;
 	}
@@ -32,6 +39,5 @@ public class HCReportBean extends AbstractReportBean implements Serializable {
 	public void setOnsitePerc(String onsitePerc) {
 		this.onsitePerc = onsitePerc;
 	}
-	
-	
+		
 }
