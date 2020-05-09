@@ -46,7 +46,7 @@ public class DashboardServiceImpl implements DashboardService {
 		List<BARatioBean> baList = new ArrayList();
 		
 		for (BRMDetails brmDetail : brmlist) {
-			empList = employeeService.leftJoinDataByBrm(new Integer(brmDetail.getBrmId()).intValue());	
+			empList = employeeService.leftJoinDataByGL(brmDetail.getBrmId());	
 		
 		
 			if ("billable".equalsIgnoreCase(reportBean.getReportType())) {
@@ -421,7 +421,7 @@ private Map<String, Object> getBillableCount(List<SearchResponse> empList) {
 		onsiteBillablePerc = onsiteBillableCount/(onsiteBillableCount+onsiteNBillableCount)*100;
 		offsiteBillablePerc = offsiteBillableCount/(offsiteBillableCount+offsiteNBillableCount)*100;
 		
-		billableRepMap.put("billabletotal", totalBillableCnt);
+		 billableRepMap.put("billabletotal", totalBillableCnt);
 		billableRepMap.put("nbtotal", totalNBillableCnt);
 		billableRepMap.put("billableperc", totalBillablePerc);
 		billableRepMap.put("nbperc", totalNBillablePerc);

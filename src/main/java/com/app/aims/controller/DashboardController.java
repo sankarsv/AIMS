@@ -37,7 +37,7 @@ public class DashboardController {
 	public ResponseEntity<Object> getBillingDetailResponse(@RequestBody ReportBean reportBean) {
 			List<Object> reportList = dashboardService.generateDashboardReport(reportBean);
 			return new ResponseEntity<Object>(reportList, HttpStatus.OK);
-			
+			 
 	}
 	
 	

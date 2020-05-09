@@ -26,14 +26,11 @@ public class BillingVersion  implements Serializable{
 	private String month;
 	
 	@Column(name="year")	
-	private String year;
-		public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
-
+	private Integer year;
+	
 	@Id
 	@Column(name="version")	
-	private String version;
+	private Integer version;
 	
 	@Column(name="freezeind")	
 	private String freezeInd;
@@ -56,19 +53,20 @@ public class BillingVersion  implements Serializable{
 		this.month = month;
 	}
 
-	public String getYear() {
+
+	public Integer getYear() {
 		return year;
 	}
 
-	public void setYear(String year) {
+	public void setYear(Integer year) {
 		this.year = year;
 	}
 
-	public String getVersion() {
+	public Integer getVersion() {
 		return version;
 	}
 
-	public void setVersion(String version) {
+	public void setVersion(Integer version) {
 		this.version = version;
 	}
 

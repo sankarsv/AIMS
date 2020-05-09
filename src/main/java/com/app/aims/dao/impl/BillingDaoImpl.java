@@ -79,8 +79,8 @@ public class BillingDaoImpl implements BillingDao {
 			BillingVersion billingVersionRes = null;
 			if(StringUtils.hasText(req.getMonth()))billingVersion.setMonth(req.getMonth());
 			if(StringUtils.hasText(req.getBrmId()))billingVersion.setBrmId(req.getBrmId());
-			if(StringUtils.hasText(req.getYear()))billingVersion.setYear(req.getYear());
-			if(StringUtils.hasText(req.getVersion()))billingVersion.setVersion(req.getVersion());
+			if(StringUtils.hasText(req.getYear()))billingVersion.setYear(new Integer(req.getYear()).intValue());
+			if(StringUtils.hasText(req.getVersion()))billingVersion.setVersion((new Integer(req.getVersion()).intValue()));
 			Example<BillingVersion> billingVersionEx = Example.of(billingVersion);
 			Optional<BillingVersion> optBillingVersion = billingVerRepo.findOne(billingVersionEx);
 			if(optBillingVersion != null) {
@@ -145,9 +145,9 @@ public class BillingDaoImpl implements BillingDao {
 	        System.out.println("Before Updating the Table");
 	        query1.setParameter("freezeInd", billingVer.getFreezeInd());
 	        query1.setParameter("brmId", billingVer.getBrmId());
-	        query1.setInteger("year",  Integer.parseInt(billingVer.getYear()));
+	        query1.setInteger("year",  billingVer.getYear());
 	        query1.setParameter("month", billingVer.getMonth());
-	        query1.setInteger("version", Integer.parseInt(billingVer.getVersion()));
+	        query1.setInteger("version", billingVer.getVersion());
 	    	//user.setEmpName(val.getEmpName());
 	        int status = query1.executeUpdate();
 

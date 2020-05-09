@@ -158,6 +158,6 @@ public class BillingController {
 	}
 	
 	private boolean validReq(BillingVersion billingVersion) {
-		return (StringUtils.hasText(billingVersion.getBrmId()) && StringUtils.hasText(billingVersion.getMonth()) && StringUtils.hasText(billingVersion.getYear()) && StringUtils.hasText(billingVersion.getFreezeInd()));
+		return (StringUtils.hasText(billingVersion.getBrmId()) && StringUtils.hasText(billingVersion.getMonth()) && !StringUtils.isEmpty(billingVersion.getYear()) && StringUtils.hasText(billingVersion.getFreezeInd()));
 	}
 }

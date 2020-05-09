@@ -120,9 +120,13 @@ public class EmployeeController {
     	if(req.getEmpId() != null) {
     		searchResponseList = employeeService.leftJoinData(req.getEmpId());
     	} else if(req.getGlId() != null) {
-    		searchResponseList = employeeService.leftJoinDataByBrm(req.getGlId());
+    		searchResponseList = employeeService.leftJoinDataByGL(req.getGlId());
+    	}else if(req.getGlName() != null) {
+    		searchResponseList = employeeService.leftJoinDataByGL(req.getGlName());
     	} else if (req.getDmId() != null) {
     		searchResponseList = employeeService.leftJoinDataByDM(req.getDmId());
+    	}else if (req.getDmName() != null) {
+    		searchResponseList = employeeService.leftJoinDataByDM(req.getDmName());
     	} else {
     	 return new ResponseEntity<>("Bad Request", HttpStatus.BAD_REQUEST);
     	}

@@ -4,10 +4,10 @@ public class BillingDetails {
 
 	private String empId;
 	private int billableHrs;
-	private int billableDays;
-	private int effortHrs;
+	private double billableDays;
+	private double effortHrs;
 	
-	private int extraHrs;
+	private double extraHrs;
 	
 	private double extraBilling;
 	private double billingAmount;
@@ -24,22 +24,22 @@ public class BillingDetails {
 	public void setBillableHrs(int billableHrs) {
 		this.billableHrs = billableHrs;
 	}
-	public int getBillableDays() {
+	public double getBillableDays() {
 		return billableDays;
 	}
-	public void setBillableDays(int billableDays) {
+	public void setBillableDays(double billableDays) {
 		this.billableDays = billableDays;
 	}
-	public int getEffortHrs() {
+	public double getEffortHrs() {
 		return effortHrs;
 	}
-	public void setEffortHrs(int effortHrs) {
+	public void setEffortHrs(double effortHrs) {
 		this.effortHrs = effortHrs;
 	}
-	public int getExtraHrs() {
+	public double getExtraHrs() {
 		return extraHrs;
 	}
-	public void setExtraHrs(int extraHrs) {
+	public void setExtraHrs(double extraHrs) {
 		this.extraHrs = extraHrs;
 	}
 	public double getExtraBilling() {
@@ -60,4 +60,6 @@ public class BillingDetails {
 	public void setRemarks(String remarks) {
 		this.remarks = remarks;
 	}
+	
+	
 }

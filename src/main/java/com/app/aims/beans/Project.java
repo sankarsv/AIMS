@@ -22,7 +22,7 @@ public class Project implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	@Column(name="id" )
+	@Column(name="project_id" )
 	@NotNull
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -60,26 +60,63 @@ public class Project implements Serializable {
 	@NotNull
     private String clientCountry;
 	
-	@Column(name="ip" )
-	@NotNull
-    private String ip;
-	
+
 	@Column(name="customer" )
 	@NotNull
     private String customer;
 	
+	@Column(name="ip" )
+	@NotNull
+    private String ip;
+	
+	
+	@Column(name="sp" )
+	private String sp;
+	
+
+	@Column(name="subsp" )
+	private String subsp;
+	
+	@Column(name="brm" )
+	@NotNull
+    private String brm;
+	
+	@Column(name="gl" )
+	@NotNull
+    private String gl;
+	
+
+	@Column(name="amid" )
+	@NotNull
+    private String amid;
+	
+
+	@Column(name="am" )
+	@NotNull
+    private String am;
+	
+	
+	@Column(name="pl" )
+	@NotNull
+    private String pl;
+	
+
 	@Column(name="group_customer" )
 	@NotNull
     private String groupCustomer;
 	
+
 	@Column(name="project_hash" )
 	@NotNull
     private String projectHash;
 	
-	@Column(name="project_location_wrt_india" )
+
+
+	@Column(name="project_location_wrt_india " )
 	@NotNull
-    private String projectLocationWrtIndia;
-	
+    private String projectLocWRTIndia;
+		
+		
 	@Column(name="project_type" )
 	@NotNull
     private String projectType;
@@ -116,6 +153,9 @@ public class Project implements Serializable {
 	@Column(name="bfs_cluster" )
 	@NotNull
     private String bfsCluster;
+	
+	@Column(name="expired_ind" )
+	private String expiredInd;
 
 	public Integer getProjectId() {
 		return projectId;
@@ -189,6 +229,14 @@ public class Project implements Serializable {
 		this.clientCountry = clientCountry;
 	}
 
+	public String getCustomer() {
+		return customer;
+	}
+
+	public void setCustomer(String customer) {
+		this.customer = customer;
+	}
+
 	public String getIp() {
 		return ip;
 	}
@@ -197,12 +245,60 @@ public class Project implements Serializable {
 		this.ip = ip;
 	}
 
-	public String getCustomer() {
-		return customer;
+	public String getSp() {
+		return sp;
 	}
 
-	public void setCustomer(String customer) {
-		this.customer = customer;
+	public void setSp(String sp) {
+		this.sp = sp;
+	}
+
+	public String getSubsp() {
+		return subsp;
+	}
+
+	public void setSubsp(String subsp) {
+		this.subsp = subsp;
+	}
+
+	public String getBrm() {
+		return brm;
+	}
+
+	public void setBrm(String brm) {
+		this.brm = brm;
+	}
+
+	public String getGl() {
+		return gl;
+	}
+
+	public void setGl(String gl) {
+		this.gl = gl;
+	}
+
+	public String getAmid() {
+		return amid;
+	}
+
+	public void setAmid(String amid) {
+		this.amid = amid;
+	}
+
+	public String getAm() {
+		return am;
+	}
+
+	public void setAm(String am) {
+		this.am = am;
+	}
+
+	public String getPl() {
+		return pl;
+	}
+
+	public void setPl(String pl) {
+		this.pl = pl;
 	}
 
 	public String getGroupCustomer() {
@@ -221,12 +317,12 @@ public class Project implements Serializable {
 		this.projectHash = projectHash;
 	}
 
-	public String getProjectLocationWrtIndia() {
-		return projectLocationWrtIndia;
+	public String getProjectLocWRTIndia() {
+		return projectLocWRTIndia;
 	}
 
-	public void setProjectLocationWrtIndia(String projectLocationWrtIndia) {
-		this.projectLocationWrtIndia = projectLocationWrtIndia;
+	public void setProjectLocWRTIndia(String projectLocWRTIndia) {
+		this.projectLocWRTIndia = projectLocWRTIndia;
 	}
 
 	public String getProjectType() {
@@ -301,6 +397,12 @@ public class Project implements Serializable {
 		this.bfsCluster = bfsCluster;
 	}
 
-	
+	public String getExpiredInd() {
+		return expiredInd;
+	}
+
+	public void setExpiredInd(String expiredInd) {
+		this.expiredInd = expiredInd;
+	}
 	
 }

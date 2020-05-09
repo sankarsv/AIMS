@@ -24,8 +24,11 @@ public interface EmployeeService {
 
     public List<VersionInfo> getVersionInfo();
     public List<SearchResponse> leftJoinData(Integer empId);
+
+    public List<SearchResponse> leftJoinDataByDM(String dmEmpName);
     public List<SearchResponse> leftJoinDataByDM(Integer dmEmpId);
-    public List<SearchResponse> leftJoinDataByBrm(Integer brmEmpId);
+    public List<SearchResponse> leftJoinDataByGL(String brmEmpId);
+    public List<SearchResponse> leftJoinDataByGL(Integer brmEmpName);
     
 
 

@@ -25,7 +25,7 @@ public class Billing  implements Serializable{
 	private static final long serialVersionUID = -4423840919843137706L;
 	@Id
 	@Column(name="version")
-	private int version;
+	private Integer version;
 	
 	private String projectId; //NA
 	
@@ -62,19 +62,19 @@ public class Billing  implements Serializable{
 	private int billableHrs;
 	
 	@Column(name="billabledays")
-	private int billableDays;	
+	private Double billableDays;	
 	
 	@Column(name="effort")
-	private int effortHrs;
+	private Double effortHrs;
 	
 	@Column(name="extrahours")
-	private int extraHrs;
+	private Double extraHrs;
 	
 	@Column(name="extrabilling")
-	private double extraBilling;
+	private Double extraBilling;
 	
 	@Column(name="billableamount")
-	private double billingAmount;
+	private Double billingAmount;
 	
 	@Column(name="remarks1")
 	private String remarks1;
@@ -91,6 +91,7 @@ public class Billing  implements Serializable{
 	public void setVersion(int version) {
 		this.version = version;
 	}
+
 	public String getProjectId() {
 		return projectId;
 	}
@@ -120,6 +121,12 @@ public class Billing  implements Serializable{
 	}
 	public void setDmName(String dmName) {
 		this.dmName = dmName;
+	}
+	public String getBrnname() {
+		return brnname;
+	}
+	public void setBrnname(String brnname) {
+		this.brnname = brnname;
 	}
 	public String getWonNumber() {
 		return wonNumber;
@@ -151,34 +158,34 @@ public class Billing  implements Serializable{
 	public void setBillableHrs(int billableHrs) {
 		this.billableHrs = billableHrs;
 	}
-	public int getBillableDays() {
+	public Double getBillableDays() {
 		return billableDays;
 	}
-	public void setBillableDays(int billableDays) {
+	public void setBillableDays(Double billableDays) {
 		this.billableDays = billableDays;
 	}
-	public int getEffortHrs() {
+	public Double getEffortHrs() {
 		return effortHrs;
 	}
-	public void setEffortHrs(int effortHrs) {
+	public void setEffortHrs(Double effortHrs) {
 		this.effortHrs = effortHrs;
 	}
-	public int getExtraHrs() {
+	public Double getExtraHrs() {
 		return extraHrs;
 	}
-	public void setExtraHrs(int extraHrs) {
+	public void setExtraHrs(Double extraHrs) {
 		this.extraHrs = extraHrs;
 	}
-	public double getExtraBilling() {
+	public Double getExtraBilling() {
 		return extraBilling;
 	}
-	public void setExtraBilling(double extraBilling) {
+	public void setExtraBilling(Double extraBilling) {
 		this.extraBilling = extraBilling;
 	}
-	public double getBillingAmount() {
+	public Double getBillingAmount() {
 		return billingAmount;
 	}
-	public void setBillingAmount(double billingAmount) {
+	public void setBillingAmount(Double billingAmount) {
 		this.billingAmount = billingAmount;
 	}
 	public String getRemarks1() {
@@ -193,21 +200,16 @@ public class Billing  implements Serializable{
 	public void setRemarks2(String remarks2) {
 		this.remarks2 = remarks2;
 	}
-
-
-	public String getBrnname() {
-		return brnname;
-	}
-	public void setBrnname(String brnname) {
-		this.brnname = brnname;
-	}
 	public BillingRate getBilingRate() {
 		return bilingRate;
 	}
 	public void setBilingRate(BillingRate bilingRate) {
 		this.bilingRate = bilingRate;
 	}
-	
+	public void setVersion(Integer version) {
+		this.version = version;
+	}
+
 	public class BillingId implements Serializable{
 		
 		/**

@@ -54,7 +54,7 @@ public class BillingServiceImpl implements BillingService {
 		try {
 			BillingVersion versionDet = billingDao.getBillingVersion(req);
 			if(versionDet != null) {
-				int version = Integer.parseInt(versionDet.getVersion());
+				int version = versionDet.getVersion();
 				List<Billing> billingList = billingDao.getBillingDetails(version);
 				respList = populateBillingDetailsList(billingList,versionDet);
 			} else {
@@ -165,7 +165,7 @@ public class BillingServiceImpl implements BillingService {
 		BillingVersion versionDet = null;
 		versionDet = billingDao.getBillingVersion(req);
 		if (versionDet != null) {
-				version = Integer.parseInt(versionDet.getVersion());
+				version = versionDet.getVersion();
 			}
 		else {
 			throw new NoSuchElementException();
