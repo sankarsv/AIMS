@@ -50,90 +50,8 @@ public class EmployeeServiceImpl implements EmployeeService {
 	public List<SearchResponse> leftJoinData(Integer empId) {
 		List<SearchResponse> searchEmpList = new ArrayList<SearchResponse>();
 		List<Employee> emplist = searchRepository.fetchDataLeftJoin(empId);
+		searchEmpList = prepareSearchResponse(emplist);
 		
-		List<Integer>  empExistList = new ArrayList<Integer>();	
-
-		for (Employee employee : emplist) {
-			
-			if(empExistList.contains(employee.getEmployeeId())) {
-				continue;
-			}
-			for (EmployeeAllocation employeeAllocation : employee.getEmployeeAllocations()) {
-				
-
-				SearchResponse searchResponse = new SearchResponse();
-				
-				 searchResponse.setEmployeeId(employee.getEmployeeId());
-	    		 System.out.println("employeeID value is " + employee.getEmployeeId());
-	    		 searchResponse.setEmployeeType(employee.getEmployeeType());
-	    		 searchResponse.setCurrentLocation(employee.getCurrentLocation());
-	    		 searchResponse.setFirstName(employee.getFirstName());
-	    		 System.out.println("FirstName value is " + employee.getFirstName());
-	    		 searchResponse.setLastName(employee.getLastName());
-	    		 searchResponse.setBaseBranch(employee.getBaseBranch());
-	    		 searchResponse.setDob(employee.getDob());
-	    		 searchResponse.setGender(employee.getGender());
-	    		 searchResponse.setOverallExp(employee.getOverallExp());
-	    		 searchResponse.setAimsExp(employee.getAimsExp());
-	    		 searchResponse.setBaseCountry(employee.getBaseCountry());
-	    		 searchResponse.setBaseDc(employee.getBaseDc());
-	    		 searchResponse.setCategoryName(employee.getCategoryName());
-	    		 searchResponse.setGrade(employee.getGrade());
-	    		 
-	    		// searchResponse.setWonId(employeeAllocation.getWon().getWonId());
-	    		// searchResponse.setPortfolioId(employeeAllocation.getPortfolioId().getPortfolioId());
-	    		 searchResponse.setStartDate(employeeAllocation.getStartDate());
-	    		 searchResponse.setEndDate(employeeAllocation.getEndDate());
-	    		 searchResponse.setTravelType(employeeAllocation.getTravelType());
-	    		 searchResponse.setEmployeeTravelCountry(employee.getEmpTravel());
-	    		 searchResponse.setTeamRole(employee.getTeamRole());
-			     //searchResponse.setEmployeeActiveBMOId(employee.getEmployeeActiveClientInd());
-				 searchResponse.setDeputeBranch(employee.getDeputeBranch());
-				 searchResponse.setDeputeDc(employee.getDeputeDC());
-				 searchResponse.setEmployeeLocationId(employee.getEmpLocation()); 
-				 
-				 
-				 //searchResponse.setPortfolioName(employeeAllocation.getPortfolioId().getPortfolioName());
-				 //searchResponse.setPortfolioType(employeeAllocation.getPortfolioId().getPortfolioType());
-				 //searchResponse.setBrmEmpId(employee.getBrmEmpId());
-				 //searchResponse.setOnsiteLeadEmpId(employeeAllocation.getProject().getOnsiteLeadEmpId());
-				 //searchResponse.setDmEmpId(employeeAllocation.getPortfolioId().getDmEmpId());
-				 //searchResponse.setOffshoreLeadEmpId(employeeAllocation.getPortfolioId().getOffshoreLeadEmpId());
-				 //searchResponse.setBillingEmpId(employeeAllocation.getPortfolioId().getBillingEmpId());
-				 
-				 
-				 searchResponse.setProjectId(employeeAllocation.getProject().getProjectId());
-				 searchResponse.setProjectName(employeeAllocation.getProject().getProjectName());
-				 searchResponse.setProjectLocation(employeeAllocation.getProject().getProjectLocation());
-				 searchResponse.setProjectChangeDate(employeeAllocation.getProject().getProjectChangeDate());
-				 searchResponse.setWorkGeography(employeeAllocation.getProject().getWorkGeography());
-				 searchResponse.setWorkCountry(employeeAllocation.getProject().getWorkCountry());
-				 searchResponse.setWorkLocation(employeeAllocation.getProject().getWorkLocation());
-				 searchResponse.setClientGeography(employeeAllocation.getProject().getClientGeography());
-				 searchResponse.setClientCountry(employeeAllocation.getProject().getClientCountry());
-				 searchResponse.setIp(employeeAllocation.getProject().getIp());
-				 searchResponse.setCustomer(employeeAllocation.getProject().getCustomer());
-				 searchResponse.setGroupCustomer(employeeAllocation.getProject().getGroupCustomer());
-				 searchResponse.setProjectHash(employeeAllocation.getProject().getProjectHash());
-				 searchResponse.setProjectLocationWrtIndia(employeeAllocation.getProject().getProjectLocWRTIndia());
-				 searchResponse.setProjectType(employeeAllocation.getProject().getProjectType());
-				 searchResponse.setPureTurnkeyFlag(employeeAllocation.getProject().getPureTurnkeyFlag());
-				 searchResponse.setSwonCategory(employeeAllocation.getProject().getSwonCategory());
-				 searchResponse.setProjectCluster(employeeAllocation.getProject().getProjectCluster());
-				 searchResponse.setIou(employeeAllocation.getProject().getIou());
-				 searchResponse.setSubIou(employeeAllocation.getProject().getSubIou());
-				 searchResponse.setParentIou(employeeAllocation.getProject().getParentIou());
-				 searchResponse.setChildIou(employeeAllocation.getProject().getChildIou());
-				 searchResponse.setBfsCluster(employeeAllocation.getProject().getBfsCluster());
-
-				 
-				 searchEmpList.add(searchResponse);	
-				 empExistList.add(employee.getEmployeeId());
-
-			}
-
-		}
-
 		return searchEmpList;
 
 	}
@@ -304,7 +222,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 	@Override
 	public List<SearchResponse> leftJoinDataByDM(String dmName) {
 		List<SearchResponse> searchEmpList = new ArrayList<SearchResponse>();
-		List<Employee> emplist = searchRepository.fetchDataLeftJoinByDm(dmName);
+		List<Employee> emplist = searchRepository.fetchDataLeftJoinByDm(dmName.toUpperCase());
 		searchEmpList = prepareSearchResponse(emplist);
 
 		return searchEmpList;
@@ -327,7 +245,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 	@Override
 	public List<SearchResponse> leftJoinDataByGL(String brmName) {
 		List<SearchResponse> searchEmpList = new ArrayList<SearchResponse>();
-		List<Employee> emplist = searchRepository.fetchDataLeftJoinByBrm(brmName);
+		List<Employee> emplist = searchRepository.fetchDataLeftJoinByBrm(brmName.toUpperCase());
 		searchEmpList = prepareSearchResponse(emplist);
 
 		return searchEmpList;
@@ -367,6 +285,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 	    		 searchResponse.setBaseDc(employee.getBaseDc());
 	    		 searchResponse.setCategoryName(employee.getCategoryName());
 	    		 searchResponse.setGrade(employee.getGrade());
+	    		 searchResponse.setSeniorJunior(employee.getSeniorJunior());
+	    		 searchResponse.setCcIndicator(employee.getCcIndicator());
+	    		 searchResponse.setMappDesignation(employee.getMappDesignation());
 	    		 
 	    		// searchResponse.setWonId(employeeAllocation.getWon().getWonId());
 	    		// searchResponse.setPortfolioId(employeeAllocation.getPortfolioId().getPortfolioId());

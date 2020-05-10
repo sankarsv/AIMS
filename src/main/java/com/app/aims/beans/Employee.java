@@ -89,8 +89,13 @@ public class Employee implements Serializable{
     private String grade;
     
     @Column(name="cc_indicator")
-    private Date ccIndicator;
+    private String ccIndicator;
     
+    @Column(name="mapp_designation")
+    private String mappDesignation;
+    
+    @Column(name="senior_junior")
+    private String seniorJunior;
     @Column(name="person_type")
     private String personType;
 
@@ -291,11 +296,11 @@ public class Employee implements Serializable{
 		this.grade = grade;
 	}
 
-	public Date getCcIndicator() {
+	public String getCcIndicator() {
 		return ccIndicator;
 	}
 
-	public void setCcIndicator(Date ccIndicator) {
+	public void setCcIndicator(String ccIndicator) {
 		this.ccIndicator = ccIndicator;
 	}
 
@@ -489,6 +494,22 @@ public class Employee implements Serializable{
 
 	public void setExpiredInd(String expiredInd) {
 		this.expiredInd = expiredInd;
+	}
+
+	public String getMappDesignation() {
+		return mappDesignation;
+	}
+
+	public void setMappDesignation(String mappDesignation) {
+		this.mappDesignation = mappDesignation;
+	}
+
+	public String getSeniorJunior() {
+		return seniorJunior;
+	}
+
+	public void setSeniorJunior(String seniorJunior) {
+		this.seniorJunior = seniorJunior;
 	}
  	
 

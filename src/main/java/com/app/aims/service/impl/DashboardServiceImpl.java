@@ -46,9 +46,9 @@ public class DashboardServiceImpl implements DashboardService {
 		List<BARatioBean> baList = new ArrayList();
 		
 		for (BRMDetails brmDetail : brmlist) {
-			empList = employeeService.leftJoinDataByGL(brmDetail.getBrmId());	
+			empList = employeeService.leftJoinDataByGL(brmDetail.getBrmName());	
 		
-		
+		if (empList != null && !empList.isEmpty()) {
 			if ("billable".equalsIgnoreCase(reportBean.getReportType())) {
 				
 				
@@ -83,11 +83,11 @@ public class DashboardServiceImpl implements DashboardService {
 				
 				
 				empsrjrRatio.setOnjrCountTot(((Integer)empRationMap.get("onjrcounttot")).toString());
-				empsrjrRatio.setOnsrCountTot(((Double)empRationMap.get("onsrcounttot")).toString());
+				empsrjrRatio.setOnsrCountTot(((Integer)empRationMap.get("onsrcounttot")).toString());
 				empsrjrRatio.setOffjrCountTot(((Integer)empRationMap.get("offjrcounttot")).toString());
-				empsrjrRatio.setOffsrCountTot(((Double)empRationMap.get("offsrcounttot")).toString());
+				empsrjrRatio.setOffsrCountTot(((Integer)empRationMap.get("offsrcounttot")).toString());
 				
-				empsrjrRatio.setJrCountTot(((Integer)empRationMap.get("jrcounttol")).toString());
+				empsrjrRatio.setJrCountTot(((Integer)empRationMap.get("jrcounttot")).toString());
 				empsrjrRatio.setSrCountTot(((Integer)empRationMap.get("srcounttot")).toString());
 				
 				empSrJrList.add(empsrjrRatio);
@@ -114,7 +114,7 @@ public class DashboardServiceImpl implements DashboardService {
 				traineeRatioBean.setBrmName(brmDetail.getBrmName());
 				traineeRatioBean.setBrmNo(brmDetail.getBrmId());
 				traineeRatioBean.setTrCountPerc(((Double)traineeRatioMap.get("tottrcountperc")).toString());
-				traineeRatioBean.setOfftrCountTot(((Integer)traineeRatioMap.get("offtrcountperc")).toString());
+				traineeRatioBean.setOfftrCountPerc(((Double)traineeRatioMap.get("offtrcountperc")).toString());
 				traineeRatioBean.setOntrCountPerc(((Double)traineeRatioMap.get("ontrcountperc")).toString());
 				traineeRatioBean.setOntrCountTot(((Integer)traineeRatioMap.get("ontrcounttot")).toString());
 				traineeRatioBean.setOfftrCountTot(((Integer)traineeRatioMap.get("offtrcounttot")).toString());
@@ -130,7 +130,7 @@ public class DashboardServiceImpl implements DashboardService {
 				baratioBean.setBrmName(brmDetail.getBrmName());
 				baratioBean.setBrmNo(brmDetail.getBrmId());
 				baratioBean.setBaCountPerc(((Double)baMap.get("bacountperc")).toString());
-				baratioBean.setBaCountPerOff(((Integer)baMap.get("bacountperoff")).toString());
+				baratioBean.setBaCountPerOff(((Double)baMap.get("bacountperoff")).toString());
 				baratioBean.setBaCountPerOn(((Double)baMap.get("bacountperon")).toString());
 				baratioBean.setBaCountTot(((Integer)baMap.get("bacounttot")).toString());
 				baratioBean.setBaCountTotOff(((Integer)baMap.get("bacounttotoff")).toString());
@@ -140,7 +140,9 @@ public class DashboardServiceImpl implements DashboardService {
 			}
 			}
 		
-		 switch (reportBean.getReportType()) {
+		
+		}
+		switch (reportBean.getReportType()) {
 		 
 		 case "srjrratio": 
 			 return empSrJrList;
@@ -156,16 +158,17 @@ public class DashboardServiceImpl implements DashboardService {
 			 
 			 default :
 				 return null;
-		 }
+
+		}
 		
 		 
 	}
 
 private Map<String, Object> getBAList(List<SearchResponse> empList) {
 		
-		double bacountperc;
-		double bacountperoff;
-		double bacountperon;
+		double bacountperc  = 0.0;
+		double bacountperoff = 0.0;
+		double bacountperon = 0.0;
 
 		int bacounttot = 0;
 		int bacounttotoff = 0;
@@ -196,9 +199,13 @@ private Map<String, Object> getBAList(List<SearchResponse> empList) {
 		}
 		bacounttot = bacounttoton+bacounttotoff;
 		
-		bacountperoff = bacounttotoff/(offsitecnt)*100;
-		bacountperon = bacounttoton/(onsitecnt)*100;
-		bacountperc = (bacounttotoff+bacounttoton)/(offsitecnt+onsitecnt);
+		if (offsitecnt > 0)
+			bacountperoff = bacounttotoff/(offsitecnt)*100;
+		
+		if (onsitecnt > 0)
+			bacountperon = bacounttoton/(onsitecnt)*100;
+		if ((offsitecnt+onsitecnt) > 0)
+			bacountperc = (bacounttotoff+bacounttoton)/(offsitecnt+onsitecnt);
 
 
 		baRatioMap.put("bacountperc", bacountperc);
@@ -214,9 +221,9 @@ private Map<String, Object> getBAList(List<SearchResponse> empList) {
 
 private Map<String, Object> getTRList(List<SearchResponse> empList) {
 	
-	double trcountperc;
-	double trcountperoff;
-	double trcountperon;
+	double trcountperc =0.0;
+	double trcountperoff =0.0;
+	double trcountperon =0.0;
 
 	int trcounttot = 0;
 	int trcounttotoff = 0;
@@ -247,9 +254,12 @@ private Map<String, Object> getTRList(List<SearchResponse> empList) {
 	}
 	trcounttot = trcounttoton+trcounttotoff;
 	
-	trcountperoff = trcounttotoff/(offsitecnt)*100;
-	trcountperon = trcounttoton/(onsitecnt)*100;
-	trcountperc = (trcounttotoff+trcounttoton)/(offsitecnt+onsitecnt);
+	if (offsitecnt > 0)
+		trcountperoff = trcounttotoff/(offsitecnt)*100;
+	if (onsitecnt > 0 )
+		trcountperon = trcounttoton/(onsitecnt)*100;
+	if ((offsitecnt+onsitecnt) > 0)
+		trcountperc = (trcounttotoff+trcounttoton)/(offsitecnt+onsitecnt);
 
 	baRatioMap.put("tottrcountperc", trcountperc);
 	baRatioMap.put("offtrcountperc", trcountperoff);
@@ -265,8 +275,8 @@ private Map<String, Object> getTRList(List<SearchResponse> empList) {
 
 	private Map<String, Object> getHCList(List<SearchResponse> empList) {
 		
-		double offperc;
-		double onperc;
+		double offperc= 0.0;
+		double onperc= 0.0;
 
 		int ontot = 0;
 		int offtot = 0;
@@ -287,9 +297,12 @@ private Map<String, Object> getTRList(List<SearchResponse> empList) {
 		}
 		totalcnt = ontot+offtot;
 		
-		offperc = offtot/(totalcnt)*100;
-		onperc = ontot/(totalcnt)*100;
-	
+		if (totalcnt > 0) {
+			offperc = offtot/(totalcnt)*100;
+			onperc = ontot/(totalcnt)*100;
+			
+		}
+		
 
 		hcRatioMap.put("offperc", onperc);
 		hcRatioMap.put("onperc", offperc);
@@ -303,13 +316,13 @@ private Map<String, Object> getTRList(List<SearchResponse> empList) {
 	
 	private Map<String, Object> getSrJrList(List<SearchResponse> empList) {
 		
-		double jrcountperc;
-		double srcountperc;
-		double offjrcountperc;
-		double offsrcountperc;
+		double jrcountperc = 0.0;
+		double srcountperc = 0.0;
+		double offjrcountperc = 0.0;
+		double offsrcountperc = 0.0;
 
-		double onjrcountperc;
-		double onsrcountperc;
+		double onjrcountperc = 0.0;
+		double onsrcountperc = 0.0;
 
 		int totalJrCount = 0;
 		int totalSrCount = 0;
@@ -318,59 +331,69 @@ private Map<String, Object> getTRList(List<SearchResponse> empList) {
 		int offjrCountTot=0;
 		int onsrCountTot=0;
 		int onjrCountTot=0;
+		Map<String, Object> empRatioMap = new HashMap<>();		
+		if (empList != null && !empList.isEmpty()) {
 		
-		Map<String, Object> empRatioMap = new HashMap<>();
-		for (SearchResponse searchResponse : empList) {
-			
-			if ("onsite".equalsIgnoreCase(searchResponse.getProjectLocation()))
-			{
-				if ("S".equalsIgnoreCase(searchResponse.getSeniorJunior())) {
-					onsrCountTot++;
-				} 
-				else if ("J".equalsIgnoreCase(searchResponse.getSeniorJunior())) {
-					onjrCountTot++;
-				}
+
+			for (SearchResponse searchResponse : empList) {
 				
+				if ("onsite".equalsIgnoreCase(searchResponse.getProjectLocation()))
+				{
+					if ("S".equalsIgnoreCase(searchResponse.getSeniorJunior())) {
+						onsrCountTot++;
+					} 
+					else if ("J".equalsIgnoreCase(searchResponse.getSeniorJunior())) {
+						onjrCountTot++;
+					}
+					
+				}
+				else if ("offsite".equalsIgnoreCase(searchResponse.getProjectLocation()))
+				{
+					if ("S".equalsIgnoreCase(searchResponse.getSeniorJunior())) {
+						offsrCountTot++;
+					} 
+					else if ("J".equalsIgnoreCase(searchResponse.getSeniorJunior())) {
+						offjrCountTot++;
+					}			}
 			}
-			else if ("offsite".equalsIgnoreCase(searchResponse.getProjectLocation()))
-			{
-				if ("S".equalsIgnoreCase(searchResponse.getSeniorJunior())) {
-					offsrCountTot++;
-				} 
-				else if ("J".equalsIgnoreCase(searchResponse.getSeniorJunior())) {
-					offjrCountTot++;
-				}			}
+			
+			totalJrCount = onjrCountTot+offjrCountTot;
+			totalSrCount = onsrCountTot+offsrCountTot;
+			
+			totalCount = totalJrCount+totalSrCount;
+			if ((onjrCountTot+onsrCountTot) > 0)
+				onjrcountperc = onjrCountTot/(onjrCountTot+onsrCountTot)*100;
+			if ((onjrCountTot+onsrCountTot) > 0)
+				onsrcountperc = onsrCountTot/(onjrCountTot+onsrCountTot)*100;
+			if ((offjrCountTot+offsrCountTot) > 0)
+				offjrcountperc = offjrCountTot/(offjrCountTot+offsrCountTot)*100;
+			if ((offjrCountTot+offsrCountTot) > 0)
+				offsrcountperc = offsrCountTot/(offjrCountTot+offsrCountTot)*100;
+			
+			if (totalCount > 0 ) {
+				jrcountperc  = totalJrCount/totalCount*100;
+			    srcountperc = totalSrCount/totalCount*100;
+	
+			}
+		    
+
+
+		    empRatioMap.put("offjrcountperc", offjrcountperc);
+		    empRatioMap.put("offsrcountperc", offsrcountperc);
+		    empRatioMap.put("onjrcountperc", onjrcountperc);
+		    empRatioMap.put("onsrcountperc", onsrcountperc);
+		    empRatioMap.put("offjrcounttot", onjrCountTot);
+		    empRatioMap.put("offsrcounttot", onsrCountTot);
+		    empRatioMap.put("onjrcounttot", onjrCountTot);
+		    empRatioMap.put("onsrcounttot", onsrCountTot);
+			
+		    empRatioMap.put("srcounttot", totalSrCount);
+			empRatioMap.put("jrcounttot", totalJrCount);		
+			empRatioMap.put("srcountperc", srcountperc);
+			empRatioMap.put("jrcountperc", jrcountperc);
+
 		}
-		
-		totalJrCount = onjrCountTot+offjrCountTot;
-		totalSrCount = onsrCountTot+offsrCountTot;
-		
-		totalCount = totalJrCount+totalSrCount;
-		
-		onjrcountperc = onjrCountTot/(onjrCountTot+onsrCountTot)*100;
-		onsrcountperc = onsrCountTot/(onjrCountTot+onsrCountTot)*100;
-		offjrcountperc = offjrCountTot/(offjrCountTot+offsrCountTot)*100;
-		offsrcountperc = offsrCountTot/(offjrCountTot+offsrCountTot)*100;
-		
-	    jrcountperc  = totalJrCount/totalCount*100;
-	    srcountperc = totalSrCount/totalCount*100;
-
-
-
-	    empRatioMap.put("offjrcountperc", offjrcountperc);
-	    empRatioMap.put("offsrcountperc", offsrcountperc);
-	    empRatioMap.put("onjrcountperc", onjrcountperc);
-	    empRatioMap.put("onsrcountperc", onsrcountperc);
-	    empRatioMap.put("offjrcounttot", onjrCountTot);
-	    empRatioMap.put("offsrcounttot", onsrCountTot);
-	    empRatioMap.put("onjrcounttot", onjrCountTot);
-	    empRatioMap.put("onsrcounttot", onsrCountTot);
-		
-	    empRatioMap.put("srcounttot", totalSrCount);
-		empRatioMap.put("jrcounttot", totalJrCount);		
-		empRatioMap.put("srcountperc", srcountperc);
-		empRatioMap.put("jrcountperc", jrcountperc);
-		return empRatioMap;
+				return empRatioMap;
 	}
 
 private Map<String, Object> getBillableCount(List<SearchResponse> empList) {
@@ -379,10 +402,10 @@ private Map<String, Object> getBillableCount(List<SearchResponse> empList) {
 		int onsiteNBillableCount = 0;
 		int offsiteBillableCount = 0;
 		int offsiteNBillableCount = 0;
-		double onsiteBillablePerc;
-		double offsiteBillablePerc;
-		double totalBillablePerc;
-		double totalNBillablePerc;
+		double onsiteBillablePerc =0.0;
+		double offsiteBillablePerc = 0.0;
+		double totalBillablePerc = 0.0;
+		double totalNBillablePerc = 0.0;
 		int totalBillableCnt = 0;
 		int totalNBillableCnt = 0;
 		int totalCount;
@@ -416,10 +439,14 @@ private Map<String, Object> getBillableCount(List<SearchResponse> empList) {
 		
 		totalCount = totalBillableCnt + totalNBillableCnt;
 		
-		totalBillablePerc = totalBillableCnt/totalCount*100;
-		totalNBillablePerc = totalNBillableCnt/totalCount*100;
-		onsiteBillablePerc = onsiteBillableCount/(onsiteBillableCount+onsiteNBillableCount)*100;
-		offsiteBillablePerc = offsiteBillableCount/(offsiteBillableCount+offsiteNBillableCount)*100;
+		if (totalCount > 0) {
+			totalBillablePerc = totalBillableCnt/totalCount*100;
+			totalNBillablePerc = totalNBillableCnt/totalCount*100;
+		}
+		if ((onsiteBillableCount+onsiteNBillableCount) > 0)
+			onsiteBillablePerc = onsiteBillableCount/(onsiteBillableCount+onsiteNBillableCount)*100;
+		if ((offsiteBillableCount+offsiteNBillableCount) > 0)
+			offsiteBillablePerc = offsiteBillableCount/(offsiteBillableCount+offsiteNBillableCount)*100;
 		
 		 billableRepMap.put("billabletotal", totalBillableCnt);
 		billableRepMap.put("nbtotal", totalNBillableCnt);

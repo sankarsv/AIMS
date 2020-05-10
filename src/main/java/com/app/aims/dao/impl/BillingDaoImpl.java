@@ -64,8 +64,8 @@ public class BillingDaoImpl implements BillingDao {
 				
 				for (BillingVersion billingVersion : billingVersionList) {
 					brmDetails2 = new BRMDetails();
-					brmDetails2.setBrmId(billingVersion.getBrmId());
-					brmDetails2.setBrmName("");
+					brmDetails2.setBrmId("");
+					brmDetails2.setBrmName(billingVersion.getBrmId());
 					brmDetails.add(brmDetails2);
 				}
 			}

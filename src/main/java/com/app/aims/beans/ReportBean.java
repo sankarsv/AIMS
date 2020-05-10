@@ -25,6 +25,12 @@ public class ReportBean {
 	public void setYear(String year) {
 		this.year = year;
 	}
+	public String getBrmName() {
+		return brmName;
+	}
+	public void setBrmName(String brmName) {
+		this.brmName = brmName;
+	}
 	
 	
 }
