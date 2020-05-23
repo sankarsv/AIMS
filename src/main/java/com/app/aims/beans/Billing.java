@@ -1,26 +1,38 @@
 package com.app.aims.beans;
 
-import java.io.Serializable;
+import com.app.aims.beans.BillingId;
 
+import java.io.Serializable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 @Entity
 @Table(name="billingmaster",schema="aims",uniqueConstraints=@UniqueConstraint(columnNames= {"version", "employee_id"}))
+@IdClass(BillingId.class)
 public class Billing  implements Serializable{
+	
+	public Billing() {
+		super();
+	}
 	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -4423840919843137706L;
+	
 	@Id
 	@Column(name="version")
-	private int version;
+	private Integer version;
 	
 	private String projectId; //NA
+	
+	@Id
 	@Column(name="employee_id")
 	private String empId;
 	
@@ -51,34 +63,39 @@ public class Billing  implements Serializable{
 	private String officeId;
 	
 	@Column(name="billablehours")
-	private int billableHrs;
+	private Integer billableHrs;
 	
 	@Column(name="billabledays")
-	private int billableDays;	
+	private Double billableDays;	
 	
 	@Column(name="effort")
-	private int effortHrs;
+	private Double effortHrs;
 	
 	@Column(name="extrahours")
-	private int extraHrs;
+	private Double extraHrs;
 	
 	@Column(name="extrabilling")
-	private double extraBilling;
+	private Double extraBilling;
 	
 	@Column(name="billableamount")
-	private double billingAmount;
+	private Double billingAmount;
 	
 	@Column(name="remarks1")
 	private String remarks1;
 	
-	@Column(name="remarks")
+	@Column(name="remarks2")
 	private String remarks2;
+	
+	@OneToOne(mappedBy = "billing", cascade = CascadeType.ALL)
+    private BillingRate bilingRate;
+	
 	public int getVersion() {
 		return version;
 	}
 	public void setVersion(int version) {
 		this.version = version;
 	}
+
 	public String getProjectId() {
 		return projectId;
 	}
@@ -109,6 +126,12 @@ public class Billing  implements Serializable{
 	public void setDmName(String dmName) {
 		this.dmName = dmName;
 	}
+	public String getBrnname() {
+		return brnname;
+	}
+	public void setBrnname(String brnname) {
+		this.brnname = brnname;
+	}
 	public String getWonNumber() {
 		return wonNumber;
 	}
@@ -133,40 +156,41 @@ public class Billing  implements Serializable{
 	public void setOfficeId(String officeId) {
 		this.officeId = officeId;
 	}
-	public int getBillableHrs() {
+	
+	public Integer getBillableHrs() {
 		return billableHrs;
 	}
-	public void setBillableHrs(int billableHrs) {
+	public void setBillableHrs(Integer billableHrs) {
 		this.billableHrs = billableHrs;
 	}
-	public int getBillableDays() {
+	public Double getBillableDays() {
 		return billableDays;
 	}
-	public void setBillableDays(int billableDays) {
+	public void setBillableDays(Double billableDays) {
 		this.billableDays = billableDays;
 	}
-	public int getEffortHrs() {
+	public Double getEffortHrs() {
 		return effortHrs;
 	}
-	public void setEffortHrs(int effortHrs) {
+	public void setEffortHrs(Double effortHrs) {
 		this.effortHrs = effortHrs;
 	}
-	public int getExtraHrs() {
+	public Double getExtraHrs() {
 		return extraHrs;
 	}
-	public void setExtraHrs(int extraHrs) {
+	public void setExtraHrs(Double extraHrs) {
 		this.extraHrs = extraHrs;
 	}
-	public double getExtraBilling() {
+	public Double getExtraBilling() {
 		return extraBilling;
 	}
-	public void setExtraBilling(double extraBilling) {
+	public void setExtraBilling(Double extraBilling) {
 		this.extraBilling = extraBilling;
 	}
-	public double getBillingAmount() {
+	public Double getBillingAmount() {
 		return billingAmount;
 	}
-	public void setBillingAmount(double billingAmount) {
+	public void setBillingAmount(Double billingAmount) {
 		this.billingAmount = billingAmount;
 	}
 	public String getRemarks1() {
@@ -181,12 +205,14 @@ public class Billing  implements Serializable{
 	public void setRemarks2(String remarks2) {
 		this.remarks2 = remarks2;
 	}
-
-
-	public String getBrnname() {
-		return brnname;
+	public BillingRate getBilingRate() {
+		return bilingRate;
 	}
-	public void setBrnname(String brnname) {
-		this.brnname = brnname;
+	public void setBilingRate(BillingRate bilingRate) {
+		this.bilingRate = bilingRate;
 	}
+	public void setVersion(Integer version) {
+		this.version = version;
+	}
+
 }

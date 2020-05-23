@@ -26,6 +26,147 @@ public class Employee implements Serializable{
 	private static final long serialVersionUID = 1L;
 
 
+	@Id 
+	@Column(name="employee_id")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int employeeId;
+	
+	
+	@OneToMany(targetEntity=EmployeeAllocation.class, mappedBy = "empId",orphanRemoval = false, fetch = FetchType.LAZY)
+	private List<EmployeeAllocation> employeeAllocations;
+	
+//	@OneToOne(fetch = FetchType.LAZY, mappedBy = "employeeId")
+//	private EmployeeAllocationPercentage employeeAllocationPercentage;
+
+	
+
+	public Employee() {
+		super();
+	}
+
+	@Column(name="employee_type")
+    private String employeeType;
+
+    @Column(name="current_location")
+    private String currentLocation;
+    
+
+
+    @Column(name="office_id")
+    private String officeId;
+    
+    @Column(name="first_name")
+    private String firstName;
+    
+    @Column(name="last_name")
+    private String lastName;
+    
+    @Column(name="base_branch")
+    private String baseBranch;
+    
+    @Column(name="dob")
+    private String dob;
+    
+    @Column(name="gender")
+    private String gender;
+    
+    @Column(name="overall_exp")
+    private String overallExp;
+    
+    @Column(name="aims_exp")
+    private String aimsExp;
+    
+    @Column(name="base_country")
+    private String baseCountry;
+    
+    @Column(name="base_dc")
+    private String baseDc;
+    
+    @Column(name="category_name")
+    private String categoryName;
+    
+    @Column(name="grade")
+    private String grade;
+    
+    @Column(name="cc_indicator")
+    private String ccIndicator;
+    
+    @Column(name="mapp_designation")
+    private String mappDesignation;
+    
+    @Column(name="senior_junior")
+    private String seniorJunior;
+    @Column(name="person_type")
+    private String personType;
+
+    @Column(name="sub_person_type")
+    private String subPersonType;
+    
+    @Column(name="sob_name")
+    private String sobName;
+    
+    @Column(name="joining_date")
+    private String joiningDate;
+    
+    @Column(name="previous_experience")
+    private String prevExp;
+    
+    @Column(name="total_experience")
+    private String totalExp;
+    
+    @Column(name="brm")
+    private String brm;
+    
+    @Column(name="em")
+    private String em;
+    
+    @Column(name="dm")
+    private String dm;
+    
+    @Column(name="deputebranch")
+    private String deputeBranch;
+    
+    @Column(name="deputedc")
+    private String deputeDC;
+    
+    @Column(name="employeelocation")
+    private String empLocation;
+    
+    @Column(name="exployeetravel")
+    private String empTravel;
+    
+    @Column(name="traveltype")
+    private String travelType;
+    
+    @Column(name="employeecluster")
+    private String empCluster;
+    
+    @Column(name="teamrole")
+    private String teamRole;
+    
+    @Column(name="parentiou")
+    private String parentIOU;
+    
+    @Column(name="childiou")
+    private String childIOU;
+    
+    @Column(name="platforms")
+    private String platforms;
+    
+    @Column(name="dc")
+    private String dc;
+    
+    @Column(name="site")
+    private String site;
+    
+    @Column(name="created_at")
+    private String createdAT;
+    
+    @Column(name="status")
+    private String status;
+    
+ 	@Column(name="expired_ind")
+ 	private String expiredInd;
 
 	public int getEmployeeId() {
 		return employeeId;
@@ -33,6 +174,14 @@ public class Employee implements Serializable{
 
 	public void setEmployeeId(int employeeId) {
 		this.employeeId = employeeId;
+	}
+
+	public List<EmployeeAllocation> getEmployeeAllocations() {
+		return employeeAllocations;
+	}
+
+	public void setEmployeeAllocations(List<EmployeeAllocation> employeeAllocations) {
+		this.employeeAllocations = employeeAllocations;
 	}
 
 	public String getEmployeeType() {
@@ -49,6 +198,14 @@ public class Employee implements Serializable{
 
 	public void setCurrentLocation(String currentLocation) {
 		this.currentLocation = currentLocation;
+	}
+
+	public String getOfficeId() {
+		return officeId;
+	}
+
+	public void setOfficeId(String officeId) {
+		this.officeId = officeId;
 	}
 
 	public String getFirstName() {
@@ -139,115 +296,189 @@ public class Employee implements Serializable{
 		this.grade = grade;
 	}
 
-	@Id 
-	@Column(name="id")
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int employeeId;
-	
-	
-	@OneToMany(targetEntity=EmployeeAllocation.class, mappedBy = "empId",orphanRemoval = false, fetch = FetchType.LAZY)
-	private List<EmployeeAllocation> employeeAllocations;
-	
-	@OneToOne(fetch = FetchType.LAZY, mappedBy = "employeeId")
-	private EmployeeAllocationPercentage employeeAllocationPercentage;
-
-	
-
-	public EmployeeAllocationPercentage getEmployeeAllocationPercentage() {
-		return employeeAllocationPercentage;
+	public String getCcIndicator() {
+		return ccIndicator;
 	}
 
-	public void setEmployeeAllocationPercentage(EmployeeAllocationPercentage employeeAllocationPercentage) {
-		this.employeeAllocationPercentage = employeeAllocationPercentage;
+	public void setCcIndicator(String ccIndicator) {
+		this.ccIndicator = ccIndicator;
 	}
 
-	public Date getCreatedAt() {
-		return createdAt;
+	public String getPersonType() {
+		return personType;
 	}
 
-	public void setCreatedAt(Date createdAt) {
-		this.createdAt = createdAt;
+	public void setPersonType(String personType) {
+		this.personType = personType;
 	}
 
-	public List<EmployeeAllocation> getEmployeeAllocations() {
-		return employeeAllocations;
+	public String getSubPersonType() {
+		return subPersonType;
 	}
 
-	public void setEmployeeAllocations(List<EmployeeAllocation> employeeAllocations) {
-		this.employeeAllocations = employeeAllocations;
+	public void setSubPersonType(String subPersonType) {
+		this.subPersonType = subPersonType;
 	}
 
-	public Employee(int employeeId, List<EmployeeAllocation> employeeAllocation, String employeeType, String currentLocation, String firstName, String lastName,
-			String baseBranch, String dob, String gender, String overallExp, String aimsExp, String baseCountry,
-			String baseDc, String categoryName, String grade) {
-		super();
-		this.employeeAllocations = employeeAllocation;
-		this.employeeId = employeeId;
-		this.employeeType = employeeType;
-		this.currentLocation = currentLocation;
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.baseBranch = baseBranch;
-		this.dob = dob;
-		this.gender = gender;
-		this.overallExp = overallExp;
-		this.aimsExp = aimsExp;
-		this.baseCountry = baseCountry;
-		this.baseDc = baseDc;
-		this.categoryName = categoryName;
-		this.grade = grade;
+	public String getSobName() {
+		return sobName;
 	}
 
-	public Employee() {
-		super();
+	public void setSobName(String sobName) {
+		this.sobName = sobName;
 	}
 
-	@Column(name="employee_type")
-    private String employeeType;
+	public String getJoiningDate() {
+		return joiningDate;
+	}
 
-    @Column(name="current_location")
-    private String currentLocation;
-    
-    @Column(name="first_name")
-    private String firstName;
-    
-    @Column(name="last_name")
-    private String lastName;
-    
-    @Column(name="base_branch")
-    private String baseBranch;
-    
-    @Column(name="dob")
-    private String dob;
-    
-    @Column(name="gender")
-    private String gender;
-    
-    @Column(name="overall_exp")
-    private String overallExp;
-    
-    @Column(name="aims_exp")
-    private String aimsExp;
-    
-    @Column(name="base_country")
-    private String baseCountry;
-    
-    @Column(name="base_dc")
-    private String baseDc;
-    
-    @Column(name="category_name")
-    private String categoryName;
-    
-    @Column(name="grade")
-    private String grade;
-    
-    @Column(name="created_at")
-    private Date createdAt;
-    
-    @Column(name="status")
-    private String status;
+	public void setJoiningDate(String joiningDate) {
+		this.joiningDate = joiningDate;
+	}
 
+	public String getPrevExp() {
+		return prevExp;
+	}
 
+	public void setPrevExp(String prevExp) {
+		this.prevExp = prevExp;
+	}
+
+	public String getTotalExp() {
+		return totalExp;
+	}
+
+	public void setTotalExp(String totalExp) {
+		this.totalExp = totalExp;
+	}
+
+	public String getBrm() {
+		return brm;
+	}
+
+	public void setBrm(String brm) {
+		this.brm = brm;
+	}
+
+	public String getEm() {
+		return em;
+	}
+
+	public void setEm(String em) {
+		this.em = em;
+	}
+
+	public String getDm() {
+		return dm;
+	}
+
+	public void setDm(String dm) {
+		this.dm = dm;
+	}
+
+	public String getDeputeBranch() {
+		return deputeBranch;
+	}
+
+	public void setDeputeBranch(String deputeBranch) {
+		this.deputeBranch = deputeBranch;
+	}
+
+	public String getDeputeDC() {
+		return deputeDC;
+	}
+
+	public void setDeputeDC(String deputeDC) {
+		this.deputeDC = deputeDC;
+	}
+
+	public String getEmpLocation() {
+		return empLocation;
+	}
+
+	public void setEmpLocation(String empLocation) {
+		this.empLocation = empLocation;
+	}
+
+	public String getEmpTravel() {
+		return empTravel;
+	}
+
+	public void setEmpTravel(String empTravel) {
+		this.empTravel = empTravel;
+	}
+
+	public String getTravelType() {
+		return travelType;
+	}
+
+	public void setTravelType(String travelType) {
+		this.travelType = travelType;
+	}
+
+	public String getEmpCluster() {
+		return empCluster;
+	}
+
+	public void setEmpCluster(String empCluster) {
+		this.empCluster = empCluster;
+	}
+
+	public String getTeamRole() {
+		return teamRole;
+	}
+
+	public void setTeamRole(String teamRole) {
+		this.teamRole = teamRole;
+	}
+
+	public String getParentIOU() {
+		return parentIOU;
+	}
+
+	public void setParentIOU(String parentIOU) {
+		this.parentIOU = parentIOU;
+	}
+
+	public String getChildIOU() {
+		return childIOU;
+	}
+
+	public void setChildIOU(String childIOU) {
+		this.childIOU = childIOU;
+	}
+
+	public String getPlatforms() {
+		return platforms;
+	}
+
+	public void setPlatforms(String platforms) {
+		this.platforms = platforms;
+	}
+
+	public String getDc() {
+		return dc;
+	}
+
+	public void setDc(String dc) {
+		this.dc = dc;
+	}
+
+	public String getSite() {
+		return site;
+	}
+
+	public void setSite(String site) {
+		this.site = site;
+	}
+
+	public String getCreatedAT() {
+		return createdAT;
+	}
+
+	public void setCreatedAT(String createdAT) {
+		this.createdAT = createdAT;
+	}
 
 	public String getStatus() {
 		return status;
@@ -256,6 +487,32 @@ public class Employee implements Serializable{
 	public void setStatus(String status) {
 		this.status = status;
 	}
+
+	public String getExpiredInd() {
+		return expiredInd;
+	}
+
+	public void setExpiredInd(String expiredInd) {
+		this.expiredInd = expiredInd;
+	}
+
+	public String getMappDesignation() {
+		return mappDesignation;
+	}
+
+	public void setMappDesignation(String mappDesignation) {
+		this.mappDesignation = mappDesignation;
+	}
+
+	public String getSeniorJunior() {
+		return seniorJunior;
+	}
+
+	public void setSeniorJunior(String seniorJunior) {
+		this.seniorJunior = seniorJunior;
+	}
+ 	
+
     
     
 }

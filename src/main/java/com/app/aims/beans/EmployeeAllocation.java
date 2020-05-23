@@ -3,6 +3,7 @@ package com.app.aims.beans;
 import java.io.Serializable;
 import java.time.LocalDate;
 import javax.persistence.Column;
+import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -24,20 +25,23 @@ public class EmployeeAllocation implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
-	@Id 
-	@Column(name="id")
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "employee_id",insertable = false, updatable = false)
-	@Fetch(FetchMode.JOIN)
+//
+//	@Id 
+//	@Column(name="allocation_id")
+//	@GeneratedValue(strategy = GenerationType.IDENTITY)
+//	private int id;
+//	
+//	@ManyToOne(fetch = FetchType.LAZY)
+//	@JoinColumn(name = "employee_id",insertable = false, updatable = false)
+//	@Fetch(FetchMode.JOIN)
+	@Id
+	@ManyToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="employee_id", nullable=false, insertable = false, updatable = false)
     private Employee empId;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="project_id" ,insertable = false, updatable = false )
-	@Fetch(FetchMode.JOIN)
+	@Id
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name="project_id" ,insertable = false, updatable = false )	
     private Project project;
 	
 	/*
@@ -47,15 +51,18 @@ public class EmployeeAllocation implements Serializable{
 	 * 
 	 * @Fetch(FetchMode.JOIN) private WonPortfolio won;
 	 */
+	@Column(name="won_id"  )
+	private Integer wonId;
+	
 	
 	@Column(name="project_change_date"  )
 	@NotNull
     private LocalDate projectChangeDate;
 		
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="portfolio_id")
-	@Fetch(FetchMode.JOIN)
-    private Portfolio portfolioId;
+//	@ManyToOne(fetch = FetchType.LAZY)
+//	@JoinColumn(name="portfolio_id")
+//	@Fetch(FetchMode.JOIN)
+//    private Portfolio portfolioId;
 	
 	@Column(name="start_date"  )
 	@NotNull
@@ -68,39 +75,13 @@ public class EmployeeAllocation implements Serializable{
 	@Column(name="travel_type"  )
 	@NotNull
     private String travelType;
-	
-	@Column(name="employee_travel_country")
-	@NotNull
-    private String employeeTravelCountry;
-	
-	@Column(name="team_role")
-	@NotNull
-    private String teamRole;
-	
-	@Column(name="employee_active_client_id")
-	@NotNull
-    private String employeeActiveClientInd;
-	
-	@Column(name="depute_branch")
-	@NotNull
-    private String deputeBranch;
-	
-	@Column(name="depute_dc")
-	@NotNull
-    private String deputeDc;
-	
-	@Column(name="employee_location_id")
-	@NotNull
-    private String employeeLocationId;
-
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
+//	
+//	@Column(name="employee_travel_country")
+//	@NotNull
+//    private String employeeTravelCountry;
+//	
+	@Column(name="percentage_allocation")
+	private double percAllocation = 0;
 	
 	
 	public Employee getEmpId() {
@@ -119,13 +100,13 @@ public class EmployeeAllocation implements Serializable{
 		this.project = project;
 	}
 
-	
-	/*
-	 * public WonPortfolio getWon() { return won; }
-	 * 
-	 * public void setWonId(WonPortfolio won) { this.won = won; }
-	 */
-	 
+	public Integer getWonId() {
+		return wonId;
+	}
+
+	public void setWonId(Integer wonId) {
+		this.wonId = wonId;
+	}
 
 	public LocalDate getProjectChangeDate() {
 		return projectChangeDate;
@@ -133,14 +114,6 @@ public class EmployeeAllocation implements Serializable{
 
 	public void setProjectChangeDate(LocalDate projectChangeDate) {
 		this.projectChangeDate = projectChangeDate;
-	}
-
-	public Portfolio getPortfolioId() {
-		return portfolioId;
-	}
-
-	public void setPortfolioId(Portfolio portfolioId) {
-		this.portfolioId = portfolioId;
 	}
 
 	public LocalDate getStartDate() {
@@ -167,53 +140,30 @@ public class EmployeeAllocation implements Serializable{
 		this.travelType = travelType;
 	}
 
-	public String getEmployeeTravelCountry() {
-		return employeeTravelCountry;
+	public double getPercAllocation() {
+		return percAllocation;
 	}
 
-	public void setEmployeeTravelCountry(String employeeTravelCountry) {
-		this.employeeTravelCountry = employeeTravelCountry;
+	public void setPercAllocation(double percAllocation) {
+		this.percAllocation = percAllocation;
 	}
 
-	public String getTeamRole() {
-		return teamRole;
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
 
-	public void setTeamRole(String teamRole) {
-		this.teamRole = teamRole;
+	public void setProject(Project project) {
+		this.project = project;
 	}
 
-	public String getEmployeeActiveClientInd() {
-		return employeeActiveClientInd;
-	}
+	
+	/*
+	 * public WonPortfolio getWon() { return won; }
+	 * 
+	 * public void setWonId(WonPortfolio won) { this.won = won; }
+	 */
+	 
 
-	public void setEmployeeActiveClientInd(String employeeActiveClientInd) {
-		this.employeeActiveClientInd = employeeActiveClientInd;
-	}
-
-	public String getDeputeBranch() {
-		return deputeBranch;
-	}
-
-	public void setDeputeBranch(String deputeBranch) {
-		this.deputeBranch = deputeBranch;
-	}
-
-	public String getDeputeDc() {
-		return deputeDc;
-	}
-
-	public void setDeputeDc(String deputeDc) {
-		this.deputeDc = deputeDc;
-	}
-
-	public String getEmployeeLocationId() {
-		return employeeLocationId;
-	}
-
-	public void setEmployeeLocationId(String employeeLocationId) {
-		this.employeeLocationId = employeeLocationId;
-	}
 	
 	
 }

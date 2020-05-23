@@ -2,6 +2,7 @@ package com.app.aims.dao.impl;
 
 import java.util.Date;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.hibernate.Session;
@@ -62,8 +63,9 @@ public class BatchDaoImpl implements BatchDao {
 			}
 		}
 	}
-
-	public void _updateStatusIfAlreadyExistBR() {
+	
+	@Override
+	public void updateStatusIfAlreadyExistBR() {
 		Session session = sessionFactory.getCurrentSession();
 		List<BillingFileData> billingDataList = bdRepository.findAll();
 		if(billingDataList != null && billingDataList.size() > 0) {
@@ -78,8 +80,9 @@ public class BatchDaoImpl implements BatchDao {
 		}
 	}
 	
-	@Override
-	public void updateStatusIfAlreadyExistBR() {
+	
+	public void _updateStatusIfAlreadyExistBR() {
+		try {
 		Session session = sessionFactory.getCurrentSession();
 		BatchAuditDetails batchAuditDetails = new BatchAuditDetails();
 		batchAuditDetails.setBatchStatus("U");
@@ -89,6 +92,9 @@ public class BatchDaoImpl implements BatchDao {
 		batchAuditDetailsRes.setBatchStatus("A");
 		batchAuditDetailsRes.setChangedDate(new Date());
 		session.update(batchAuditDetails);
+		} catch (NoSuchElementException e) {
+			return;
+		}
 
 	}
 }

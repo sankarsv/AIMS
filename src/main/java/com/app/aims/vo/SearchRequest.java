@@ -8,6 +8,10 @@ public class SearchRequest {
 	
 	private Integer glId;
 	
+	private String dmName;
+	
+	private String brmName;
+	
 	private String empName;
 	
 	private String teamRole;
@@ -60,6 +64,22 @@ public class SearchRequest {
 
 	public void setBaseBranch(String baseBranch) {
 		this.baseBranch = baseBranch;
+	}
+
+	public String getDmName() {
+		return dmName;
+	}
+
+	public void setDmName(String dmName) {
+		this.dmName = dmName;
+	}
+
+	public String getBrmName() {
+		return brmName;
+	}
+
+	public void setBrmName(String brmName) {
+		this.brmName = brmName;
 	}
 
 	

@@ -45,9 +45,6 @@ public class EmployeeController {
     UploadXlsService uploadXlsService;
     
 
-    @Autowired
-    BillingService billingService;
-
     @PostMapping(value="/upload")
     public ResponseEntity<Void> uploadXls(@RequestParam("file") MultipartFile file){
     	try {
@@ -123,9 +120,13 @@ public class EmployeeController {
     	if(req.getEmpId() != null) {
     		searchResponseList = employeeService.leftJoinData(req.getEmpId());
     	} else if(req.getGlId() != null) {
-    		searchResponseList = employeeService.leftJoinDataByBrm(req.getGlId());
+    		searchResponseList = employeeService.leftJoinDataByGL(req.getGlId());
+    	}else if(req.getBrmName() != null) {
+    		searchResponseList = employeeService.leftJoinDataByGL(req.getBrmName());
     	} else if (req.getDmId() != null) {
     		searchResponseList = employeeService.leftJoinDataByDM(req.getDmId());
+    	}else if (req.getDmName() != null) {
+    		searchResponseList = employeeService.leftJoinDataByDM(req.getDmName());
     	} else {
     	 return new ResponseEntity<>("Bad Request", HttpStatus.BAD_REQUEST);
     	}
@@ -153,14 +154,6 @@ public class EmployeeController {
         return new ResponseEntity<Employee>(HttpStatus.NO_CONTENT);
     }
     
-    @GetMapping(value="/getBRMDetails", headers="Accept=application/json")
-    public ResponseEntity<Object> getBRMDetails()
-    {
-     
-    	List<BRMDetails> brmDetails = billingService.getBRMDetails();
-    	return new ResponseEntity<Object>(brmDetails, HttpStatus.OK);
-    	
-    }
     
     
 }

@@ -12,8 +12,8 @@ import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@Entity
-@Table(name="portfolio",schema="aims")
+//@Entity
+//@Table(name="portfolio",schema="aims")
 public class Portfolio implements Serializable {
 	
 	/**
