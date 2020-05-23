@@ -10,7 +10,7 @@ public class SearchRequest {
 	
 	private String dmName;
 	
-	private String glName;
+	private String brmName;
 	
 	private String empName;
 	
@@ -74,12 +74,12 @@ public class SearchRequest {
 		this.dmName = dmName;
 	}
 
-	public String getGlName() {
-		return glName;
+	public String getBrmName() {
+		return brmName;
 	}
 
-	public void setGlName(String glName) {
-		this.glName = glName;
+	public void setBrmName(String brmName) {
+		this.brmName = brmName;
 	}
 
 	

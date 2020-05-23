@@ -78,12 +78,12 @@ public class BillingDaoImpl implements BillingDao {
 			BillingVersion billingVersion = new BillingVersion();
 			BillingVersion billingVersionRes = null;
 			if(StringUtils.hasText(req.getMonth()))billingVersion.setMonth(req.getMonth());
-			if(StringUtils.hasText(req.getBrmId()))billingVersion.setBrmId(req.getBrmId());
+			if(StringUtils.hasText(req.getBrmName()))billingVersion.setBrmId(req.getBrmName());
 			if(StringUtils.hasText(req.getYear()))billingVersion.setYear(new Integer(req.getYear()).intValue());
 			if(StringUtils.hasText(req.getVersion()))billingVersion.setVersion((new Integer(req.getVersion()).intValue()));
 			Example<BillingVersion> billingVersionEx = Example.of(billingVersion);
 			Optional<BillingVersion> optBillingVersion = billingVerRepo.findOne(billingVersionEx);
-			if(optBillingVersion != null) {
+			if(optBillingVersion != null && optBillingVersion.get() != null) {
 				billingVersionRes = optBillingVersion.get();
 			}
 			
@@ -129,7 +129,7 @@ public class BillingDaoImpl implements BillingDao {
 		
 		@Override
 		public void updateFreezeInd(BillingDetailsReq req) {
-			int res = billingVerRepo.updateFreezeIndicator(req.getFreezeInd(), req.getBrmId(), req.getMonth(), req.getYear());
+			int res = billingVerRepo.updateFreezeIndicator(req.getFreezeInd(), req.getBrmName(), req.getMonth(), Integer.parseInt(req.getYear()));
 			if(!(res > 0)) {
 				throw new NoSuchElementException();
 			}

@@ -127,7 +127,7 @@ public class BillingServiceImpl implements BillingService {
             resp.setBillableHrs(bl.getBillableHrs());
             resp.setBillingAmount(bl.getBillingAmount());
             resp.setBrmId(versionDet.getBrmId());
-            resp.setBrnname(bl.getBrnname());
+            resp.setBrmName(bl.getBrnname());
             resp.setDmId(bl.getDmId());
             resp.setDmName(bl.getDmName());
             resp.setEffortHrs(bl.getEffortHrs());
@@ -136,6 +136,7 @@ public class BillingServiceImpl implements BillingService {
             resp.setExtraBilling(bl.getExtraBilling());
             resp.setExtraHrs(bl.getExtraHrs());
             resp.setFreezeInd(versionDet.getFreezeInd());
+            resp.setVersion(versionDet.getVersion().toString());
             resp.setLocationId(bl.getLocationId());
             resp.setOfficeId(bl.getOfficeId());
             resp.setProjectId(bl.getProjectId());
@@ -205,14 +206,14 @@ public class BillingServiceImpl implements BillingService {
 					  Cell amountCell = row.createCell(++cellNum);
 					  amountCell.setCellStyle(cs);
 					  amountCell.setCellValue(billingDetails.getExtraBilling());
-					  totalBillingAmt = totalBillingAmt + billingDetails.getExtraBilling();
+					  totalBillingAmt = totalBillingAmt + billingDetails.getBillingAmount();
 					  row.createCell(++cellNum).setCellValue(billingDetails.getBillingAmount());
 					  row.createCell(++cellNum).setCellValue(billingDetails.getRemarks1()); // PL
 					  row.createCell(++cellNum).setCellValue(billingDetails.getRemarks2());
 					 
 
 				}
-				Cell totalAmountCell = sheet.createRow(0).createCell(14);
+				Cell totalAmountCell = sheet.createRow(0).createCell(15);
 				totalAmountCell.setCellStyle(cs);
 				totalAmountCell.setCellValue(totalBillingAmt);
 

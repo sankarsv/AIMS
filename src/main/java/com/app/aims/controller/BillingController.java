@@ -32,7 +32,7 @@ public class BillingController {
 	@Autowired
     BillingService billingService;
 	
-	@PostMapping(value="/getBRMDetails", headers="Accept=application/json")
+	@GetMapping(value="/getBRMDetails", headers="Accept=application/json")
     public ResponseEntity<Object> getBRMDetails()
     {
      
@@ -116,7 +116,7 @@ public class BillingController {
 	@PostMapping(value="/downloadBilling")
     public ResponseEntity<byte[]>  exportHCData(@RequestBody BillingDetailsReq billingDetailReq) throws Exception {
     	if(!((StringUtils.hasText(billingDetailReq.getVersion())) || 
-    			(StringUtils.hasText(billingDetailReq.getBrmId()) && StringUtils.hasText(billingDetailReq.getMonth()) && StringUtils.hasText(billingDetailReq.getYear())))) {
+    			(StringUtils.hasText(billingDetailReq.getBrmName()) && StringUtils.hasText(billingDetailReq.getMonth()) && StringUtils.hasText(billingDetailReq.getYear())))) {
     		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
     	DownloadXlsResponse response=	billingService.downloadXlsBillingReport(billingDetailReq);
@@ -154,7 +154,7 @@ public class BillingController {
 	}
 
 	private boolean validReq(BillingDetailsReq billingDetailReq) {
-		return (StringUtils.hasText(billingDetailReq.getBrmId()) && StringUtils.hasText(billingDetailReq.getMonth()) && StringUtils.hasText(billingDetailReq.getYear()));
+		return (StringUtils.hasText(billingDetailReq.getBrmName()) && StringUtils.hasText(billingDetailReq.getMonth()) && StringUtils.hasText(billingDetailReq.getYear()));
 	}
 	
 	private boolean validReq(BillingVersion billingVersion) {

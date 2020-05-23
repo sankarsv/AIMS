@@ -1,10 +1,8 @@
 package com.app.aims.beans;
 
-import com.app.aims.beans.Billing.BillingId;
+import com.app.aims.beans.BillingId;
 
 import java.io.Serializable;
-import java.util.Objects;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -19,16 +17,22 @@ import javax.persistence.UniqueConstraint;
 @IdClass(BillingId.class)
 public class Billing  implements Serializable{
 	
+	public Billing() {
+		super();
+	}
+	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -4423840919843137706L;
+	
 	@Id
 	@Column(name="version")
 	private Integer version;
 	
 	private String projectId; //NA
 	
+	@Id
 	@Column(name="employee_id")
 	private String empId;
 	
@@ -59,7 +63,7 @@ public class Billing  implements Serializable{
 	private String officeId;
 	
 	@Column(name="billablehours")
-	private int billableHrs;
+	private Integer billableHrs;
 	
 	@Column(name="billabledays")
 	private Double billableDays;	
@@ -79,7 +83,7 @@ public class Billing  implements Serializable{
 	@Column(name="remarks1")
 	private String remarks1;
 	
-	@Column(name="remarks")
+	@Column(name="remarks2")
 	private String remarks2;
 	
 	@OneToOne(mappedBy = "billing", cascade = CascadeType.ALL)
@@ -152,10 +156,11 @@ public class Billing  implements Serializable{
 	public void setOfficeId(String officeId) {
 		this.officeId = officeId;
 	}
-	public int getBillableHrs() {
+	
+	public Integer getBillableHrs() {
 		return billableHrs;
 	}
-	public void setBillableHrs(int billableHrs) {
+	public void setBillableHrs(Integer billableHrs) {
 		this.billableHrs = billableHrs;
 	}
 	public Double getBillableDays() {
@@ -210,49 +215,4 @@ public class Billing  implements Serializable{
 		this.version = version;
 	}
 
-	public class BillingId implements Serializable{
-		
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = 5656532316206560404L;
-		private String empId;
-		private int version;
-		
-		public String getEmpId() {
-			return empId;
-		}
-		public void setEmpId(String empId) {
-			this.empId = empId;
-		}
-		public int getVersion() {
-			return version;
-		}
-		public void setVersion(int version) {
-			this.version = version;
-		}
-		
-		BillingId(String empId, int version) {
-			this.empId = empId;
-			this.version = version;
-		}
-		
-		@Override
-		public boolean equals(Object o) {
-			if(o == this ) {
-				return true;
-			}
-			if ( o == null || getClass() != o.getClass() ) {
-	            return false;
-	        }
-			BillingId id = (BillingId) o;
-			return id.getEmpId().equalsIgnoreCase(this.empId) && (id.getVersion() == this.version);
-		}
-		
-		@Override
-		public int hashCode() {
-			return Objects.hash(empId, version);
-		}
-	}
-	
 }

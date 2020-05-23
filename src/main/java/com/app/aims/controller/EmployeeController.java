@@ -121,8 +121,8 @@ public class EmployeeController {
     		searchResponseList = employeeService.leftJoinData(req.getEmpId());
     	} else if(req.getGlId() != null) {
     		searchResponseList = employeeService.leftJoinDataByGL(req.getGlId());
-    	}else if(req.getGlName() != null) {
-    		searchResponseList = employeeService.leftJoinDataByGL(req.getGlName());
+    	}else if(req.getBrmName() != null) {
+    		searchResponseList = employeeService.leftJoinDataByGL(req.getBrmName());
     	} else if (req.getDmId() != null) {
     		searchResponseList = employeeService.leftJoinDataByDM(req.getDmId());
     	}else if (req.getDmName() != null) {

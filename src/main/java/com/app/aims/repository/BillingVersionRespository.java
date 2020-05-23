@@ -13,6 +13,6 @@ public interface BillingVersionRespository extends JpaRepository<BillingVersion,
 	
 	@Modifying
     @Query("UPDATE BillingVersion b SET b.freezeInd = :freezeInd WHERE b.brmId = :brmId AND b.month = :month AND b.year = :year")
-    public int updateFreezeIndicator(@Param("freezeInd") String freezeInd, @Param("brmId") String brmId, @Param("month") String month, @Param("year") String year);
+    public int updateFreezeIndicator(@Param("freezeInd") String freezeInd, @Param("brmId") String brmId, @Param("month") String month, @Param("year") Integer year);
 
 }

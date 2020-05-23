@@ -8,7 +8,7 @@ public class BillingDetailsResp extends BaseResponse{
 	
 	private String dmName;
 
-	private String brnname;
+	private String brmName;
 	
 	private String wonNumber;
 	
@@ -33,6 +33,8 @@ public class BillingDetailsResp extends BaseResponse{
 	private String remarks;
 	
 	private String freezeInd;
+	
+	private String version;
 
 	public String getProjectId() {
 		return projectId;
@@ -127,10 +129,17 @@ public class BillingDetailsResp extends BaseResponse{
 	public void setFreezeInd(String freezeInd) {
 		this.freezeInd = freezeInd;
 	}
-	public String getBrnname() {
-		return brnname;
+	public String getBrmName() {
+		return brmName;
 	}
-	public void setBrnname(String brnname) {
-		this.brnname = brnname;
+	public void setBrmName(String brmName) {
+		this.brmName = brmName;
 	}
+	public String getVersion() {
+		return version;
+	}
+	public void setVersion(String version) {
+		this.version = version;
+	}
+	
 }

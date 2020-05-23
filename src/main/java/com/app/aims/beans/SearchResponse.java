@@ -152,6 +152,10 @@ public class SearchResponse {
 	private Integer description;
 	
 	private String employeeActiveBMOId;
+	
+	private String brmName;
+	
+	private String DmName;
 
 	/**
 	 * @return the employeeId
@@ -1134,19 +1138,22 @@ public class SearchResponse {
 	public void setEmployeeActiveBMOId(String employeeActiveBMOId) {
 		this.employeeActiveBMOId = employeeActiveBMOId;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-		
-		
-		
-	
+
+	public String getBrmName() {
+		return brmName;
+	}
+
+	public void setBrmName(String brmName) {
+		this.brmName = brmName;
+	}
+
+	public String getDmName() {
+		return DmName;
+	}
+
+	public void setDmName(String dmName) {
+		DmName = dmName;
+	}
 	
 
 }

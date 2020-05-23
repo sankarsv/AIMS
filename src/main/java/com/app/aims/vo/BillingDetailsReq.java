@@ -4,7 +4,7 @@ public class BillingDetailsReq {
 
 	private String month;
 	private String year;
-	private String brmId;
+	private String brmName;
 	private String freezeInd;
 	private String version;
 
@@ -20,11 +20,12 @@ public class BillingDetailsReq {
 	public void setYear(String year) {
 		this.year = year;
 	}
-	public String getBrmId() {
-		return brmId;
+	
+	public String getBrmName() {
+		return brmName;
 	}
-	public void setBrmId(String brmId) {
-		this.brmId = brmId;
+	public void setBrmName(String brmName) {
+		this.brmName = brmName;
 	}
 	public String getFreezeInd() {
 		return freezeInd;

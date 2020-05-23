@@ -222,7 +222,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 	@Override
 	public List<SearchResponse> leftJoinDataByDM(String dmName) {
 		List<SearchResponse> searchEmpList = new ArrayList<SearchResponse>();
-		List<Employee> emplist = searchRepository.fetchDataLeftJoinByDm(dmName.toUpperCase());
+		List<Employee> emplist = searchRepository.fetchDataLeftJoinByDm(dmName);
 		searchEmpList = prepareSearchResponse(emplist);
 
 		return searchEmpList;
@@ -245,7 +245,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 	@Override
 	public List<SearchResponse> leftJoinDataByGL(String brmName) {
 		List<SearchResponse> searchEmpList = new ArrayList<SearchResponse>();
-		List<Employee> emplist = searchRepository.fetchDataLeftJoinByBrm(brmName.toUpperCase());
+		List<Employee> emplist = searchRepository.fetchDataLeftJoinByBrm(brmName);
 		searchEmpList = prepareSearchResponse(emplist);
 
 		return searchEmpList;
@@ -288,7 +288,8 @@ public class EmployeeServiceImpl implements EmployeeService {
 	    		 searchResponse.setSeniorJunior(employee.getSeniorJunior());
 	    		 searchResponse.setCcIndicator(employee.getCcIndicator());
 	    		 searchResponse.setMappDesignation(employee.getMappDesignation());
-	    		 
+	    		 searchResponse.setBrmName(employee.getBrm());
+	    		 searchResponse.setDmName(employee.getDm());
 	    		// searchResponse.setWonId(employeeAllocation.getWon().getWonId());
 	    		// searchResponse.setPortfolioId(employeeAllocation.getPortfolioId().getPortfolioId());
 	    		 searchResponse.setStartDate(employeeAllocation.getStartDate());
@@ -299,7 +300,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 			     //searchResponse.setEmployeeActiveBMOId(employee.getEmployeeActiveClientInd());
 				 searchResponse.setDeputeBranch(employee.getDeputeBranch());
 				 searchResponse.setDeputeDc(employee.getDeputeDC());
-				 searchResponse.setEmployeeLocationId(employee.getEmpLocation()); 
+				 searchResponse.setEmployeeLocationId(employee.getEmpLocation());
 				 
 				 
 				 //searchResponse.setPortfolioName(employeeAllocation.getPortfolioId().getPortfolioName());
@@ -326,6 +327,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 				 searchResponse.setProjectHash(employeeAllocation.getProject().getProjectHash());
 				 searchResponse.setProjectLocationWrtIndia(employeeAllocation.getProject().getProjectLocWRTIndia());
 				 searchResponse.setProjectType(employeeAllocation.getProject().getProjectType());
+				 searchResponse.setPersonType(employee.getPersonType());
 				 searchResponse.setPureTurnkeyFlag(employeeAllocation.getProject().getPureTurnkeyFlag());
 				 searchResponse.setSwonCategory(employeeAllocation.getProject().getSwonCategory());
 				 searchResponse.setProjectCluster(employeeAllocation.getProject().getProjectCluster());

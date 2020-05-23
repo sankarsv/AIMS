@@ -45,15 +45,12 @@ public class BillingRate implements Serializable{
 	private String billRate;
 
 	@Column(name = "CURRENCR")
-	@NotNull
 	private String currency;
 	
 	@Column(name = "STARTDATE")
-	@NotNull
 	private Date startDate;
 	
 	@Column(name = "ENDDATE")
-	@NotNull
 	private Date endDate;
 
 
