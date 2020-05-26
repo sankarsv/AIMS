@@ -74,20 +74,15 @@ public class BillingDaoImpl implements BillingDao {
 		}
 	   
 		@Override
-		public BillingVersion getBillingVersion(BillingDetailsReq req) {
+		public List<BillingVersion> getBillingVersion(BillingDetailsReq req) {
 			BillingVersion billingVersion = new BillingVersion();
-			BillingVersion billingVersionRes = null;
 			if(StringUtils.hasText(req.getMonth()))billingVersion.setMonth(req.getMonth());
 			if(StringUtils.hasText(req.getBrmName()))billingVersion.setBrmId(req.getBrmName());
 			if(StringUtils.hasText(req.getYear()))billingVersion.setYear(new Integer(req.getYear()).intValue());
 			if(StringUtils.hasText(req.getVersion()))billingVersion.setVersion((new Integer(req.getVersion()).intValue()));
 			Example<BillingVersion> billingVersionEx = Example.of(billingVersion);
-			Optional<BillingVersion> optBillingVersion = billingVerRepo.findOne(billingVersionEx);
-			if(optBillingVersion != null && optBillingVersion.get() != null) {
-				billingVersionRes = optBillingVersion.get();
-			}
-			
-			return billingVersionRes;
+			List<BillingVersion> billingVersionResList = billingVerRepo.findAll(billingVersionEx);
+			return billingVersionResList;
 
 		}
 

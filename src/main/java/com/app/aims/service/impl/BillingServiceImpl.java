@@ -5,8 +5,11 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -26,7 +29,9 @@ import org.springframework.util.StringUtils;
 import com.app.aims.beans.BRMDetails;
 import com.app.aims.beans.Billing;
 import com.app.aims.beans.BillingVersion;
+import com.app.aims.beans.Employee;
 import com.app.aims.dao.BillingDao;
+import com.app.aims.dao.EmployeeDao;
 import com.app.aims.service.BillingService;
 import com.app.aims.vo.BaseResponse;
 import com.app.aims.vo.BillingDetailUpdateReq;
@@ -40,6 +45,9 @@ public class BillingServiceImpl implements BillingService {
     
     @Autowired
     BillingDao billingDao;
+    
+    @Autowired
+    EmployeeDao employeeDao;
 
 	@Override
 	public List<BRMDetails> getBRMDetails() {
@@ -52,11 +60,13 @@ public class BillingServiceImpl implements BillingService {
 		BillingDetailsResp resp = null;
 		List<BillingDetailsResp> respList= null;
 		try {
-			BillingVersion versionDet = billingDao.getBillingVersion(req);
-			if(versionDet != null) {
+			List<BillingVersion> versionDetList = billingDao.getBillingVersion(req);
+			if(versionDetList != null && versionDetList.size() > 0) {
+				BillingVersion versionDet = versionDetList.get(0);
 				int version = versionDet.getVersion();
+				Map<Integer,Employee> employeeDetailsMap = getEmployeeDetailMap();
 				List<Billing> billingList = billingDao.getBillingDetails(version);
-				respList = populateBillingDetailsList(billingList,versionDet);
+				respList = populateBillingDetailsList(billingList,versionDet,employeeDetailsMap);
 			} else {
 				resp = new BillingDetailsResp();
 				respList = new ArrayList<BillingDetailsResp>();
@@ -81,6 +91,16 @@ public class BillingServiceImpl implements BillingService {
 		return respList;
 	}
 	
+	private Map<Integer,Employee> getEmployeeDetailMap() {
+		Map<Integer,Employee> employeeDetailMap = new HashMap<Integer,Employee>();
+		List<Employee> employeeList = employeeDao.getEmployeeDetails();
+		employeeList.stream().forEach(e -> {
+			employeeDetailMap.put(e.getEmployeeId(), e);
+		});
+		return employeeDetailMap;
+		
+	}
+
 	@Override
 	public BaseResponse updateBillingDetails(BillingDetailUpdateReq req) {
 		BaseResponse resp = null;
@@ -119,7 +139,7 @@ public class BillingServiceImpl implements BillingService {
 		
 	}
 
-	private List<BillingDetailsResp> populateBillingDetailsList(List<Billing> billingList, BillingVersion versionDet) {
+	private List<BillingDetailsResp> populateBillingDetailsList(List<Billing> billingList, BillingVersion versionDet, Map<Integer, Employee> employeeDetailsMap) {
 		
 		List<BillingDetailsResp> result = billingList.stream().map(bl -> {
 			BillingDetailsResp resp = new BillingDetailsResp();
@@ -127,18 +147,19 @@ public class BillingServiceImpl implements BillingService {
             resp.setBillableHrs(bl.getBillableHrs());
             resp.setBillingAmount(bl.getBillingAmount());
             resp.setBrmId(versionDet.getBrmId());
-            resp.setBrmName(bl.getBrnname());
+            resp.setBrmName(employeeDetailsMap.get(bl.getEmpId()).getBrm());
             resp.setDmId(bl.getDmId());
             resp.setDmName(bl.getDmName());
             resp.setEffortHrs(bl.getEffortHrs());
             resp.setEmpId(bl.getEmpId());
-            resp.setEmpName(bl.getEmpName());
+            String empName = employeeDetailsMap.get(bl.getEmpId()).getFirstName() +" "+employeeDetailsMap.get(bl.getEmpId()).getLastName();
+            resp.setEmpName(empName);
             resp.setExtraBilling(bl.getExtraBilling());
             resp.setExtraHrs(bl.getExtraHrs());
             resp.setFreezeInd(versionDet.getFreezeInd());
             resp.setVersion(versionDet.getVersion().toString());
             resp.setLocationId(bl.getLocationId());
-            resp.setOfficeId(bl.getOfficeId());
+            resp.setOfficeId(employeeDetailsMap.get(bl.getEmpId()).getOfficeId());
             resp.setProjectId(bl.getProjectId());
             resp.setRemarks(addRemarks(bl.getRemarks1(),bl.getRemarks2()));
             resp.setStoName(bl.getStoName());
@@ -164,15 +185,19 @@ public class BillingServiceImpl implements BillingService {
 		Integer version = null;
 		DownloadXlsResponse response = null;
 		BillingVersion versionDet = null;
-		versionDet = billingDao.getBillingVersion(req);
-		if (versionDet != null) {
+		List<BillingVersion> versionDetList = billingDao.getBillingVersion(req);
+		if(versionDetList != null && versionDetList.size() > 0) {
+			   versionDet = versionDetList.get(0);
 				version = versionDet.getVersion();
 			}
 		else {
 			throw new NoSuchElementException();
 		}
 		List<Billing> billingList = billingDao.getBillingDetails(version);
-
+		if(billingList != null && billingList.size() > 0) {
+			if(req.getBillingDetailsFilter() != null) {
+				billingList = filterBillingList(req, billingList);
+			}
 		try {
 			Resource resource = new ClassPathResource("BillingTemplate.xlsx");
 			InputStream input = resource.getInputStream();
@@ -241,8 +266,120 @@ public class BillingServiceImpl implements BillingService {
 		response = new DownloadXlsResponse();
 		response.addError("Exception Occurred");
 		}
-
+		}else {
+			throw new NoSuchElementException();
+		}
 		return response;
+	}
+
+	private List<Billing> filterBillingList(BillingDetailsReq req, List<Billing> billingList) {
+		Predicate<Billing> dmIdFilter = b -> {
+			if (StringUtils.hasText(req.getBillingDetailsFilter().getDmId())) {
+				if (b.getDmId().contains(req.getBillingDetailsFilter().getDmId())) {
+					return true;
+				}
+
+			}
+			return false;
+		};
+		Predicate<Billing> dmNameFilter = b -> {
+			if (StringUtils.hasText(req.getBillingDetailsFilter().getDmName())) {
+				if (b.getDmName().contains(req.getBillingDetailsFilter().getDmName())) {
+					return true;
+				}
+
+			}
+			return false;
+		};
+		Predicate<Billing> wonNoFilter = b -> {
+			if (StringUtils.hasText(req.getBillingDetailsFilter().getWonNumber())) {
+				if (b.getWonNumber().contains(req.getBillingDetailsFilter().getWonNumber())) {
+					return true;
+				}
+
+			}
+			return false;
+		};
+		Predicate<Billing> stoNameFilter = b -> {
+			if (StringUtils.hasText(req.getBillingDetailsFilter().getStoName())) {
+				if (b.getStoName().contains(req.getBillingDetailsFilter().getStoName())) {
+					return true;
+				}
+
+			}
+			return false;
+		};
+		Predicate<Billing> billableHrsFilter = b -> {
+			if (req.getBillingDetailsFilter().getBillableHrs() != null) {
+				String reqBillableHrs = String.valueOf(req.getBillingDetailsFilter().getBillableHrs());
+				String resBillableHrs = String.valueOf(b.getBillableHrs());
+				if (resBillableHrs.startsWith(reqBillableHrs)) {
+					return true;
+				}
+			}
+			return false;
+		};
+		Predicate<Billing> billableDaysFilter = b -> {
+			if (req.getBillingDetailsFilter().getBillableDays() != null) {
+				String reqBillableDays = String.valueOf(req.getBillingDetailsFilter().getBillableDays());
+				String resBillableDays = String.valueOf(b.getBillableDays());
+				if (resBillableDays.startsWith(reqBillableDays)) {
+					return true;
+				}
+			}
+			return false;
+		};
+		Predicate<Billing> effortHrsFilter = b -> {
+			if (req.getBillingDetailsFilter().getEffortHrs() != null) {
+				String reqEffortHrs = String.valueOf(req.getBillingDetailsFilter().getEffortHrs());
+				String resEffortHrs = String.valueOf(b.getEffortHrs());
+				if (resEffortHrs.startsWith(reqEffortHrs)) {
+					return true;
+				}
+			}
+			return false;
+		};
+		Predicate<Billing> extraHrsFilter = b -> {
+			if (req.getBillingDetailsFilter().getExtraHrs() != null) {
+				String reqExtraHrs = String.valueOf(req.getBillingDetailsFilter().getExtraHrs());
+				String resExtraHrs = String.valueOf(b.getExtraHrs());
+				if (resExtraHrs.startsWith(reqExtraHrs)) {
+					return true;
+				}
+			}
+			return false;
+		};
+		Predicate<Billing> extraBillingFilter = b -> {
+			if (req.getBillingDetailsFilter().getExtraBilling() != null) {
+				String reqExtraBilling = String.valueOf(req.getBillingDetailsFilter().getExtraBilling());
+				String resExtraBilling = String.valueOf(b.getExtraBilling());
+				if (resExtraBilling.startsWith(reqExtraBilling)) {
+					return true;
+				}
+			}
+			return false;
+		};
+		Predicate<Billing> billingAmountFilter = b -> {
+			if (req.getBillingDetailsFilter().getBillingAmount() != null) {
+				String reqBillingAmount = String.valueOf(req.getBillingDetailsFilter().getBillingAmount());
+				String resBillingAmount = String.valueOf(b.getBillingAmount());
+				if (resBillingAmount.startsWith(reqBillingAmount)) {
+					return true;
+				}
+			}
+			return false;
+		};
+		billingList = billingList.stream().filter(dmIdFilter
+												  .and(dmNameFilter)
+												  .and(wonNoFilter)
+												  .and(stoNameFilter)
+												  .and(billableHrsFilter)
+												  .and(billableDaysFilter)
+												  .and(effortHrsFilter)
+												  .and(extraHrsFilter)
+												  .and(extraBillingFilter)
+												  .and(billingAmountFilter)).collect(Collectors.toList());
+		return billingList;
 	}
 	
 

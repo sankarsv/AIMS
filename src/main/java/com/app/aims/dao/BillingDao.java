@@ -12,7 +12,7 @@ public interface BillingDao {
 
 	    public List<BRMDetails> retrieveBRMInfo();
 
-		public BillingVersion getBillingVersion(BillingDetailsReq req);
+		public List<BillingVersion> getBillingVersion(BillingDetailsReq req);
 		
 		public List<Billing> getBillingDetails(int version);
 		

@@ -18,7 +18,7 @@ public class BillingDetailsResp extends BaseResponse{
 	
 	private String officeId;
 	
-	private int billableHrs;
+	private Integer billableHrs;
 	
 	private Double billableDays;	
 	
@@ -80,10 +80,10 @@ public class BillingDetailsResp extends BaseResponse{
 	public void setOfficeId(String officeId) {
 		this.officeId = officeId;
 	}
-	public int getBillableHrs() {
+	public Integer getBillableHrs() {
 		return billableHrs;
 	}
-	public void setBillableHrs(int billableHrs) {
+	public void setBillableHrs(Integer billableHrs) {
 		this.billableHrs = billableHrs;
 	}
 	public Double getBillableDays() {
@@ -104,16 +104,16 @@ public class BillingDetailsResp extends BaseResponse{
 	public void setExtraHrs(Double extraHrs) {
 		this.extraHrs = extraHrs;
 	}
-	public double getExtraBilling() {
+	public Double getExtraBilling() {
 		return extraBilling;
 	}
-	public void setExtraBilling(double extraBilling) {
+	public void setExtraBilling(Double extraBilling) {
 		this.extraBilling = extraBilling;
 	}
-	public double getBillingAmount() {
+	public Double getBillingAmount() {
 		return billingAmount;
 	}
-	public void setBillingAmount(double billingAmount) {
+	public void setBillingAmount(Double billingAmount) {
 		this.billingAmount = billingAmount;
 	}
 	

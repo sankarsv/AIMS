@@ -2,6 +2,7 @@ package com.app.aims.vo;
 
 public class BillingDetailsReq {
 
+	private BillingDetailsResp billingDetailsFilter;
 	private String month;
 	private String year;
 	private String brmName;
@@ -38,6 +39,12 @@ public class BillingDetailsReq {
 	}
 	public void setVersion(String version) {
 		this.version = version;
+	}
+	public BillingDetailsResp getBillingDetailsFilter() {
+		return billingDetailsFilter;
+	}
+	public void setBillingDetailsFilter(BillingDetailsResp billingDetailsFilter) {
+		this.billingDetailsFilter = billingDetailsFilter;
 	}
 	
 }

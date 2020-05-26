@@ -136,17 +136,13 @@ public class EmployeeDaoImpl implements EmployeeDao {
 	    }
 
 	    @Override
-		public List<Employee> getEmployeeDetailsByDate(Date date) {
-			
-			if(date == null) {
-				return null;
-			}
+		public List<Employee> getEmployeeDetails() {
 			
 			// TODO Auto-generated method stub
 			Session session = sessionFactory.getCurrentSession();
-			String queryStr1 = "FROM Employee where createdAt = :createdAt";
+			String queryStr1 = "FROM Employee";
 			Query query = session.createQuery(queryStr1);
-			query.setParameter("createdAt", date);
+			//query.setParameter("createdAt", date);
 			return query.list();    
 		}
 
