@@ -16,7 +16,7 @@ public interface EmployeeDao {
 	    public Employee findById(int id);
 	  //  public boolean update(EditRequest editRequest);
 	    public boolean delete(String empId);
-	    public List<Employee> getEmployeeDetailsByDate(Date date);
+	    public List<Employee> getEmployeeDetails();
 	    public List<VersionInfo> getVersionInfo();
 	    public boolean uploadFile(FileData  fileData);
 		public boolean uploadBrFile(BillingFileData billingFileData);
