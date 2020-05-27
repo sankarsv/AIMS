@@ -12,8 +12,8 @@ import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-//@Entity
-//@Table(name="portfolio",schema="aims")
+@Entity
+@Table(name="portfolio",schema="aims")
 public class Portfolio implements Serializable {
 	
 	/**
@@ -28,37 +28,65 @@ public class Portfolio implements Serializable {
     private Integer portfolioId;
 	
 	@Column(name="portfolio_name" )
-	@NotNull
     private String portfolioName;
 
 	@Column(name="portfolio_type" )
-	@NotNull
     private String portfolioType;
 	
+	@Column(name="location")
+	private String location;
+	
+	@Column(name="sto")
+	private String sto;
+	
+	@Column(name="lto")
+	private String lto;
+	
 	@Column(name="brm_empid" )
-	@NotNull
     private Integer brmEmpId;
 	
-	@Column(name="onsite_lead_empid" )
-	@NotNull
-    private Integer onsiteLeadEmpId;
+	@Column(name="brmname" )
+    private String brmname;
+	
+	@Column(name="brmnamehc" )
+    private String brmnamehc;
+	
+	@Column(name="brmnamebilling" )
+    private String brmnamebilling;
+	
+	@Column(name="em_empno" )
+    private Integer em_empno;
+	
+	@Column(name="em_name" )
+    private String em_name;
+	
+	@Column(name="emnamehc" )
+    private String emnamehc;
+	
+	@Column(name="emnamebilling" )
+    private String emnamebilling;
+	
+	@Column(name="dm_name" )
+    private String dm_name;
+	
+	@Column(name="dmnamehc" )
+    private String dmnamehc;
+	
+	@Column(name="dmnamebilling" )
+    private String dmnamebilling;
 	
 	@Column(name="dm_emp_id" )
-	@NotNull
-    private Integer dmEmpId;
+    private Integer dm_emp_id;
 	
-	@Column(name="offshore_lead_emp_id" )
-	@NotNull
-    private Integer offshoreLeadEmpId;
+	@Column(name="billing_lead_emp_id" )
+    private Integer billing_lead_emp_id;
 	
-	@Column(name="billing_emp_id" )
-	@NotNull
-    private Integer billingEmpId;
+	@Column(name="billing_lead_name" )
+    private String billing_lead_name;
 	
 	@Column(name="description" )
-	@NotNull
-    private Integer description;
-
+    private String description;
+	
 	public Integer getPortfolioId() {
 		return portfolioId;
 	}
@@ -91,53 +119,140 @@ public class Portfolio implements Serializable {
 		this.brmEmpId = brmEmpId;
 	}
 
-	public Integer getOnsiteLeadEmpId() {
-		return onsiteLeadEmpId;
+	public String getLocation() {
+		return location;
 	}
 
-	public void setOnsiteLeadEmpId(Integer onsiteLeadEmpId) {
-		this.onsiteLeadEmpId = onsiteLeadEmpId;
+	public void setLocation(String location) {
+		this.location = location;
 	}
 
-	public Integer getDmEmpId() {
-		return dmEmpId;
+	public String getSto() {
+		return sto;
 	}
 
-	public void setDmEmpId(Integer dmEmpId) {
-		this.dmEmpId = dmEmpId;
+	public void setSto(String sto) {
+		this.sto = sto;
 	}
 
-	public Integer getOffshoreLeadEmpId() {
-		return offshoreLeadEmpId;
+	public String getLto() {
+		return lto;
 	}
 
-	public void setOffshoreLeadEmpId(Integer offshoreLeadEmpId) {
-		this.offshoreLeadEmpId = offshoreLeadEmpId;
+	public void setLto(String lto) {
+		this.lto = lto;
 	}
 
-	public Integer getBillingEmpId() {
-		return billingEmpId;
+	public String getBrmname() {
+		return brmname;
 	}
 
-	public void setBillingEmpId(Integer billingEmpId) {
-		this.billingEmpId = billingEmpId;
+	public void setBrmname(String brmname) {
+		this.brmname = brmname;
 	}
 
-	public Integer getDescription() {
+	public String getBrmnamehc() {
+		return brmnamehc;
+	}
+
+	public void setBrmnamehc(String brmnamehc) {
+		this.brmnamehc = brmnamehc;
+	}
+
+	public String getBrmnamebilling() {
+		return brmnamebilling;
+	}
+
+	public void setBrmnamebilling(String brmnamebilling) {
+		this.brmnamebilling = brmnamebilling;
+	}
+
+	public Integer getEm_empno() {
+		return em_empno;
+	}
+
+	public void setEm_empno(Integer em_empno) {
+		this.em_empno = em_empno;
+	}
+
+	public String getEm_name() {
+		return em_name;
+	}
+
+	public void setEm_name(String em_name) {
+		this.em_name = em_name;
+	}
+
+	public String getEmnamehc() {
+		return emnamehc;
+	}
+
+	public void setEmnamehc(String emnamehc) {
+		this.emnamehc = emnamehc;
+	}
+
+	public String getEmnamebilling() {
+		return emnamebilling;
+	}
+
+	public void setEmnamebilling(String emnamebilling) {
+		this.emnamebilling = emnamebilling;
+	}
+
+	public String getDm_name() {
+		return dm_name;
+	}
+
+	public void setDm_name(String dm_name) {
+		this.dm_name = dm_name;
+	}
+
+	public String getDmnamehc() {
+		return dmnamehc;
+	}
+
+	public void setDmnamehc(String dmnamehc) {
+		this.dmnamehc = dmnamehc;
+	}
+
+	public String getDmnamebilling() {
+		return dmnamebilling;
+	}
+
+	public void setDmnamebilling(String dmnamebilling) {
+		this.dmnamebilling = dmnamebilling;
+	}
+
+	public Integer getDm_emp_id() {
+		return dm_emp_id;
+	}
+
+	public void setDm_emp_id(Integer dm_emp_id) {
+		this.dm_emp_id = dm_emp_id;
+	}
+
+	public Integer getBilling_lead_emp_id() {
+		return billing_lead_emp_id;
+	}
+
+	public void setBilling_lead_emp_id(Integer billing_lead_emp_id) {
+		this.billing_lead_emp_id = billing_lead_emp_id;
+	}
+
+	public String getBilling_lead_name() {
+		return billing_lead_name;
+	}
+
+	public void setBilling_lead_name(String billing_lead_name) {
+		this.billing_lead_name = billing_lead_name;
+	}
+
+	public String getDescription() {
 		return description;
 	}
 
-	public void setDescription(Integer description) {
+	public void setDescription(String description) {
 		this.description = description;
 	}
 
-	// 	List<BaseLine> newBaseLineList = getMaxBaseLineDetailsList();
-	//        	
-	//        	if(newBaseLineList == null || newBaseLineList.size() < 1) {
-	//        		throw new InternalError("Something went wrong please try again later.");
-	//        	}
-	//        	
-	//        	return newBaseLineList.get(0);
-	
-	
 }

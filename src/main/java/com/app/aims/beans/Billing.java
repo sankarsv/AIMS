@@ -35,21 +35,12 @@ public class Billing  implements Serializable{
 	@Id
 	@Column(name="employee_id")
 	private String empId;
-	
-	@Column(name="employee_name")	
-	private String empName;
-	
-	@Column(name="dmid")
-	private String dmId;
+		
 	
 	@Column(name="dmname")
 	private String dmName;
 	
 
-	@Column(name="brmname")
-	private String brnname;
-	
-	
 	@Column(name="won")
 	private String wonNumber;
 	
@@ -59,8 +50,6 @@ public class Billing  implements Serializable{
 	@Column(name="sto")
 	private String stoName;
 	
-	
-	private String officeId;
 	
 	@Column(name="billablehours")
 	private Integer billableHrs;
@@ -108,29 +97,11 @@ public class Billing  implements Serializable{
 	public void setEmpId(String empId) {
 		this.empId = empId;
 	}
-	public String getEmpName() {
-		return empName;
-	}
-	public void setEmpName(String empName) {
-		this.empName = empName;
-	}
-	public String getDmId() {
-		return dmId;
-	}
-	public void setDmId(String dmId) {
-		this.dmId = dmId;
-	}
 	public String getDmName() {
 		return dmName;
 	}
 	public void setDmName(String dmName) {
 		this.dmName = dmName;
-	}
-	public String getBrnname() {
-		return brnname;
-	}
-	public void setBrnname(String brnname) {
-		this.brnname = brnname;
 	}
 	public String getWonNumber() {
 		return wonNumber;
@@ -149,12 +120,6 @@ public class Billing  implements Serializable{
 	}
 	public void setStoName(String stoName) {
 		this.stoName = stoName;
-	}
-	public String getOfficeId() {
-		return officeId;
-	}
-	public void setOfficeId(String officeId) {
-		this.officeId = officeId;
 	}
 	
 	public Integer getBillableHrs() {
