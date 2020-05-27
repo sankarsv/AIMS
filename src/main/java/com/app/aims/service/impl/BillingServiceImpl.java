@@ -34,7 +34,7 @@ import com.app.aims.dao.BaseLineDao;
 import com.app.aims.dao.BillingDao;
 import com.app.aims.dao.EmployeeDao;
 import com.app.aims.service.BillingService;
-import com.app.aims.util.CommonUtil;
+import com.app.aims.util.ServiceUtil;
 import com.app.aims.vo.BaseResponse;
 import com.app.aims.vo.BillingDetailUpdateReq;
 import com.app.aims.vo.BillingDetailsReq;
@@ -43,10 +43,13 @@ import com.app.aims.vo.DownloadXlsResponse;
 
 @Service
 @Transactional
-public class BillingServiceImpl implements BillingService {
+public class BillingServiceImpl implements BillingService{
     
     @Autowired
     BillingDao billingDao;
+    
+    @Autowired
+    ServiceUtil util ;
     
 	@Override
 	public List<BRMDetails> getBRMDetails() {
@@ -63,8 +66,8 @@ public class BillingServiceImpl implements BillingService {
 			if(versionDetList != null && versionDetList.size() > 0) {
 				BillingVersion versionDet = versionDetList.get(0);
 				int version = versionDet.getVersion();
-				Map<Integer,Employee> employeeDetailsMap = CommonUtil.getEmployeeDetailMap();
-				Map<Integer,String> portfolioMap = CommonUtil.getPortfolioMap();
+				Map<Integer,Employee> employeeDetailsMap = util.getEmployeeDetailMap();
+				Map<Integer,String> portfolioMap = util.getPortfolioMap();
 				List<Billing> billingList = billingDao.getBillingDetails(version);
 				respList = populateBillingDetailsList(billingList,versionDet,employeeDetailsMap,portfolioMap);
 			} else {
@@ -151,7 +154,7 @@ public class BillingServiceImpl implements BillingService {
             resp.setVersion(versionDet.getVersion().toString());
             resp.setLocationId(bl.getLocationId());
             resp.setOfficeId(employeeDetailsMap.get(bl.getEmpId()).getOfficeId());
-            resp.setProjectId(bl.getProjectId());
+            resp.setProjectId(bl.getWonNumber());
             resp.setRemarks1(bl.getRemarks1());
             resp.setRemarks2(bl.getRemarks2());
             resp.setStoName(bl.getStoName());
@@ -188,8 +191,8 @@ public class BillingServiceImpl implements BillingService {
 		}
 		List<Billing> billingList = billingDao.getBillingDetails(version);
 		if(billingList != null && billingList.size() > 0) {
-			Map<Integer,Employee> employeeDetailsMap = CommonUtil.getEmployeeDetailMap();
-			Map<Integer,String> portfolioMap = CommonUtil.getPortfolioMap();
+			Map<Integer,Employee> employeeDetailsMap = util.getEmployeeDetailMap();
+			Map<Integer,String> portfolioMap = util.getPortfolioMap();
 			List<BillingDetailsResp> respList = populateBillingDetailsList(billingList,versionDet,employeeDetailsMap,portfolioMap);
 			if(req.getBillingDetailsFilter() != null) {
 				respList = filterBillingList(req, respList);
