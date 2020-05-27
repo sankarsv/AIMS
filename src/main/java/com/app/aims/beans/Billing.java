@@ -30,7 +30,6 @@ public class Billing  implements Serializable{
 	@Column(name="version")
 	private Integer version;
 	
-	private String projectId; //NA
 	
 	@Id
 	@Column(name="employee_id")
@@ -85,12 +84,6 @@ public class Billing  implements Serializable{
 		this.version = version;
 	}
 
-	public String getProjectId() {
-		return projectId;
-	}
-	public void setProjectId(String projectId) {
-		this.projectId = projectId;
-	}
 	public String getEmpId() {
 		return empId;
 	}

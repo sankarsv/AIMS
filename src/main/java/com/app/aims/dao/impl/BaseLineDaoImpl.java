@@ -85,7 +85,7 @@ public class BaseLineDaoImpl implements BaseLineDao {
 	@Override
 	public List<Portfolio> getPortfolio() {
 		Session session = sessionFactory.getCurrentSession();
-		String queryStr1 = "FROM portfolio";
+		String queryStr1 = "FROM Portfolio";
 		Query query = session.createQuery(queryStr1);
 		return query.list();
 	}
