@@ -1,5 +1,7 @@
 package com.app.aims.vo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class BillingDetailsResp extends BaseResponse{
 	
 	private String projectId;
@@ -30,11 +32,16 @@ public class BillingDetailsResp extends BaseResponse{
 	
 	private Double billingAmount;
 	
-	private String remarks;
+	private String remarks1;
+	
+	private String remarks2;
 	
 	private String freezeInd;
 	
 	private String version;
+	
+	@JsonIgnore
+	private String billRate;
 
 	public String getProjectId() {
 		return projectId;
@@ -117,12 +124,6 @@ public class BillingDetailsResp extends BaseResponse{
 		this.billingAmount = billingAmount;
 	}
 	
-	public String getRemarks() {
-		return remarks;
-	}
-	public void setRemarks(String remarks) {
-		this.remarks = remarks;
-	}
 	public String getFreezeInd() {
 		return freezeInd;
 	}
@@ -140,6 +141,26 @@ public class BillingDetailsResp extends BaseResponse{
 	}
 	public void setVersion(String version) {
 		this.version = version;
+	}
+	public String getRemarks1() {
+		return remarks1;
+	}
+	public void setRemarks1(String remarks1) {
+		this.remarks1 = remarks1;
+	}
+	public String getRemarks2() {
+		return remarks2;
+	}
+	public void setRemarks2(String remarks2) {
+		this.remarks2 = remarks2;
+	}
+	
+	@JsonIgnore
+	public String getBillRate() {
+		return billRate;
+	}
+	public void setBillRate(String billRate) {
+		this.billRate = billRate;
 	}
 	
 }

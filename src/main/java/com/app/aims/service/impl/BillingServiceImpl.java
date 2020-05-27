@@ -30,9 +30,11 @@ import com.app.aims.beans.BRMDetails;
 import com.app.aims.beans.Billing;
 import com.app.aims.beans.BillingVersion;
 import com.app.aims.beans.Employee;
+import com.app.aims.dao.BaseLineDao;
 import com.app.aims.dao.BillingDao;
 import com.app.aims.dao.EmployeeDao;
 import com.app.aims.service.BillingService;
+import com.app.aims.util.CommonUtil;
 import com.app.aims.vo.BaseResponse;
 import com.app.aims.vo.BillingDetailUpdateReq;
 import com.app.aims.vo.BillingDetailsReq;
@@ -46,9 +48,6 @@ public class BillingServiceImpl implements BillingService {
     @Autowired
     BillingDao billingDao;
     
-    @Autowired
-    EmployeeDao employeeDao;
-
 	@Override
 	public List<BRMDetails> getBRMDetails() {
 		
@@ -64,9 +63,10 @@ public class BillingServiceImpl implements BillingService {
 			if(versionDetList != null && versionDetList.size() > 0) {
 				BillingVersion versionDet = versionDetList.get(0);
 				int version = versionDet.getVersion();
-				Map<Integer,Employee> employeeDetailsMap = getEmployeeDetailMap();
+				Map<Integer,Employee> employeeDetailsMap = CommonUtil.getEmployeeDetailMap();
+				Map<Integer,String> portfolioMap = CommonUtil.getPortfolioMap();
 				List<Billing> billingList = billingDao.getBillingDetails(version);
-				respList = populateBillingDetailsList(billingList,versionDet,employeeDetailsMap);
+				respList = populateBillingDetailsList(billingList,versionDet,employeeDetailsMap,portfolioMap);
 			} else {
 				resp = new BillingDetailsResp();
 				respList = new ArrayList<BillingDetailsResp>();
@@ -91,15 +91,6 @@ public class BillingServiceImpl implements BillingService {
 		return respList;
 	}
 	
-	private Map<Integer,Employee> getEmployeeDetailMap() {
-		Map<Integer,Employee> employeeDetailMap = new HashMap<Integer,Employee>();
-		List<Employee> employeeList = employeeDao.getEmployeeDetails();
-		employeeList.stream().forEach(e -> {
-			employeeDetailMap.put(e.getEmployeeId(), e);
-		});
-		return employeeDetailMap;
-		
-	}
 
 	@Override
 	public BaseResponse updateBillingDetails(BillingDetailUpdateReq req) {
@@ -139,7 +130,7 @@ public class BillingServiceImpl implements BillingService {
 		
 	}
 
-	private List<BillingDetailsResp> populateBillingDetailsList(List<Billing> billingList, BillingVersion versionDet, Map<Integer, Employee> employeeDetailsMap) {
+	private List<BillingDetailsResp> populateBillingDetailsList(List<Billing> billingList, BillingVersion versionDet, Map<Integer, Employee> employeeDetailsMap, Map<Integer, String> portfolioMap) {
 		
 		List<BillingDetailsResp> result = billingList.stream().map(bl -> {
 			BillingDetailsResp resp = new BillingDetailsResp();
@@ -147,9 +138,9 @@ public class BillingServiceImpl implements BillingService {
             resp.setBillableHrs(bl.getBillableHrs());
             resp.setBillingAmount(bl.getBillingAmount());
             resp.setBrmId(versionDet.getBrmId());
-            resp.setBrmName(employeeDetailsMap.get(bl.getEmpId()).getBrm());
-            resp.setDmId(bl.getDmId());
-            resp.setDmName(bl.getDmName());
+            resp.setBrmName(portfolioMap.get(versionDet.getBrmId()));
+            resp.setDmId(employeeDetailsMap.get(bl.getEmpId()).getDm());
+            resp.setDmName(portfolioMap.get(resp.getDmId()));
             resp.setEffortHrs(bl.getEffortHrs());
             resp.setEmpId(bl.getEmpId());
             String empName = employeeDetailsMap.get(bl.getEmpId()).getFirstName() +" "+employeeDetailsMap.get(bl.getEmpId()).getLastName();
@@ -161,24 +152,26 @@ public class BillingServiceImpl implements BillingService {
             resp.setLocationId(bl.getLocationId());
             resp.setOfficeId(employeeDetailsMap.get(bl.getEmpId()).getOfficeId());
             resp.setProjectId(bl.getProjectId());
-            resp.setRemarks(addRemarks(bl.getRemarks1(),bl.getRemarks2()));
+            resp.setRemarks1(bl.getRemarks1());
+            resp.setRemarks2(bl.getRemarks2());
             resp.setStoName(bl.getStoName());
             resp.setWonNumber(bl.getWonNumber());
+            resp.setBillRate(bl.getBilingRate().getBillRate());
             return resp;
         }).collect(Collectors.toList());
 		return result;
 	}
 
 
-	private String addRemarks(String remark1,String remark2) {
-		if(StringUtils.hasText(remark1) && StringUtils.hasText(remark2)) {
-			return remark1+" "+remark2;
-		} else if(!StringUtils.hasText(remark1)) {
-			return remark2;
-		} else  {
-			return remark1;
-		}
-	}
+//	private String addRemarks(String remark1,String remark2) {
+//		if(StringUtils.hasText(remark1) && StringUtils.hasText(remark2)) {
+//			return remark1+" "+remark2;
+//		} else if(!StringUtils.hasText(remark1)) {
+//			return remark2;
+//		} else  {
+//			return remark1;
+//		}
+//	}
 
 	@Override
 	public DownloadXlsResponse downloadXlsBillingReport(BillingDetailsReq req) {
@@ -195,8 +188,11 @@ public class BillingServiceImpl implements BillingService {
 		}
 		List<Billing> billingList = billingDao.getBillingDetails(version);
 		if(billingList != null && billingList.size() > 0) {
+			Map<Integer,Employee> employeeDetailsMap = CommonUtil.getEmployeeDetailMap();
+			Map<Integer,String> portfolioMap = CommonUtil.getPortfolioMap();
+			List<BillingDetailsResp> respList = populateBillingDetailsList(billingList,versionDet,employeeDetailsMap,portfolioMap);
 			if(req.getBillingDetailsFilter() != null) {
-				billingList = filterBillingList(req, billingList);
+				respList = filterBillingList(req, respList);
 			}
 		try {
 			Resource resource = new ClassPathResource("BillingTemplate.xlsx");
@@ -209,7 +205,7 @@ public class BillingServiceImpl implements BillingService {
 			double totalBillingAmt = 0.00;
 
 				int rowNum = 2;
-				for (Billing billingDetails : billingList) {
+				for (BillingDetailsResp billingDetails : respList) {
 					Row row = sheet.createRow(rowNum++);
 
 					  int cellNum = 0;
@@ -222,7 +218,7 @@ public class BillingServiceImpl implements BillingService {
 					  row.createCell(++cellNum).setCellValue(billingDetails.getEmpId());
 					  row.createCell(++cellNum).setCellValue(billingDetails.getOfficeId());
 					  row.createCell(++cellNum).setCellValue(billingDetails.getEmpName());
-					  row.createCell(++cellNum).setCellValue(billingDetails.getBilingRate().getBillRate());
+					  row.createCell(++cellNum).setCellValue(billingDetails.getBillRate());
 					  
 					  row.createCell(++cellNum).setCellValue(billingDetails.getBillableHrs()); 
 					  row.createCell(++cellNum).setCellValue(billingDetails.getBillableDays()); 
@@ -272,8 +268,8 @@ public class BillingServiceImpl implements BillingService {
 		return response;
 	}
 
-	private List<Billing> filterBillingList(BillingDetailsReq req, List<Billing> billingList) {
-		Predicate<Billing> dmIdFilter = b -> {
+	private List<BillingDetailsResp> filterBillingList(BillingDetailsReq req, List<BillingDetailsResp> respList) {
+		Predicate<BillingDetailsResp> dmIdFilter = b -> {
 			if (StringUtils.hasText(req.getBillingDetailsFilter().getDmId())) {
 				if (b.getDmId().contains(req.getBillingDetailsFilter().getDmId())) {
 					return true;
@@ -282,7 +278,7 @@ public class BillingServiceImpl implements BillingService {
 			}
 			return false;
 		};
-		Predicate<Billing> dmNameFilter = b -> {
+		Predicate<BillingDetailsResp> dmNameFilter = b -> {
 			if (StringUtils.hasText(req.getBillingDetailsFilter().getDmName())) {
 				if (b.getDmName().contains(req.getBillingDetailsFilter().getDmName())) {
 					return true;
@@ -291,7 +287,7 @@ public class BillingServiceImpl implements BillingService {
 			}
 			return false;
 		};
-		Predicate<Billing> wonNoFilter = b -> {
+		Predicate<BillingDetailsResp> wonNoFilter = b -> {
 			if (StringUtils.hasText(req.getBillingDetailsFilter().getWonNumber())) {
 				if (b.getWonNumber().contains(req.getBillingDetailsFilter().getWonNumber())) {
 					return true;
@@ -300,7 +296,7 @@ public class BillingServiceImpl implements BillingService {
 			}
 			return false;
 		};
-		Predicate<Billing> stoNameFilter = b -> {
+		Predicate<BillingDetailsResp> stoNameFilter = b -> {
 			if (StringUtils.hasText(req.getBillingDetailsFilter().getStoName())) {
 				if (b.getStoName().contains(req.getBillingDetailsFilter().getStoName())) {
 					return true;
@@ -309,7 +305,7 @@ public class BillingServiceImpl implements BillingService {
 			}
 			return false;
 		};
-		Predicate<Billing> billableHrsFilter = b -> {
+		Predicate<BillingDetailsResp> billableHrsFilter = b -> {
 			if (req.getBillingDetailsFilter().getBillableHrs() != null) {
 				String reqBillableHrs = String.valueOf(req.getBillingDetailsFilter().getBillableHrs());
 				String resBillableHrs = String.valueOf(b.getBillableHrs());
@@ -319,7 +315,7 @@ public class BillingServiceImpl implements BillingService {
 			}
 			return false;
 		};
-		Predicate<Billing> billableDaysFilter = b -> {
+		Predicate<BillingDetailsResp> billableDaysFilter = b -> {
 			if (req.getBillingDetailsFilter().getBillableDays() != null) {
 				String reqBillableDays = String.valueOf(req.getBillingDetailsFilter().getBillableDays());
 				String resBillableDays = String.valueOf(b.getBillableDays());
@@ -329,7 +325,7 @@ public class BillingServiceImpl implements BillingService {
 			}
 			return false;
 		};
-		Predicate<Billing> effortHrsFilter = b -> {
+		Predicate<BillingDetailsResp> effortHrsFilter = b -> {
 			if (req.getBillingDetailsFilter().getEffortHrs() != null) {
 				String reqEffortHrs = String.valueOf(req.getBillingDetailsFilter().getEffortHrs());
 				String resEffortHrs = String.valueOf(b.getEffortHrs());
@@ -339,7 +335,7 @@ public class BillingServiceImpl implements BillingService {
 			}
 			return false;
 		};
-		Predicate<Billing> extraHrsFilter = b -> {
+		Predicate<BillingDetailsResp> extraHrsFilter = b -> {
 			if (req.getBillingDetailsFilter().getExtraHrs() != null) {
 				String reqExtraHrs = String.valueOf(req.getBillingDetailsFilter().getExtraHrs());
 				String resExtraHrs = String.valueOf(b.getExtraHrs());
@@ -349,7 +345,7 @@ public class BillingServiceImpl implements BillingService {
 			}
 			return false;
 		};
-		Predicate<Billing> extraBillingFilter = b -> {
+		Predicate<BillingDetailsResp> extraBillingFilter = b -> {
 			if (req.getBillingDetailsFilter().getExtraBilling() != null) {
 				String reqExtraBilling = String.valueOf(req.getBillingDetailsFilter().getExtraBilling());
 				String resExtraBilling = String.valueOf(b.getExtraBilling());
@@ -359,7 +355,7 @@ public class BillingServiceImpl implements BillingService {
 			}
 			return false;
 		};
-		Predicate<Billing> billingAmountFilter = b -> {
+		Predicate<BillingDetailsResp> billingAmountFilter = b -> {
 			if (req.getBillingDetailsFilter().getBillingAmount() != null) {
 				String reqBillingAmount = String.valueOf(req.getBillingDetailsFilter().getBillingAmount());
 				String resBillingAmount = String.valueOf(b.getBillingAmount());
@@ -369,7 +365,7 @@ public class BillingServiceImpl implements BillingService {
 			}
 			return false;
 		};
-		billingList = billingList.stream().filter(dmIdFilter
+		respList = respList.stream().filter(dmIdFilter
 												  .and(dmNameFilter)
 												  .and(wonNoFilter)
 												  .and(stoNameFilter)
@@ -379,7 +375,7 @@ public class BillingServiceImpl implements BillingService {
 												  .and(extraHrsFilter)
 												  .and(extraBillingFilter)
 												  .and(billingAmountFilter)).collect(Collectors.toList());
-		return billingList;
+		return respList;
 	}
 	
 
