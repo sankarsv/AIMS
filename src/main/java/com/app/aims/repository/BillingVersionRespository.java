@@ -12,7 +12,7 @@ import com.app.aims.beans.BillingVersion;
 public interface BillingVersionRespository extends JpaRepository<BillingVersion, Integer> {
 	
 	@Modifying
-    @Query("UPDATE BillingVersion b SET b.freezeInd = :freezeInd WHERE b.brmId = :brmId AND b.month = :month AND b.year = :year")
-    public int updateFreezeIndicator(@Param("freezeInd") String freezeInd, @Param("brmId") String brmId, @Param("month") String month, @Param("year") Integer year);
+    @Query("UPDATE BillingVersion b SET b.freezeInd = :freezeInd WHERE b.brm_EmpNo = :brm_EmpNo AND b.periodMonth = :periodMonth AND b.year = :year")
+    public int updateFreezeIndicator(@Param("freezeInd") String freezeInd, @Param("brm_EmpNo") String brmId, @Param("periodMonth") String month, @Param("year") Integer year);
 
 }

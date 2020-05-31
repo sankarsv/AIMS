@@ -3,11 +3,14 @@ package com.app.aims.dao.impl;
 import java.util.Date;
 import java.util.List;
 
+
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.app.aims.beans.BaseLine;
 import com.app.aims.beans.EmployeeAllocation;
@@ -15,6 +18,7 @@ import com.app.aims.beans.Portfolio;
 import com.app.aims.dao.BaseLineDao;
 
 @Repository
+@Transactional
 public class BaseLineDaoImpl implements BaseLineDao {
 
     @Autowired

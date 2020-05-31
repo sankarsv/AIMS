@@ -43,138 +43,139 @@ import com.app.aims.vo.DownloadXlsResponse;
 
 @Service
 @Transactional
-public class BillingServiceImpl implements BillingService{
-    
-    @Autowired
-    BillingDao billingDao;
-    
-    @Autowired
-    ServiceUtil util ;
-    
+public class BillingServiceImpl implements BillingService {
+
+	@Autowired
+	BillingDao billingDao;
+
+	@Autowired
+	ServiceUtil util;
+
 	@Override
 	public List<BRMDetails> getBRMDetails() {
-		
+
 		return billingDao.retrieveBRMInfo();
 	}
 
 	@Override
 	public List<BillingDetailsResp> getBillingDetails(BillingDetailsReq req) {
 		BillingDetailsResp resp = null;
-		List<BillingDetailsResp> respList= null;
+		List<BillingDetailsResp> respList = null;
 		try {
 			List<BillingVersion> versionDetList = billingDao.getBillingVersion(req);
-			if(versionDetList != null && versionDetList.size() > 0) {
+			if (versionDetList != null && versionDetList.size() > 0) {
 				BillingVersion versionDet = versionDetList.get(0);
 				int version = versionDet.getVersion();
-				Map<Integer,Employee> employeeDetailsMap = util.getEmployeeDetailMap();
-				Map<Integer,String> portfolioMap = util.getPortfolioMap();
+				Map<Integer, Employee> employeeDetailsMap = util.getEmployeeDetailMap();
+				Map<Integer, String> portfolioMap = util.getPortfolioMap();
+
 				List<Billing> billingList = billingDao.getBillingDetails(version);
-				respList = populateBillingDetailsList(billingList,versionDet,employeeDetailsMap,portfolioMap);
+				respList = populateBillingDetailsList(billingList, versionDet, employeeDetailsMap, portfolioMap);
 			} else {
 				resp = new BillingDetailsResp();
 				respList = new ArrayList<BillingDetailsResp>();
 				resp.addError("NOT FOUND");
 				respList.add(resp);
 			}
-			
-		}catch(NoSuchElementException ex) {
+
+		} catch (NoSuchElementException ex) {
 			ex.printStackTrace();
 			resp = new BillingDetailsResp();
 			respList = new ArrayList<BillingDetailsResp>();
 			resp.addError("NOT FOUND");
 			respList.add(resp);
-			
-		}catch(Exception e) {
-		e.printStackTrace();
-		resp = new BillingDetailsResp();
-		respList = new ArrayList<BillingDetailsResp>();
-		resp.addError("Exception Occurred");
-		respList.add(resp);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			resp = new BillingDetailsResp();
+			respList = new ArrayList<BillingDetailsResp>();
+			resp.addError("Exception Occurred");
+			respList.add(resp);
 		}
 		return respList;
 	}
-	
 
 	@Override
 	public BaseResponse updateBillingDetails(BillingDetailUpdateReq req) {
 		BaseResponse resp = null;
 		try {
 			billingDao.fetchAndUpdateBillingDetails(req);
-		} catch(NoSuchElementException ex) {
+		} catch (NoSuchElementException ex) {
 			ex.printStackTrace();
 			resp = new BillingDetailsResp();
 			resp.addError("NOT FOUND");
-			
-		}catch(Exception e) {
-		 e.printStackTrace();
-		 resp = new BillingDetailsResp();
-		 resp.addError("Exception Occurred");
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			resp = new BillingDetailsResp();
+			resp.addError("Exception Occurred");
 		}
 		return resp;
-		
+
 	}
-	
+
 	@Override
 	public BaseResponse updateFreezeInd(BillingDetailsReq req) {
 		BaseResponse resp = null;
 		try {
 			billingDao.updateFreezeInd(req);
-		} catch(NoSuchElementException ex) {
+		} catch (NoSuchElementException ex) {
 			ex.printStackTrace();
 			resp = new BillingDetailsResp();
 			resp.addError("NOT FOUND");
-			
-		}catch(Exception e) {
-		 e.printStackTrace();
-		 resp = new BillingDetailsResp();
-		 resp.addError("Exception Occurred");
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			resp = new BillingDetailsResp();
+			resp.addError("Exception Occurred");
 		}
 		return resp;
-		
+
 	}
 
-	private List<BillingDetailsResp> populateBillingDetailsList(List<Billing> billingList, BillingVersion versionDet, Map<Integer, Employee> employeeDetailsMap, Map<Integer, String> portfolioMap) {
-		
+	public List<BillingDetailsResp> populateBillingDetailsList(List<Billing> billingList, BillingVersion versionDet,
+			Map<Integer, Employee> employeeDetailsMap, Map<Integer, String> portfolioMap) {
+
 		List<BillingDetailsResp> result = billingList.stream().map(bl -> {
 			BillingDetailsResp resp = new BillingDetailsResp();
-            resp.setBillableDays(bl.getBillableDays());
-            resp.setBillableHrs(bl.getBillableHrs());
-            resp.setBillingAmount(bl.getBillingAmount());
-            resp.setBrmId(versionDet.getBrmId());
-            resp.setBrmName(portfolioMap.get(versionDet.getBrmId()));
-            resp.setDmId(employeeDetailsMap.get(bl.getEmpId()).getDm());
-            resp.setDmName(portfolioMap.get(resp.getDmId()));
-            resp.setEffortHrs(bl.getEffortHrs());
-            resp.setEmpId(bl.getEmpId());
-            String empName = employeeDetailsMap.get(bl.getEmpId()).getFirstName() +" "+employeeDetailsMap.get(bl.getEmpId()).getLastName();
-            resp.setEmpName(empName);
-            resp.setExtraBilling(bl.getExtraBilling());
-            resp.setExtraHrs(bl.getExtraHrs());
-            resp.setFreezeInd(versionDet.getFreezeInd());
-            resp.setVersion(versionDet.getVersion().toString());
-            resp.setLocationId(bl.getLocationId());
-            resp.setOfficeId(employeeDetailsMap.get(bl.getEmpId()).getOfficeId());
-            resp.setProjectId(bl.getWonNumber());
-            resp.setRemarks1(bl.getRemarks1());
-            resp.setRemarks2(bl.getRemarks2());
-            resp.setStoName(bl.getStoName());
-            resp.setWonNumber(bl.getWonNumber());
-            resp.setBillRate(bl.getBilingRate().getBillRate());
-            return resp;
-        }).collect(Collectors.toList());
+			resp.setBillableDays(bl.getBillableDays());
+			resp.setBillableHrs(bl.getBillableHrs());
+			resp.setBillingAmount(bl.getBillingAmount());
+			resp.setBrmId(versionDet.getBrm_EmpNo());
+			resp.setBrmName(portfolioMap.get(versionDet.getBrm_EmpNo()));
+			resp.setDmId(employeeDetailsMap.get(Integer.parseInt(bl.getEmpId())).getDm());
+			resp.setDmName(portfolioMap.get(resp.getDmId()));
+			resp.setEffortHrs(bl.getEffortHrs());
+			resp.setEmpId(bl.getEmpId());
+			String empName = employeeDetailsMap.get(Integer.parseInt(bl.getEmpId())).getFirstName() + " "
+					+ employeeDetailsMap.get(Integer.parseInt(bl.getEmpId())).getLastName();
+			resp.setEmpName(empName);
+			resp.setExtraBilling(bl.getExtraBilling());
+			resp.setExtraHrs(bl.getExtraHrs());
+			resp.setFreezeInd(versionDet.getFreezeInd());
+			resp.setVersion(versionDet.getVersion().toString());
+			resp.setLocationId(bl.getLocationId());
+			resp.setOfficeId(employeeDetailsMap.get(Integer.parseInt(bl.getEmpId())).getOfficeId());
+			resp.setProjectId(bl.getWonNumber());
+			resp.setRemarks1(bl.getRemarks1());
+			resp.setRemarks2(bl.getRemarks2());
+			resp.setStoName(bl.getStoName());
+			resp.setWonNumber(bl.getWonNumber());
+			resp.setBillRate(bl.getBilingRate().getBillRate());
+			return resp;
+		}).collect(Collectors.toList());
 		return result;
 	}
 
-
-//	private String addRemarks(String remark1,String remark2) {
-//		if(StringUtils.hasText(remark1) && StringUtils.hasText(remark2)) {
-//			return remark1+" "+remark2;
-//		} else if(!StringUtils.hasText(remark1)) {
-//			return remark2;
-//		} else  {
-//			return remark1;
-//		}
-//	}
+	// private String addRemarks(String remark1,String remark2) {
+	// if(StringUtils.hasText(remark1) && StringUtils.hasText(remark2)) {
+	// return remark1+" "+remark2;
+	// } else if(!StringUtils.hasText(remark1)) {
+	// return remark2;
+	// } else {
+	// return remark1;
+	// }
+	// }
 
 	@Override
 	public DownloadXlsResponse downloadXlsBillingReport(BillingDetailsReq req) {
@@ -182,59 +183,58 @@ public class BillingServiceImpl implements BillingService{
 		DownloadXlsResponse response = null;
 		BillingVersion versionDet = null;
 		List<BillingVersion> versionDetList = billingDao.getBillingVersion(req);
-		if(versionDetList != null && versionDetList.size() > 0) {
-			   versionDet = versionDetList.get(0);
-				version = versionDet.getVersion();
-			}
-		else {
+		if (versionDetList != null && versionDetList.size() > 0) {
+			versionDet = versionDetList.get(0);
+			version = versionDet.getVersion();
+		} else {
 			throw new NoSuchElementException();
 		}
 		List<Billing> billingList = billingDao.getBillingDetails(version);
-		if(billingList != null && billingList.size() > 0) {
-			Map<Integer,Employee> employeeDetailsMap = util.getEmployeeDetailMap();
-			Map<Integer,String> portfolioMap = util.getPortfolioMap();
-			List<BillingDetailsResp> respList = populateBillingDetailsList(billingList,versionDet,employeeDetailsMap,portfolioMap);
-			if(req.getBillingDetailsFilter() != null) {
+		if (billingList != null && billingList.size() > 0) {
+			Map<Integer, Employee> employeeDetailsMap = util.getEmployeeDetailMap();
+			Map<Integer, String> portfolioMap = util.getPortfolioMap();
+			List<BillingDetailsResp> respList = populateBillingDetailsList(billingList, versionDet, employeeDetailsMap,
+					portfolioMap);
+			if (req.getBillingDetailsFilter() != null) {
 				respList = filterBillingList(req, respList);
 			}
-		try {
-			Resource resource = new ClassPathResource("BillingTemplate.xlsx");
-			InputStream input = resource.getInputStream();
-			Workbook workbook = WorkbookFactory.create(input);
-			Sheet sheet = workbook.getSheetAt(0);
-			CellStyle cs = workbook.createCellStyle();
-			DataFormat df = workbook.createDataFormat();
-			cs.setDataFormat(df.getFormat("$#,##0.00"));
-			double totalBillingAmt = 0.00;
+			try {
+				Resource resource = new ClassPathResource("BillingTemplate.xlsx");
+				InputStream input = resource.getInputStream();
+				Workbook workbook = WorkbookFactory.create(input);
+				Sheet sheet = workbook.getSheetAt(0);
+				CellStyle cs = workbook.createCellStyle();
+				DataFormat df = workbook.createDataFormat();
+				cs.setDataFormat(df.getFormat("$#,##0.00"));
+				double totalBillingAmt = 0.00;
 
 				int rowNum = 2;
 				for (BillingDetailsResp billingDetails : respList) {
 					Row row = sheet.createRow(rowNum++);
 
-					  int cellNum = 0;
-					  row.createCell(cellNum).setCellValue(versionDet.getBrmId());
-					  row.createCell(++cellNum).setCellValue(billingDetails.getDmName());
-					  row.createCell(++cellNum).setCellValue(billingDetails.getLocationId());
-					  row.createCell(++cellNum).setCellValue(billingDetails.getWonNumber());
-					  row.createCell(++cellNum).setCellValue(billingDetails.getProjectId());//Project Name
-					  row.createCell(++cellNum).setCellValue(billingDetails.getStoName());
-					  row.createCell(++cellNum).setCellValue(billingDetails.getEmpId());
-					  row.createCell(++cellNum).setCellValue(billingDetails.getOfficeId());
-					  row.createCell(++cellNum).setCellValue(billingDetails.getEmpName());
-					  row.createCell(++cellNum).setCellValue(billingDetails.getBillRate());
-					  
-					  row.createCell(++cellNum).setCellValue(billingDetails.getBillableHrs()); 
-					  row.createCell(++cellNum).setCellValue(billingDetails.getBillableDays()); 
-					  row.createCell(++cellNum).setCellValue(billingDetails.getEffortHrs()); 
-					  row.createCell(++cellNum).setCellValue(billingDetails.getExtraHrs());
-					  Cell amountCell = row.createCell(++cellNum);
-					  amountCell.setCellStyle(cs);
-					  amountCell.setCellValue(billingDetails.getExtraBilling());
-					  totalBillingAmt = totalBillingAmt + billingDetails.getBillingAmount();
-					  row.createCell(++cellNum).setCellValue(billingDetails.getBillingAmount());
-					  row.createCell(++cellNum).setCellValue(billingDetails.getRemarks1()); // PL
-					  row.createCell(++cellNum).setCellValue(billingDetails.getRemarks2());
-					 
+					int cellNum = 0;
+					row.createCell(cellNum).setCellValue(versionDet.getBrm_EmpNo());
+					row.createCell(++cellNum).setCellValue(billingDetails.getDmName());
+					row.createCell(++cellNum).setCellValue(billingDetails.getLocationId());
+					row.createCell(++cellNum).setCellValue(billingDetails.getWonNumber());
+					row.createCell(++cellNum).setCellValue(billingDetails.getProjectId());// Project Name
+					row.createCell(++cellNum).setCellValue(billingDetails.getStoName());
+					row.createCell(++cellNum).setCellValue(billingDetails.getEmpId());
+					row.createCell(++cellNum).setCellValue(billingDetails.getOfficeId());
+					row.createCell(++cellNum).setCellValue(billingDetails.getEmpName());
+					row.createCell(++cellNum).setCellValue(billingDetails.getBillRate());
+
+					row.createCell(++cellNum).setCellValue(billingDetails.getBillableHrs());
+					row.createCell(++cellNum).setCellValue(billingDetails.getBillableDays());
+					row.createCell(++cellNum).setCellValue(billingDetails.getEffortHrs());
+					row.createCell(++cellNum).setCellValue(billingDetails.getExtraHrs());
+					Cell amountCell = row.createCell(++cellNum);
+					amountCell.setCellStyle(cs);
+					amountCell.setCellValue(billingDetails.getExtraBilling());
+					totalBillingAmt = totalBillingAmt + billingDetails.getBillingAmount();
+					row.createCell(++cellNum).setCellValue(billingDetails.getBillingAmount());
+					row.createCell(++cellNum).setCellValue(billingDetails.getRemarks1()); // PL
+					row.createCell(++cellNum).setCellValue(billingDetails.getRemarks2());
 
 				}
 				Cell totalAmountCell = sheet.createRow(0).createCell(15);
@@ -255,17 +255,17 @@ public class BillingServiceImpl implements BillingService{
 				response.setByteArray(Files.readAllBytes(f.toPath()));
 				return response;
 
-		} catch(NoSuchElementException ex) {
-			ex.printStackTrace();
-			response = new DownloadXlsResponse();
-			response.addError("NOT FOUND");
-			
-		}catch(Exception e) {
-		e.printStackTrace();
-		response = new DownloadXlsResponse();
-		response.addError("Exception Occurred");
-		}
-		}else {
+			} catch (NoSuchElementException ex) {
+				ex.printStackTrace();
+				response = new DownloadXlsResponse();
+				response.addError("NOT FOUND");
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				response = new DownloadXlsResponse();
+				response.addError("Exception Occurred");
+			}
+		} else {
 			throw new NoSuchElementException();
 		}
 		return response;
@@ -368,36 +368,54 @@ public class BillingServiceImpl implements BillingService{
 			}
 			return false;
 		};
-		respList = respList.stream().filter(dmIdFilter
-												  .and(dmNameFilter)
-												  .and(wonNoFilter)
-												  .and(stoNameFilter)
-												  .and(billableHrsFilter)
-												  .and(billableDaysFilter)
-												  .and(effortHrsFilter)
-												  .and(extraHrsFilter)
-												  .and(extraBillingFilter)
-												  .and(billingAmountFilter)).collect(Collectors.toList());
+		respList = respList.stream()
+				.filter(dmIdFilter.and(dmNameFilter).and(wonNoFilter).and(stoNameFilter).and(billableHrsFilter)
+						.and(billableDaysFilter).and(effortHrsFilter).and(extraHrsFilter).and(extraBillingFilter)
+						.and(billingAmountFilter))
+				.collect(Collectors.toList());
 		return respList;
 	}
-	
 
 	@Override
 	public boolean updateFreeze(BillingVersion billingVer) {
 
 		try {
-		
+
 			billingDao.updateFreezeInd(billingVer);
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
-	
-	}
+
+		}
 		return false;
 	}
-	
-	
-	
+
+	@Override
+	public List<Billing> RetriveBillingDetailsListByBillingVersion(Integer billingVersion) {
+
+		List<Billing> billingList = null;
+
+		if (billingVersion != null) {
+
+			billingList = billingDao.getBillingDetails(billingVersion);
+
+		}
+
+		return billingList;
+	}
+
+	@Override
+	public List<BillingVersion> getBillingVersion(BillingDetailsReq req) {
+
+		List<BillingVersion> billingVersion = null;
+
+		if (req != null) {
+
+			billingVersion = billingDao.getBillingVersion(req);
+
+		}
+
+		return billingVersion;
+	}
 
 }
- 	
