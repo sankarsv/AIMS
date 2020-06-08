@@ -1,8 +1,10 @@
 package com.app.aims.repository;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,4 +30,8 @@ public interface SearchRepository extends JpaRepository<Employee,String>{
 	
 	//@Query("SELECT e,pr,ea FROM Employee e,Project pr, EmployeeAllocation ea WHERE e.brm = :brmEmpId")
 	//List<Employee> fetchDataLeftJoinByBrm(@Param("brmEmpId")  Integer brmEmpId);
+	
+	@Modifying(clearAutomatically = true, flushAutomatically = true)
+	@Query("DELETE FROM Employee e WHERE e.employeeId IN :employeeIds")
+	int deleteEmployees(@Param("employeeIds") Collection<String> employeeIds);
 }

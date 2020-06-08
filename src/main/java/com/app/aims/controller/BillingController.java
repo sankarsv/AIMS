@@ -1,5 +1,6 @@
 package com.app.aims.controller;
 
+import java.time.YearMonth;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,8 @@ import com.app.aims.beans.BRMDetails;
 import com.app.aims.beans.BillingVersion;
 import com.app.aims.beans.GenerateBaseLineRequest;
 import com.app.aims.service.BillingService;
+import com.app.aims.service.UpdateBillingService;
+import com.app.aims.util.DateUtil;
 import com.app.aims.vo.BaseResponse;
 import com.app.aims.vo.BillingDetailUpdateReq;
 import com.app.aims.vo.BillingDetailsReq;
@@ -31,6 +34,9 @@ public class BillingController {
 
 	@Autowired
     BillingService billingService;
+	
+	@Autowired
+    UpdateBillingService updateBillingService;
 	
 	@GetMapping(value="/getBRMDetails", headers="Accept=application/json")
     public ResponseEntity<Object> getBRMDetails()
@@ -62,7 +68,15 @@ public class BillingController {
 	@PostMapping(value = "/getBillingDetails", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> getBillingDetails(@RequestBody BillingDetailsReq billingDetailReq) {
 		if(validReq(billingDetailReq)) {
-			List<BillingDetailsResp> billingDetails = billingService.getBillingDetails(billingDetailReq);
+			if(isValidMonth(billingDetailReq)) {
+				List<BillingDetailsResp> billingDetails = null;
+				if("brmid".equalsIgnoreCase(billingDetailReq.getFilterBy())) {
+					billingDetails = billingService.getBillingDetailsByBrmId(billingDetailReq);
+				} else if("all".equalsIgnoreCase(billingDetailReq.getFilterBy())){
+					billingDetails = billingService.getBillingDetailsByMonth(billingDetailReq);
+				} else if("others".equalsIgnoreCase(billingDetailReq.getFilterBy())){
+					billingDetails = billingService.getBillingDetailsForOthers(billingDetailReq);
+				}
 			if(billingDetails != null) {
 				if(!(billingDetails.get(0).getErrorList().size() > 0)) {
 					return new ResponseEntity<Object>(billingDetails, HttpStatus.OK);
@@ -73,6 +87,9 @@ public class BillingController {
 					return new ResponseEntity<>("Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
 				}
 			}
+		  } else {
+			  return new ResponseEntity<>("Only Details from current or previous months can be requested", HttpStatus.BAD_REQUEST);
+		  }
 		}
 		return new ResponseEntity<>("Bad Request", HttpStatus.BAD_REQUEST);
 	}
@@ -80,7 +97,7 @@ public class BillingController {
 	@PostMapping(value = "/updateBillingDetails", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> updateBilingDetails(@RequestBody BillingDetailUpdateReq updateBillingDetailReq) {
 		if (validReq(updateBillingDetailReq)) {
-		BaseResponse resp = billingService.updateBillingDetails(updateBillingDetailReq);
+		BaseResponse resp = updateBillingService.updateBillingDetails(updateBillingDetailReq);
 		if(resp == null) {
 			return new ResponseEntity<Object>(HttpStatus.ACCEPTED);
 		} else {
@@ -154,7 +171,18 @@ public class BillingController {
 	}
 
 	private boolean validReq(BillingDetailsReq billingDetailReq) {
-		return (StringUtils.hasText(billingDetailReq.getBrmName()) && StringUtils.hasText(billingDetailReq.getMonth()) && StringUtils.hasText(billingDetailReq.getYear()));
+		return (StringUtils.hasText(billingDetailReq.getFilterBy()) && StringUtils.hasText(billingDetailReq.getMonth()) && StringUtils.hasText(billingDetailReq.getYear()));
+	}
+	
+	private boolean isValidMonth(BillingDetailsReq billingDetailReq) {
+		Integer yearFromReq = Integer.parseInt(billingDetailReq.getYear());
+		Integer monthFromReq = DateUtil.monthMap.get(billingDetailReq.getMonth());
+		YearMonth reqYearMonth = YearMonth.of(yearFromReq, monthFromReq);
+		int compare = reqYearMonth.compareTo(YearMonth.now());
+		if (compare > 0) {
+			return false;
+		}
+		return true;
 	}
 	
 	private boolean validReq(BillingVersion billingVersion) {

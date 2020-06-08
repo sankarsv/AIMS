@@ -14,14 +14,17 @@ public interface BillingService {
 
     public List<BRMDetails> getBRMDetails();   
     
-    public List<BillingDetailsResp> getBillingDetails(BillingDetailsReq req);
+    public List<BillingDetailsResp> getBillingDetailsByBrmId(BillingDetailsReq req);
     
     public boolean updateFreeze(BillingVersion req);
 
-    public BaseResponse updateBillingDetails(BillingDetailUpdateReq req);
 
 	public BaseResponse updateFreezeInd(BillingDetailsReq req);
 
 	public DownloadXlsResponse downloadXlsBillingReport(BillingDetailsReq billingDetailReq);
+
+	public List<BillingDetailsResp> getBillingDetailsByMonth(BillingDetailsReq billingDetailReq);
+
+	public List<BillingDetailsResp> getBillingDetailsForOthers(BillingDetailsReq billingDetailReq);
     
 }

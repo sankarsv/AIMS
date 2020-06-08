@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,10 +31,13 @@ import com.app.aims.beans.BRMDetails;
 import com.app.aims.beans.Billing;
 import com.app.aims.beans.BillingVersion;
 import com.app.aims.beans.Employee;
+import com.app.aims.beans.HCDetails;
+import com.app.aims.beans.Portfolio;
 import com.app.aims.dao.BaseLineDao;
 import com.app.aims.dao.BillingDao;
 import com.app.aims.dao.EmployeeDao;
 import com.app.aims.service.BillingService;
+import com.app.aims.util.DateUtil;
 import com.app.aims.util.ServiceUtil;
 import com.app.aims.vo.BaseResponse;
 import com.app.aims.vo.BillingDetailUpdateReq;
@@ -51,18 +55,32 @@ public class BillingServiceImpl implements BillingService{
     @Autowired
     ServiceUtil util ;
     
+    @Autowired
+    BaseLineDao baseLineDao;
+    
 	@Override
 	public List<BRMDetails> getBRMDetails() {
+		List<Portfolio> portfolioList = baseLineDao.getPortfolio();
+		List<BRMDetails> brmDetails = new ArrayList<BRMDetails>();
+		if(portfolioList != null && portfolioList.size() > 0) {
+			portfolioList.forEach(p -> {
+				BRMDetails brmDetail = new BRMDetails();
+				brmDetail.setBrmId(String.valueOf(p.getBrmEmpId()));
+				brmDetail.setBrmName(p.getBrmname());
+				brmDetails.add(brmDetail);
+			});
+		}
+		return brmDetails;
 		
-		return billingDao.retrieveBRMInfo();
 	}
 
 	@Override
-	public List<BillingDetailsResp> getBillingDetails(BillingDetailsReq req) {
+	public List<BillingDetailsResp> getBillingDetailsByBrmId(BillingDetailsReq req) {
 		BillingDetailsResp resp = null;
 		List<BillingDetailsResp> respList= null;
+		List<BillingVersion> versionDetList = null;
 		try {
-			List<BillingVersion> versionDetList = billingDao.getBillingVersion(req);
+			versionDetList = billingDao.getBillingVersion(req);
 			if(versionDetList != null && versionDetList.size() > 0) {
 				BillingVersion versionDet = versionDetList.get(0);
 				int version = versionDet.getVersion();
@@ -71,18 +89,17 @@ public class BillingServiceImpl implements BillingService{
 				List<Billing> billingList = billingDao.getBillingDetails(version);
 				respList = populateBillingDetailsList(billingList,versionDet,employeeDetailsMap,portfolioMap);
 			} else {
-				resp = new BillingDetailsResp();
-				respList = new ArrayList<BillingDetailsResp>();
-				resp.addError("NOT FOUND");
-				respList.add(resp);
+				versionDetList = billingDao.getBillingVersionByMonth(req,false);
+				if(versionDetList != null && versionDetList.size() > 0) {
+					resp = new BillingDetailsResp();
+					respList = new ArrayList<BillingDetailsResp>();
+					resp.addError("NOT FOUND");
+					respList.add(resp);
+				} else {
+					replicateBillingPrevMonthToCurrentMonth(req);
+					getBillingDetailsByBrmId(req);
+				}
 			}
-			
-		}catch(NoSuchElementException ex) {
-			ex.printStackTrace();
-			resp = new BillingDetailsResp();
-			respList = new ArrayList<BillingDetailsResp>();
-			resp.addError("NOT FOUND");
-			respList.add(resp);
 			
 		}catch(Exception e) {
 		e.printStackTrace();
@@ -95,23 +112,50 @@ public class BillingServiceImpl implements BillingService{
 	}
 	
 
-	@Override
-	public BaseResponse updateBillingDetails(BillingDetailUpdateReq req) {
-		BaseResponse resp = null;
-		try {
-			billingDao.fetchAndUpdateBillingDetails(req);
-		} catch(NoSuchElementException ex) {
-			ex.printStackTrace();
-			resp = new BillingDetailsResp();
-			resp.addError("NOT FOUND");
-			
-		}catch(Exception e) {
-		 e.printStackTrace();
-		 resp = new BillingDetailsResp();
-		 resp.addError("Exception Occurred");
+	private void replicateBillingPrevMonthToCurrentMonth(BillingDetailsReq bdReq) {
+		List<BillingVersion> newBillingVersionList = new ArrayList<BillingVersion>();
+		List<Billing> newBillingList = new ArrayList<Billing>();
+		BillingDetailsReq req = createReqForPrevMonth(bdReq);
+		List<BillingVersion> versionDetList = null;
+		versionDetList = billingDao.getBillingVersionByMonth(req,true);
+		if(versionDetList != null && versionDetList.size() > 0) {
+			Integer currMonVersionNo = versionDetList.get(0).getVersion() + 1;
+			for(BillingVersion versionDet : versionDetList) {
+				Integer oldVersion = versionDet.getVersion();
+				versionDet.setVersion(currMonVersionNo);
+				versionDet.setMonth(bdReq.getMonth());
+				versionDet.setYear(Integer.parseInt(bdReq.getYear()));
+				newBillingVersionList.add(versionDet);
+				List<Billing> billingList = billingDao.getBillingDetails(oldVersion);
+				for(Billing billing : billingList) {
+					billing.setVersion(currMonVersionNo);
+					newBillingList.add(billing);
+				}
+				currMonVersionNo = currMonVersionNo + 1;
+			}
+			System.out.println("Size of newBillingVersionList -->" + newBillingVersionList.size());
+			System.out.println("Size of newBillingList -->" + newBillingList.size());
+			if(newBillingVersionList.size() > 0 && newBillingList.size() > 0) {
+				billingDao.saveNewBillingDetails(newBillingVersionList, newBillingList);
+			}
 		}
-		return resp;
 		
+	}
+
+	private BillingDetailsReq createReqForPrevMonth(BillingDetailsReq bdReq) {
+		Integer reqMonthValue = DateUtil.monthMap.get(bdReq.getMonth());
+		BillingDetailsReq newReq = new BillingDetailsReq();
+		if (reqMonthValue == 1) {
+			Integer year = Integer.parseInt(bdReq.getYear());
+			year = year - 1;
+			newReq.setMonth(DateUtil.monthValueMap.get(12));
+			newReq.setYear(year.toString());
+		} else {
+			newReq.setMonth(DateUtil.monthValueMap.get(reqMonthValue -1));
+			newReq.setYear(bdReq.getYear());
+		}
+		newReq.setBrmId(bdReq.getBrmId());
+		return newReq;
 	}
 	
 	@Override
@@ -165,16 +209,6 @@ public class BillingServiceImpl implements BillingService{
 		return result;
 	}
 
-
-//	private String addRemarks(String remark1,String remark2) {
-//		if(StringUtils.hasText(remark1) && StringUtils.hasText(remark2)) {
-//			return remark1+" "+remark2;
-//		} else if(!StringUtils.hasText(remark1)) {
-//			return remark2;
-//		} else  {
-//			return remark1;
-//		}
-//	}
 
 	@Override
 	public DownloadXlsResponse downloadXlsBillingReport(BillingDetailsReq req) {
@@ -394,6 +428,145 @@ public class BillingServiceImpl implements BillingService{
 	
 	}
 		return false;
+	}
+
+	@Override
+	public List<BillingDetailsResp> getBillingDetailsByMonth(BillingDetailsReq req) {
+
+		BillingDetailsResp resp = null;
+		List<BillingDetailsResp> respList= null;
+		List<BillingDetailsResp> completeRespList= null;
+		try {
+			List<BillingVersion> versionDetList = billingDao.getBillingVersionByMonth(req,false);
+			if (versionDetList != null && versionDetList.size() > 0) {
+				completeRespList = new ArrayList<BillingDetailsResp>();
+				Map<Integer, Employee> employeeDetailsMap = util.getEmployeeDetailMap();
+				Map<Integer, String> portfolioMap = util.getPortfolioMap();
+				for (BillingVersion versionDet : versionDetList) {
+					int version = versionDet.getVersion();
+					List<Billing> billingList = billingDao.getBillingDetails(version);
+					respList = populateBillingDetailsList(billingList, versionDet, employeeDetailsMap, portfolioMap);
+					completeRespList.addAll(respList);
+				}
+			} else {
+				if(isCurrentMonthAndyear(req)) {
+					replicateBillingPrevMonthToCurrentMonth(req);
+					getBillingDetailsByMonth(req);
+				}
+				resp = new BillingDetailsResp();
+				respList = new ArrayList<BillingDetailsResp>();
+				resp.addError("NOT FOUND");
+				respList.add(resp);
+			}
+			
+		}catch(NoSuchElementException ex) {
+			ex.printStackTrace();
+			resp = new BillingDetailsResp();
+			respList = new ArrayList<BillingDetailsResp>();
+			resp.addError("NOT FOUND");
+			respList.add(resp);
+			
+		}catch(Exception e) {
+		e.printStackTrace();
+		resp = new BillingDetailsResp();
+		respList = new ArrayList<BillingDetailsResp>();
+		resp.addError("Exception Occurred");
+		respList.add(resp);
+		}
+		return completeRespList;
+	
+	}
+
+	private boolean isCurrentMonthAndyear(BillingDetailsReq req) {
+		int monthValue = DateUtil.monthMap.get(req.getMonth().toUpperCase());
+		int year = Integer.parseInt(req.getYear());
+		YearMonth reqYearMonth = YearMonth.of(year, monthValue);
+		int compare = reqYearMonth.compareTo(YearMonth.now());
+		return (compare == 0);
+	}
+
+	@Override
+	public List<BillingDetailsResp> getBillingDetailsForOthers(BillingDetailsReq req) {
+		BillingDetailsResp resp = null;
+		List<BillingDetailsResp> respList= new ArrayList<BillingDetailsResp>();;
+		List<Billing> completeBillingList = new ArrayList<Billing>();
+		List<Integer> billingListEmpIds = new ArrayList<Integer>();
+		List<Integer> versions = new ArrayList<Integer>();
+		try {
+			List<BillingVersion> versionDetList = billingDao.getBillingVersionByMonth(req,false);
+			if (versionDetList != null && versionDetList.size() > 0) {
+				Map<Integer,String> portfolioMap = util.getPortfolioMap();
+				for (BillingVersion versionDet : versionDetList) {
+					int version = versionDet.getVersion();
+					versions.add(version);
+					/*List<Billing> billingList = billingDao.getBillingDetails(version);
+					if(billingList != null && billingList.size() > 0) {
+						completeBillingList.addAll(billingList);
+					}*/
+				}
+				List<Billing> billingList = billingDao.getBillingDetailsWithVersions(versions); //to test
+				billingListEmpIds = billingList.stream().map(p -> {
+					return (Integer.parseInt(p.getEmpId()));
+				}).collect(Collectors.toList());
+				
+				/*billingListEmpIds = completeBillingList.stream().map(p -> {
+					return (Integer.parseInt(p.getEmpId()));
+				}).collect(Collectors.toList());*/
+				
+				//Getting HCVersion
+				Integer version = baseLineDao.getMaxHacVersion();
+				if(version != null && version > 0) {
+					List<HCDetails> hcDetailsList = baseLineDao.getHCDetails(version);
+					for(HCDetails hcDetail: hcDetailsList) {
+						if(!billingListEmpIds.contains(hcDetail.getEmployeeId())) {
+							populateBillResFrmHCDetail(resp,hcDetail,versionDetList,portfolioMap);
+							respList.add(resp);
+						}
+					}
+				}
+			} else {
+				if(isCurrentMonthAndyear(req)) {
+					replicateBillingPrevMonthToCurrentMonth(req);
+					getBillingDetailsForOthers(req);
+				}
+			}
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+			resp = new BillingDetailsResp();
+			respList = new ArrayList<BillingDetailsResp>();
+			resp.addError("Exception Occurred");
+			respList.add(resp);
+			}
+		return respList;
+	}
+
+	private void populateBillResFrmHCDetail(BillingDetailsResp resp, HCDetails hcDetail, List<BillingVersion> versionDetList, Map<Integer, String> portfolioMap) {
+		
+		resp = new BillingDetailsResp();
+        resp.setBillableDays(0.0d);
+        resp.setBillableHrs(0);
+        resp.setBillingAmount(0.0d);
+        resp.setBrmId(hcDetail.getBrm());
+        resp.setBrmName(portfolioMap.get(Integer.getInteger(hcDetail.getBrm())));
+        resp.setDmId(hcDetail.getDm());
+        resp.setDmName(portfolioMap.get(Integer.getInteger(hcDetail.getDm())));
+        resp.setEffortHrs(0.0d);
+        resp.setEmpId(String.valueOf(hcDetail.getEmployeeId()));
+        resp.setEmpName(hcDetail.getEmpName());
+        resp.setExtraBilling(0.0d);
+        resp.setExtraHrs(0.0d);
+        resp.setFreezeInd("N");
+        resp.setVersion(String.valueOf(versionDetList.get(0).getVersion()));
+        resp.setLocationId(hcDetail.getProjectLoc());
+        resp.setOfficeId("");
+        resp.setProjectId(hcDetail.getProjectID());
+        resp.setRemarks1("");
+        resp.setRemarks2("");
+        resp.setStoName("");
+        resp.setWonNumber(hcDetail.getProjectID());
+        resp.setBillRate("0");
+		
 	}
 	
 	

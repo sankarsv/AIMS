@@ -3,23 +3,28 @@ package com.app.aims.dao.impl;
 import java.util.Date;
 import java.util.List;
 
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.app.aims.beans.BaseLine;
 import com.app.aims.beans.EmployeeAllocation;
+import com.app.aims.beans.HCDetails;
 import com.app.aims.beans.Portfolio;
+import com.app.aims.beans.VersionInfo;
 import com.app.aims.dao.BaseLineDao;
 
 @Repository
+@Transactional
 public class BaseLineDaoImpl implements BaseLineDao {
 
     @Autowired
     private SessionFactory sessionFactory;
-	
+    
 	@Override
 	public  BaseLine getMaxBaseLineDetails(Date date) {
 		
@@ -88,6 +93,24 @@ public class BaseLineDaoImpl implements BaseLineDao {
 		String queryStr1 = "FROM Portfolio";
 		Query query = session.createQuery(queryStr1);
 		return query.list();
+	}
+
+	@Override
+	public int getMaxHacVersion() {
+		Session session = sessionFactory.getCurrentSession();
+        String queryStr1 = "select max(versionNo) from VersionInfo";
+        Query query = session.createQuery(queryStr1);
+        query.setMaxResults(1);
+       return (Integer) query.uniqueResult(); 
+	}
+
+	@Override
+	public List<HCDetails> getHCDetails(Integer version) {
+		Session session = sessionFactory.getCurrentSession();
+        String queryStr1 = "from HCDetails where versionNo = :version";
+        Query query = session.createQuery(queryStr1);
+        query.setParameter("version", version.intValue());
+        return query.list();
 	}
 	
 }

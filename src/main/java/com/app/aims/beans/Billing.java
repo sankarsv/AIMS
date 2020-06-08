@@ -77,13 +77,6 @@ public class Billing  implements Serializable{
 	@OneToOne(mappedBy = "billing", cascade = CascadeType.ALL)
     private BillingRate bilingRate;
 	
-	public int getVersion() {
-		return version;
-	}
-	public void setVersion(int version) {
-		this.version = version;
-	}
-
 	public String getEmpId() {
 		return empId;
 	}

@@ -6,6 +6,8 @@ public class BillingDetailsReq {
 	private String month;
 	private String year;
 	private String brmName;
+	private Integer brmId;
+	private String filterBy;
 	private String freezeInd;
 	private String version;
 
@@ -45,6 +47,18 @@ public class BillingDetailsReq {
 	}
 	public void setBillingDetailsFilter(BillingDetailsResp billingDetailsFilter) {
 		this.billingDetailsFilter = billingDetailsFilter;
+	}
+	public Integer getBrmId() {
+		return brmId;
+	}
+	public void setBrmId(Integer brmId) {
+		this.brmId = brmId;
+	}
+	public String getFilterBy() {
+		return filterBy;
+	}
+	public void setFilterBy(String filterBy) {
+		this.filterBy = filterBy;
 	}
 	
 }
