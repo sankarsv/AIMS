@@ -34,4 +34,6 @@ public interface BillingDao {
 		
 		public List<Billing> getBillingDetailsWithVersions(List<Integer> versions);
 
+		public List<BillingVersion> getBillingVersionByClaritydescrepancyVersion(BillingDetailsReq req);
+
 }

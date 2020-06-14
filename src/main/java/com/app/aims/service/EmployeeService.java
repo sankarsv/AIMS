@@ -18,6 +18,7 @@ public interface EmployeeService {
 	public void createUser(Employee user);
     public List<Employee> getUser();
     public Employee findById(int id);
+    public List<Employee>  getEmployeeListByBrmId(String brm);
     public boolean update(EditRequest editRequest);
     public boolean deleteUserById(String id);
     public void generateBaseLine( GenerateBaseLineRequest generateBaseLineRequest)  throws ParseException, InvalidRequestException;

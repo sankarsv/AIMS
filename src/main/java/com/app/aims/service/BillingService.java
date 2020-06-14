@@ -20,6 +20,8 @@ public interface BillingService {
     
     public List<BillingDetailsResp> getBillingDetailsByBrmId(BillingDetailsReq req);
     
+    public List<BillingVersion> getBillingVersionByClaritydescrepancyVersion(BillingDetailsReq req);
+    
     public boolean updateFreeze(BillingVersion req);
 
 

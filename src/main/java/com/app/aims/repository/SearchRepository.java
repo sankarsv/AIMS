@@ -21,6 +21,8 @@ public interface SearchRepository extends JpaRepository<Employee,String>{
 	@Query("SELECT  DISTINCT e,pr,ea FROM Employee e,Project pr, EmployeeAllocation ea WHERE e.dm = :dmId and e.employeeId=ea.empId and pr.projectId=ea.project")
 	List<Employee> fetchDataLeftJoinByDm(@Param("dmId")  String dmId);
 	
+	@Query("SELECT u FROM Employee u WHERE u.brm = :brm")
+	List<Employee> getEmployeeListByBrmId(@Param("brm")  String brm);
 
 	//@Query("SELECT e,pr,ea FROM Employee e,Project pr, EmployeeAllocation ea WHERE e.dm = :dmId")
 	//List<Employee> fetchDataLeftJoinByDm(@Param("dmEmpId")  Integer dmId);
