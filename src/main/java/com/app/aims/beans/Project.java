@@ -157,6 +157,14 @@ public class Project implements Serializable {
 	@Column(name="expired_ind" )
 	private String expiredInd;
 
+	@Column(name="groupcustomer" )
+	@NotNull
+    private String _groupCustomer;
+	
+	@Column(name = "id")
+	@NotNull
+	private Integer id;
+	
 	public Integer getProjectId() {
 		return projectId;
 	}
@@ -403,6 +411,22 @@ public class Project implements Serializable {
 
 	public void setExpiredInd(String expiredInd) {
 		this.expiredInd = expiredInd;
+	}
+
+	public String get_groupCustomer() {
+		return _groupCustomer;
+	}
+
+	public void set_groupCustomer(String _groupCustomer) {
+		this._groupCustomer = _groupCustomer;
+	}
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
 	}
 	
 }

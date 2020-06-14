@@ -5,6 +5,8 @@ import java.util.List;
 public class BillingDetailUpdateReq {
 
 	private String version;
+	private String month;
+	private String year;
 	private List<BillingDetails> billingDetailsList;
 	public String getVersion() {
 		return version;
@@ -18,4 +20,17 @@ public class BillingDetailUpdateReq {
 	public void setBillingDetailsList(List<BillingDetails> billingDetailsList) {
 		this.billingDetailsList = billingDetailsList;
 	}
+	public String getMonth() {
+		return month;
+	}
+	public void setMonth(String month) {
+		this.month = month;
+	}
+	public String getYear() {
+		return year;
+	}
+	public void setYear(String year) {
+		this.year = year;
+	}
+	
 }

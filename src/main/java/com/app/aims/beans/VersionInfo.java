@@ -29,6 +29,8 @@ public class VersionInfo {
 	@Column(name="LOAD_DATE")
 	private Date loadDate;
 
+	@Column(name="CURRENT_IND")
+	private String current_ind;
 
 	public VersionInfo() {
 		super();
@@ -52,6 +54,16 @@ public class VersionInfo {
 
 	public void setLoadDate(Date loadDate) {
 		this.loadDate = loadDate;
+	}
+
+
+	public String getCurrent_ind() {
+		return current_ind;
+	}
+
+
+	public void setCurrent_ind(String current_ind) {
+		this.current_ind = current_ind;
 	}
     
     

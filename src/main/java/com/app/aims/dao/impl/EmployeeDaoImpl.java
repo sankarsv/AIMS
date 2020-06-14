@@ -1,27 +1,23 @@
 package com.app.aims.dao.impl;
 
-import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.app.aims.beans.BatchAuditDetails;
 import com.app.aims.beans.BillingFileData;
-import com.app.aims.beans.EditRequest;
+import com.app.aims.beans.ClarityFileData;
 import com.app.aims.beans.Employee;
-import com.app.aims.beans.EmployeeAllocation;
 import com.app.aims.beans.FileData;
 import com.app.aims.beans.Portfolio;
 import com.app.aims.beans.VersionInfo;
 import com.app.aims.dao.EmployeeDao;
-import com.app.aims.repository.BatchRepository;
-import com.app.aims.repository.FileDataRepository;
+import com.app.aims.repository.AllocationRepository;
+import com.app.aims.repository.SearchRepository;
 import com.app.aims.repository.SearchRepository;
 
 @Transactional
@@ -33,10 +29,11 @@ public class EmployeeDaoImpl implements EmployeeDao {
 	    private SessionFactory sessionFactory;
 	    
 	    @Autowired
-	    private FileDataRepository fdRepository;
-
+		private SearchRepository searchRepository;
+	    
 	    @Autowired
-	    private BatchRepository batchRepository;
+		private AllocationRepository allocationRepository;
+	    
 	    
 	    @Autowired
 	    private SearchRepository employeeRepository;
@@ -183,6 +180,28 @@ public class EmployeeDaoImpl implements EmployeeDao {
 	        	Session session = sessionFactory.getCurrentSession();
 	        	truncateTable(billingFileData.getClass().getSimpleName(),session);
 		        session.save(billingFileData);
+		        
+			} catch (Exception e) {
+				e.printStackTrace();
+				return false;
+			}
+	    	return true;
+	        
+	    }
+
+		@Override
+		public void deleteDetails(List<String> empIds) {
+			allocationRepository.deleteEmployees(empIds);
+			searchRepository.deleteEmployees(empIds);
+		}
+
+		@Override
+		public boolean uploadClFile(ClarityFileData clarityFileData) {
+	        // TODO Auto-generated method stub
+	        try {
+	        	Session session = sessionFactory.getCurrentSession();
+	        	truncateTable(clarityFileData.getClass().getSimpleName(),session);
+		        session.save(clarityFileData);
 		        
 			} catch (Exception e) {
 				e.printStackTrace();

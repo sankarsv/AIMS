@@ -7,6 +7,8 @@ public interface UploadXlsService {
     public void uploadXls(byte[] byteStream);
 
 	public void uploadBrXls(byte[] byteStream);
+	
+	public void uploadClXls(byte[] byteStream);
 
 
 

@@ -1,7 +1,5 @@
 package com.app.aims.vo;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 public class BillingDetailsResp extends BaseResponse{
 	
 	private String projectId;
@@ -40,8 +38,8 @@ public class BillingDetailsResp extends BaseResponse{
 	
 	private String version;
 	
-	@JsonIgnore
 	private String billRate;
+	
 
 	public String getProjectId() {
 		return projectId;
@@ -155,12 +153,10 @@ public class BillingDetailsResp extends BaseResponse{
 		this.remarks2 = remarks2;
 	}
 	
-	@JsonIgnore
 	public String getBillRate() {
 		return billRate;
 	}
 	public void setBillRate(String billRate) {
 		this.billRate = billRate;
 	}
-	
 }

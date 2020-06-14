@@ -48,7 +48,7 @@ public class DashboardServiceImpl implements DashboardService {
 		List<BARatioBean> baList = new ArrayList();
 		
 		for (BRMDetails brmDetail : brmlist) {
-			empList = employeeService.leftJoinDataByGL(brmDetail.getBrmName());	
+			empList = employeeService.leftJoinDataByGL(brmDetail.getBrmId());	
 		
 		if (empList != null && !empList.isEmpty()) {
 			if ("billable".equalsIgnoreCase(reportBean.getReportType())) {

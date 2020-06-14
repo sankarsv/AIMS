@@ -5,7 +5,7 @@ import java.util.List;
 import com.app.aims.beans.BRMDetails;
 import com.app.aims.beans.Billing;
 import com.app.aims.beans.BillingVersion;
-import com.app.aims.vo.BillingDetailUpdateReq;
+import com.app.aims.vo.BillingDetails;
 import com.app.aims.vo.BillingDetailsReq;
 
 public interface BillingDao {
@@ -20,8 +20,20 @@ public interface BillingDao {
 
 		public boolean updateFreezeInd (BillingVersion billingVer) throws Exception;
 		
-		public void fetchAndUpdateBillingDetails(BillingDetailUpdateReq req);
+		public void fetchAndUpdateBillingDetails(String ver, List<BillingDetails> billingDetailsList);
 
 		public void updateFreezeInd(BillingDetailsReq req);
+
+		public List<BillingVersion> getBillingVersionByMonth(BillingDetailsReq req, boolean sort);
+		
+		public void saveNewBillingDetails(List<BillingVersion> billingVersionList, List<Billing> billingList);
+		
+		public void addBillingDetails(List<Billing> billingList);
+		
+		public void deleteDetails(List<Billing> billingList);
+		
+		public List<Billing> getBillingDetailsWithVersions(List<Integer> versions);
+
+		public List<BillingVersion> getBillingVersionByClaritydescrepancyVersion(BillingDetailsReq req);
 
 }

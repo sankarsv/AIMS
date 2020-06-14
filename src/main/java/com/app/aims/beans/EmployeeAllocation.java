@@ -9,6 +9,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -18,7 +19,6 @@ import org.hibernate.annotations.FetchMode;
 
 @Entity
 @Table(name="allocation",schema="aims")
-
 public class EmployeeAllocation implements Serializable{
 	
 	/**
@@ -26,20 +26,20 @@ public class EmployeeAllocation implements Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 //
-//	@Id 
-//	@Column(name="allocation_id")
-//	@GeneratedValue(strategy = GenerationType.IDENTITY)
-//	private int id;
+	@Id 
+	@Column(name="allocation_id")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int id;
 //	
 //	@ManyToOne(fetch = FetchType.LAZY)
 //	@JoinColumn(name = "employee_id",insertable = false, updatable = false)
 //	@Fetch(FetchMode.JOIN)
-	@Id
+	
 	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="employee_id", nullable=false, insertable = false, updatable = false)
     private Employee empId;
 	
-	@Id
+	
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name="project_id" ,insertable = false, updatable = false )	
     private Project project;
@@ -59,10 +59,9 @@ public class EmployeeAllocation implements Serializable{
 	@NotNull
     private LocalDate projectChangeDate;
 		
-//	@ManyToOne(fetch = FetchType.LAZY)
-//	@JoinColumn(name="portfolio_id")
-//	@Fetch(FetchMode.JOIN)
-//    private Portfolio portfolioId;
+	
+	@Column(name="portfolio_id")
+    private int portfolioId;
 	
 	@Column(name="start_date"  )
 	@NotNull

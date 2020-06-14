@@ -18,6 +18,7 @@ import java.io.FileInputStream;
 import com.mysql.cj.util.StringUtils;
 import com.app.aims.beans.BatchAuditDetails;
 import com.app.aims.beans.BillingFileData;
+import com.app.aims.beans.ClarityFileData;
 import com.app.aims.beans.FileData;
 import com.app.aims.dao.BatchDao;
 import com.app.aims.dao.EmployeeDao;
@@ -106,6 +107,34 @@ public  class UploadXlsServiceImpl implements UploadXlsService {
 			System.out.println("Error "+ e.getMessage());
 		} 
 
+	}
+
+
+	@Override
+	public void uploadClXls(byte[] byteStream) {
+		try {
+
+			 ClarityFileData clarityFileData = new ClarityFileData();
+			 long id = System.currentTimeMillis();
+			 Date date = new Date();
+			 clarityFileData.setFileId(id);
+			 clarityFileData.setUploadTime(date);
+			 clarityFileData.setFileData(byteStream);
+			 batchDao.updateStatusIfAlreadyExistCl();
+			 boolean isSuccess = userDao.uploadClFile(clarityFileData);
+			 if(isSuccess) {
+				 BatchAuditDetails batchAuditDetails = new BatchAuditDetails();
+				 batchAuditDetails.setLoadDate(date);
+				 batchAuditDetails.setBatchStatus("U");
+				 batchAuditDetails.setFileId(id);
+				 batchAuditDetails.setFileType("CL");
+				 batchDao.saveFileProcessDetails(batchAuditDetails);
+			 }
+		 }
+		catch (Exception e) { 
+			System.out.println("Error "+ e.getMessage());
+		} 
+		
 	}
 
 	
