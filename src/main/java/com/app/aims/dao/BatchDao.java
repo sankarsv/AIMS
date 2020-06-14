@@ -10,4 +10,5 @@ public interface BatchDao {
 	public List<BatchAuditDetails> getAllFileProcessDetails() throws Exception;
 	public void updateStatusIfAlreadyExistBR();
 	public void updateStatusIfAlreadyExistHC();
+	public void updateStatusIfAlreadyExistCl();
 }

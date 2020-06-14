@@ -5,6 +5,7 @@ import java.util.List;
 import com.app.aims.beans.BRMDetails;
 import com.app.aims.beans.Billing;
 import com.app.aims.beans.BillingVersion;
+import com.app.aims.beans.DMDetails;
 import com.app.aims.vo.BaseResponse;
 import com.app.aims.vo.BillingDetailUpdateReq;
 import com.app.aims.vo.BillingDetailsReq;
@@ -13,7 +14,9 @@ import com.app.aims.vo.DownloadXlsResponse;
 
 public interface BillingService {
 
-    public List<BRMDetails> getBRMDetails();   
+    public List<BRMDetails> getBRMDetails();
+    
+    public List<DMDetails> getDMDetails(); 
     
     public List<BillingDetailsResp> getBillingDetailsByBrmId(BillingDetailsReq req);
     

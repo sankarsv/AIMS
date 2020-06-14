@@ -60,6 +60,21 @@ public class EmployeeController {
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
     
+    @PostMapping(value="/upload/cr")
+    public ResponseEntity<Void> uploadClXls(@RequestParam("file") MultipartFile file){
+    	try {
+    		
+    	
+       	 System.out.println("Token check passed - Clarity Upload");
+       	 //System.out.println(uploadXlsRequest.getXlsBytes());
+       	 uploadXlsService.uploadClXls(file.getBytes());
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+        return new ResponseEntity<Void>(HttpStatus.OK);
+    }
+    
     @PostMapping(value="/upload/br")
     public ResponseEntity<Void> uploadBrXls(@RequestParam("file") MultipartFile file){
     	try {

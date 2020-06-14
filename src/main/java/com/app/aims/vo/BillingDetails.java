@@ -3,6 +3,7 @@ package com.app.aims.vo;
 public class BillingDetails {
 
 	private String empId;
+	private int brm;
 	private int billableHrs;
 	private double billableDays;
 	private double effortHrs;
@@ -102,4 +103,11 @@ public class BillingDetails {
 	public void setBillRate(String billRate) {
 		this.billRate = billRate;
 	}
+	public int getBrm() {
+		return brm;
+	}
+	public void setBrm(int brm) {
+		this.brm = brm;
+	}
+	
 }

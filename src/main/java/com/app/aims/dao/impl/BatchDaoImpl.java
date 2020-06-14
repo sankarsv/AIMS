@@ -14,10 +14,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.app.aims.beans.BatchAuditDetails;
 import com.app.aims.beans.BillingFileData;
+import com.app.aims.beans.ClarityFileData;
 import com.app.aims.beans.FileData;
 import com.app.aims.dao.BatchDao;
 import com.app.aims.repository.BatchRepository;
 import com.app.aims.repository.BillingFileDataRepository;
+import com.app.aims.repository.ClarityIntermediateDataRepository;
 import com.app.aims.repository.FileDataRepository;
 
 @Transactional
@@ -35,6 +37,9 @@ public class BatchDaoImpl implements BatchDao {
 	
 	@Autowired
 	BillingFileDataRepository bdRepository;
+	
+	@Autowired
+	ClarityIntermediateDataRepository clRepository;
 	
 	@Override
 	public void saveFileProcessDetails(BatchAuditDetails batchAuditDetails) {
@@ -96,5 +101,21 @@ public class BatchDaoImpl implements BatchDao {
 			return;
 		}
 
+	}
+
+	@Override
+	public void updateStatusIfAlreadyExistCl() {
+		Session session = sessionFactory.getCurrentSession();
+		List<ClarityFileData> clarityDataList = clRepository.findAll();
+		if(clarityDataList != null && clarityDataList.size() > 0) {
+			for (ClarityFileData billingData : clarityDataList) {
+				BatchAuditDetails batchAuditDetails = batchRepository.findByFileId(billingData.getFileId());
+				if(batchAuditDetails != null && "U".equalsIgnoreCase(batchAuditDetails.getBatchStatus())) {
+		    		batchAuditDetails.setBatchStatus("A");
+		    		batchAuditDetails.setChangedDate(new Date());
+		    		session.update(batchAuditDetails);
+		    	}
+			}
+		}
 	}
 }

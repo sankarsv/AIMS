@@ -5,12 +5,15 @@ import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import org.apache.poi.ss.formula.functions.Now;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import com.app.aims.beans.Billing;
 import com.app.aims.beans.BillingRate;
+import com.app.aims.beans.BillingVersion;
 import com.app.aims.dao.BaseLineDao;
 import com.app.aims.dao.BillingDao;
 import com.app.aims.dao.EmployeeDao;
@@ -19,6 +22,7 @@ import com.app.aims.util.ServiceUtil;
 import com.app.aims.vo.BaseResponse;
 import com.app.aims.vo.BillingDetailUpdateReq;
 import com.app.aims.vo.BillingDetails;
+import com.app.aims.vo.BillingDetailsReq;
 import com.app.aims.vo.BillingDetailsResp;
 
 @Service
@@ -47,14 +51,19 @@ public class UpdateBillingServiceImpl implements UpdateBillingService{
 			List<Billing> billingDetailDelList = new ArrayList<Billing>();
 			List<String> empDelList = new ArrayList<String>();
 			List<BillingDetails> billingDetailupdateList = new ArrayList<BillingDetails>();
-			int version = Integer.parseInt(req.getVersion());
 			req.getBillingDetailsList().forEach(bd -> {
 				if("A".equalsIgnoreCase(bd.getAction())) {
+					int version = getBillingVersion(req,bd);
+					if (version != 0) {
 					billingDetailNewList.add(populateBillingTableDetails(bd,version));
+					} else {
+						throw new NoSuchElementException();
+					}
 				}
 				if("D".equalsIgnoreCase(bd.getAction())) {
 					empDelList.add(bd.getEmpId());
 					Billing billing = new Billing();
+					int version = Integer.parseInt(req.getVersion());
 					billing.setVersion(version);
 					billing.setEmpId(bd.getEmpId());
 					BillingRate billingRate = new BillingRate();
@@ -115,6 +124,19 @@ public class UpdateBillingServiceImpl implements UpdateBillingService{
 		return null;
 	}
 	
+	private int getBillingVersion(BillingDetailUpdateReq req,BillingDetails bd) {
+		BillingDetailsReq billingDetailReq = new BillingDetailsReq();
+		int version = 0;
+		billingDetailReq.setBrmId(bd.getBrm());
+		billingDetailReq.setMonth(req.getMonth());
+		billingDetailReq.setYear(req.getYear());
+		List<BillingVersion> versionDetList = billingDao.getBillingVersion(billingDetailReq);
+		if (versionDetList != null && versionDetList.size() > 0) {
+			BillingVersion versionDet = versionDetList.get(0);
+			version = versionDet.getVersion();
+		}
+		return version;
+	}
 	
 }
  	

@@ -30,6 +30,7 @@ import org.springframework.util.StringUtils;
 import com.app.aims.beans.BRMDetails;
 import com.app.aims.beans.Billing;
 import com.app.aims.beans.BillingVersion;
+import com.app.aims.beans.DMDetails;
 import com.app.aims.beans.Employee;
 import com.app.aims.beans.HCDetails;
 import com.app.aims.beans.Portfolio;
@@ -62,12 +63,16 @@ public class BillingServiceImpl implements BillingService {
 	public List<BRMDetails> getBRMDetails() {
 		List<Portfolio> portfolioList = baseLineDao.getPortfolio();
 		List<BRMDetails> brmDetails = new ArrayList<BRMDetails>();
+		List<String> brmIdList = new ArrayList<String>();
 		if(portfolioList != null && portfolioList.size() > 0) {
 			portfolioList.forEach(p -> {
+				if(!brmIdList.contains(String.valueOf(p.getBrmEmpId()))) {
 				BRMDetails brmDetail = new BRMDetails();
 				brmDetail.setBrmId(String.valueOf(p.getBrmEmpId()));
 				brmDetail.setBrmName(p.getBrmname());
 				brmDetails.add(brmDetail);
+				brmIdList.add(brmDetail.getBrmId());
+				}
 			});
 		}
 		return brmDetails;
@@ -98,7 +103,7 @@ public class BillingServiceImpl implements BillingService {
 					respList.add(resp);
 				} else {
 					replicateBillingPrevMonthToCurrentMonth(req);
-					getBillingDetailsByBrmId(req);
+					return getBillingDetailsByBrmId(req);
 				}
 			}
 
@@ -121,15 +126,12 @@ public class BillingServiceImpl implements BillingService {
 		if(versionDetList != null && versionDetList.size() > 0) {
 			Integer currMonVersionNo = versionDetList.get(0).getVersion() + 1;
 			for(BillingVersion versionDet : versionDetList) {
-				Integer oldVersion = versionDet.getVersion();
-				versionDet.setVersion(currMonVersionNo);
-				versionDet.setPeriodMonth(bdReq.getMonth());
-				versionDet.setYear(Integer.parseInt(bdReq.getYear()));
-				newBillingVersionList.add(versionDet);
-				List<Billing> billingList = billingDao.getBillingDetails(oldVersion);
+				List<Billing> billingList = billingDao.getBillingDetails(versionDet.getVersion());
+				BillingVersion versionDetNew = cloneVersionDetUpdVersion(versionDet,currMonVersionNo,bdReq);
+				newBillingVersionList.add(versionDetNew);
 				for(Billing billing : billingList) {
-					billing.setVersion(currMonVersionNo);
-					newBillingList.add(billing);
+					Billing billingNew = cloneVersionDetUpdVersion(billing,currMonVersionNo);
+					newBillingList.add(billingNew);
 				}
 				currMonVersionNo = currMonVersionNo + 1;
 			}
@@ -140,6 +142,41 @@ public class BillingServiceImpl implements BillingService {
 			}
 		}
 		
+	}
+
+	private Billing cloneVersionDetUpdVersion(Billing billing, Integer currMonVersionNo) {
+		Billing billingNew = new Billing();
+		billingNew.setBilingRate(billing.getBilingRate());
+		billingNew.setBillableDays(billing.getBillableDays());
+		billingNew.setBillableHrs(billing.getBillableHrs());
+		billingNew.setBillingAmount(billing.getBillingAmount());
+		billingNew.setDmName(billing.getDmName());
+		billingNew.setEffortHrs(billing.getEffortHrs());
+		billingNew.setEmpId(billing.getEmpId());
+		billingNew.setExtraBilling(billing.getExtraBilling());
+		billingNew.setExtraHrs(billing.getExtraHrs());
+		billingNew.setLocationId(billing.getLocationId());
+		billingNew.setRemarks1(billing.getRemarks1());
+		billingNew.setRemarks2(billing.getRemarks2());
+		billingNew.setStoName(billing.getStoName());
+		billingNew.setWonNumber(billing.getWonNumber());
+		billingNew.setVersion(currMonVersionNo);
+		return billingNew;
+	}
+
+	private BillingVersion cloneVersionDetUpdVersion(BillingVersion versionDetail, Integer currMonVersionNo,
+			BillingDetailsReq bdReq) {
+		BillingVersion newVersionDet = new BillingVersion();
+		newVersionDet.setBillingComments(versionDetail.getBillingComments());
+		newVersionDet.setBrm_EmpNo(versionDetail.getBrm_EmpNo());
+		newVersionDet.setDraftIndicator("N");
+		newVersionDet.setFreezeInd("N");
+		newVersionDet.setLocation(versionDetail.getLocation());
+		newVersionDet.setVersion(currMonVersionNo);
+		newVersionDet.setPeriodMonth(bdReq.getMonth());
+		newVersionDet.setYear(Integer.parseInt(bdReq.getYear()));
+		
+		return newVersionDet;
 	}
 
 	private BillingDetailsReq createReqForPrevMonth(BillingDetailsReq bdReq) {
@@ -182,30 +219,41 @@ public class BillingServiceImpl implements BillingService {
 
 		List<BillingDetailsResp> result = billingList.stream().map(bl -> {
 			BillingDetailsResp resp = new BillingDetailsResp();
+			String empName = "";
+			String dmId="";
+			String officeId = "";
+			if (employeeDetailsMap.get(Integer.parseInt(bl.getEmpId())) != null){
+				dmId = employeeDetailsMap.get(Integer.parseInt(bl.getEmpId())).getDm();
+				String lastName = StringUtils.hasText(employeeDetailsMap.get(Integer.parseInt(bl.getEmpId())).getLastName()) ? employeeDetailsMap.get(Integer.parseInt(bl.getEmpId())).getLastName():"";
+				empName = employeeDetailsMap.get(Integer.parseInt(bl.getEmpId())).getFirstName() + " "+ lastName;
+				officeId = employeeDetailsMap.get(Integer.parseInt(bl.getEmpId())).getOfficeId();
+			}
 			resp.setBillableDays(bl.getBillableDays());
 			resp.setBillableHrs(bl.getBillableHrs());
 			resp.setBillingAmount(bl.getBillingAmount());
 			resp.setBrmId(versionDet.getBrm_EmpNo());
-			resp.setBrmName(portfolioMap.get(versionDet.getBrm_EmpNo()));
-			resp.setDmId(employeeDetailsMap.get(Integer.parseInt(bl.getEmpId())).getDm());
-			resp.setDmName(portfolioMap.get(resp.getDmId()));
+			if(StringUtils.hasText(versionDet.getBrm_EmpNo()))
+				resp.setBrmName(portfolioMap.get(Integer.parseInt(versionDet.getBrm_EmpNo())));
+			resp.setDmId(dmId);
+			if(StringUtils.hasText(resp.getDmId()))
+				resp.setDmName(portfolioMap.get(Integer.parseInt(resp.getDmId())));
 			resp.setEffortHrs(bl.getEffortHrs());
 			resp.setEmpId(bl.getEmpId());
-			String empName = employeeDetailsMap.get(Integer.parseInt(bl.getEmpId())).getFirstName() + " "
-					+ employeeDetailsMap.get(Integer.parseInt(bl.getEmpId())).getLastName();
 			resp.setEmpName(empName);
 			resp.setExtraBilling(bl.getExtraBilling());
 			resp.setExtraHrs(bl.getExtraHrs());
 			resp.setFreezeInd(versionDet.getFreezeInd());
 			resp.setVersion(versionDet.getVersion().toString());
 			resp.setLocationId(bl.getLocationId());
-			resp.setOfficeId(employeeDetailsMap.get(Integer.parseInt(bl.getEmpId())).getOfficeId());
+			resp.setOfficeId(officeId);
 			resp.setProjectId(bl.getWonNumber());
 			resp.setRemarks1(bl.getRemarks1());
 			resp.setRemarks2(bl.getRemarks2());
 			resp.setStoName(bl.getStoName());
 			resp.setWonNumber(bl.getWonNumber());
-			resp.setBillRate(bl.getBilingRate().getBillRate());
+			if(bl.getBilingRate() != null) {
+				resp.setBillRate(bl.getBilingRate().getBillRate());
+			}
 			return resp;
 		}).collect(Collectors.toList());
 		return result;
@@ -213,95 +261,106 @@ public class BillingServiceImpl implements BillingService {
 
 	@Override
 	public DownloadXlsResponse downloadXlsBillingReport(BillingDetailsReq req) {
-		Integer version = null;
 		DownloadXlsResponse response = null;
-		BillingVersion versionDet = null;
-		List<BillingVersion> versionDetList = billingDao.getBillingVersion(req);
-		if (versionDetList != null && versionDetList.size() > 0) {
-			versionDet = versionDetList.get(0);
-			version = versionDet.getVersion();
+		List<BillingVersion> versionDetList = null;
+		List<BillingDetailsResp> completeRespList= null;
+		if(req.getBrmId() != null && req.getBrmId() !=0) {
+			versionDetList = billingDao.getBillingVersion(req);
 		} else {
-			throw new NoSuchElementException();
+			versionDetList = billingDao.getBillingVersionByMonth(req, false);
 		}
-		List<Billing> billingList = billingDao.getBillingDetails(version);
-		if (billingList != null && billingList.size() > 0) {
+		if (versionDetList != null && versionDetList.size() > 0) {
+			completeRespList = new ArrayList<BillingDetailsResp>();
 			Map<Integer, Employee> employeeDetailsMap = util.getEmployeeDetailMap();
 			Map<Integer, String> portfolioMap = util.getPortfolioMap();
-			List<BillingDetailsResp> respList = populateBillingDetailsList(billingList, versionDet, employeeDetailsMap,
-					portfolioMap);
-			if (req.getBillingDetailsFilter() != null) {
-				respList = filterBillingList(req, respList);
+			for(BillingVersion billingVersion:versionDetList) {
+				List<Billing> billingList = billingDao.getBillingDetails(billingVersion.getVersion());
+				if (billingList != null && billingList.size() > 0) {
+					List<BillingDetailsResp> respList = populateBillingDetailsList(billingList, billingVersion, employeeDetailsMap,
+							portfolioMap);
+					completeRespList.addAll(respList);
+				}	
 			}
-			try {
-				Resource resource = new ClassPathResource("BillingTemplate.xlsx");
-				InputStream input = resource.getInputStream();
-				Workbook workbook = WorkbookFactory.create(input);
-				Sheet sheet = workbook.getSheetAt(0);
-				CellStyle cs = workbook.createCellStyle();
-				DataFormat df = workbook.createDataFormat();
-				cs.setDataFormat(df.getFormat("$#,##0.00"));
-				double totalBillingAmt = 0.00;
-
-				int rowNum = 2;
-				for (BillingDetailsResp billingDetails : respList) {
-					Row row = sheet.createRow(rowNum++);
-
-					int cellNum = 0;
-					row.createCell(cellNum).setCellValue(versionDet.getBrm_EmpNo());
-					row.createCell(++cellNum).setCellValue(billingDetails.getDmName());
-					row.createCell(++cellNum).setCellValue(billingDetails.getLocationId());
-					row.createCell(++cellNum).setCellValue(billingDetails.getWonNumber());
-					row.createCell(++cellNum).setCellValue(billingDetails.getProjectId());// Project Name
-					row.createCell(++cellNum).setCellValue(billingDetails.getStoName());
-					row.createCell(++cellNum).setCellValue(billingDetails.getEmpId());
-					row.createCell(++cellNum).setCellValue(billingDetails.getOfficeId());
-					row.createCell(++cellNum).setCellValue(billingDetails.getEmpName());
-					row.createCell(++cellNum).setCellValue(billingDetails.getBillRate());
-
-					row.createCell(++cellNum).setCellValue(billingDetails.getBillableHrs());
-					row.createCell(++cellNum).setCellValue(billingDetails.getBillableDays());
-					row.createCell(++cellNum).setCellValue(billingDetails.getEffortHrs());
-					row.createCell(++cellNum).setCellValue(billingDetails.getExtraHrs());
-					Cell amountCell = row.createCell(++cellNum);
-					amountCell.setCellStyle(cs);
-					amountCell.setCellValue(billingDetails.getExtraBilling());
-					totalBillingAmt = totalBillingAmt + billingDetails.getBillingAmount();
-					row.createCell(++cellNum).setCellValue(billingDetails.getBillingAmount());
-					row.createCell(++cellNum).setCellValue(billingDetails.getRemarks1()); // PL
-					row.createCell(++cellNum).setCellValue(billingDetails.getRemarks2());
-
+			
+				if(completeRespList != null && completeRespList.size() > 0) {
+				
+				if (req.getBillingDetailsFilter() != null) {
+					completeRespList = filterBillingList(req, completeRespList);
 				}
-				Cell totalAmountCell = sheet.createRow(0).createCell(15);
-				totalAmountCell.setCellStyle(cs);
-				totalAmountCell.setCellValue(totalBillingAmt);
+				try {
+					Resource resource = new ClassPathResource("BillingTemplate.xlsx");
+					InputStream input = resource.getInputStream();
+					Workbook workbook = WorkbookFactory.create(input);
+					Sheet sheet = workbook.getSheetAt(0);
+					CellStyle cs = workbook.createCellStyle();
+					DataFormat df = workbook.createDataFormat();
+					cs.setDataFormat(df.getFormat("$#,##0.00"));
+					double totalBillingAmt = 0.00;
 
-				// Resize all columns to fit the content size
-				for (int i = 0; i < 20; i++) {
-					sheet.autoSizeColumn(i);
+					int rowNum = 2;
+					for (BillingDetailsResp billingDetails : completeRespList) {
+						Row row = sheet.createRow(rowNum++);
+
+						int cellNum = 0;
+						row.createCell(cellNum).setCellValue(billingDetails.getBrmName());
+						row.createCell(++cellNum).setCellValue(billingDetails.getDmName());
+						row.createCell(++cellNum).setCellValue(billingDetails.getLocationId());
+						row.createCell(++cellNum).setCellValue(billingDetails.getWonNumber());
+						row.createCell(++cellNum).setCellValue(billingDetails.getProjectId());// Project Name
+						row.createCell(++cellNum).setCellValue(billingDetails.getStoName());
+						row.createCell(++cellNum).setCellValue(billingDetails.getEmpId());
+						row.createCell(++cellNum).setCellValue(billingDetails.getOfficeId());
+						row.createCell(++cellNum).setCellValue(billingDetails.getEmpName());
+						row.createCell(++cellNum).setCellValue(billingDetails.getBillRate());
+
+						row.createCell(++cellNum).setCellValue(billingDetails.getBillableHrs());
+						row.createCell(++cellNum).setCellValue(billingDetails.getBillableDays());
+						row.createCell(++cellNum).setCellValue(billingDetails.getEffortHrs());
+						row.createCell(++cellNum).setCellValue(billingDetails.getExtraHrs());
+						Cell amountCell = row.createCell(++cellNum);
+						amountCell.setCellStyle(cs);
+						amountCell.setCellValue(billingDetails.getExtraBilling());
+						totalBillingAmt = totalBillingAmt + billingDetails.getBillingAmount();
+						row.createCell(++cellNum).setCellValue(billingDetails.getBillingAmount());
+						row.createCell(++cellNum).setCellValue(billingDetails.getRemarks1()); // PL
+						row.createCell(++cellNum).setCellValue(billingDetails.getRemarks2());
+
+					}
+					Cell totalAmountCell = sheet.createRow(0).createCell(15);
+					totalAmountCell.setCellStyle(cs);
+					totalAmountCell.setCellValue(totalBillingAmt);
+
+					// Resize all columns to fit the content size
+					for (int i = 0; i < 20; i++) {
+						sheet.autoSizeColumn(i);
+					}
+
+					File f = File.createTempFile("billingDetails", ".xls");
+					FileOutputStream fileOut = new FileOutputStream(f);
+					workbook.write(fileOut);
+					fileOut.close();
+					workbook.close();
+					response = new DownloadXlsResponse();
+					response.setByteArray(Files.readAllBytes(f.toPath()));
+					return response;
+
+				} catch (NoSuchElementException ex) {
+					ex.printStackTrace();
+					response = new DownloadXlsResponse();
+					response.addError("NOT FOUND");
+
+				} catch (Exception e) {
+					e.printStackTrace();
+					response = new DownloadXlsResponse();
+					response.addError("Exception Occurred");
 				}
-
-				File f = File.createTempFile("billingDetails", ".xls");
-				FileOutputStream fileOut = new FileOutputStream(f);
-				workbook.write(fileOut);
-				fileOut.close();
-				workbook.close();
-				response = new DownloadXlsResponse();
-				response.setByteArray(Files.readAllBytes(f.toPath()));
-				return response;
-
-			} catch (NoSuchElementException ex) {
-				ex.printStackTrace();
-				response = new DownloadXlsResponse();
-				response.addError("NOT FOUND");
-
-			} catch (Exception e) {
-				e.printStackTrace();
-				response = new DownloadXlsResponse();
-				response.addError("Exception Occurred");
+			} else {
+				throw new NoSuchElementException();
 			}
 		} else {
 			throw new NoSuchElementException();
 		}
+		
 		return response;
 	}
 
@@ -450,7 +509,7 @@ public class BillingServiceImpl implements BillingService {
 			} else {
 				if(isCurrentMonthAndyear(req)) {
 					replicateBillingPrevMonthToCurrentMonth(req);
-					getBillingDetailsByMonth(req);
+					return getBillingDetailsByMonth(req);
 				}
 				resp = new BillingDetailsResp();
 				respList = new ArrayList<BillingDetailsResp>();
@@ -488,7 +547,6 @@ public class BillingServiceImpl implements BillingService {
 	public List<BillingDetailsResp> getBillingDetailsForOthers(BillingDetailsReq req) {
 		BillingDetailsResp resp = null;
 		List<BillingDetailsResp> respList= new ArrayList<BillingDetailsResp>();;
-		List<Billing> completeBillingList = new ArrayList<Billing>();
 		List<Integer> billingListEmpIds = new ArrayList<Integer>();
 		List<Integer> versions = new ArrayList<Integer>();
 		try {
@@ -498,19 +556,11 @@ public class BillingServiceImpl implements BillingService {
 				for (BillingVersion versionDet : versionDetList) {
 					int version = versionDet.getVersion();
 					versions.add(version);
-					/*List<Billing> billingList = billingDao.getBillingDetails(version);
-					if(billingList != null && billingList.size() > 0) {
-						completeBillingList.addAll(billingList);
-					}*/
 				}
 				List<Billing> billingList = billingDao.getBillingDetailsWithVersions(versions); //to test
 				billingListEmpIds = billingList.stream().map(p -> {
 					return (Integer.parseInt(p.getEmpId()));
 				}).collect(Collectors.toList());
-				
-				/*billingListEmpIds = completeBillingList.stream().map(p -> {
-					return (Integer.parseInt(p.getEmpId()));
-				}).collect(Collectors.toList());*/
 				
 				//Getting HCVersion
 				Integer version = baseLineDao.getMaxHacVersion();
@@ -518,7 +568,7 @@ public class BillingServiceImpl implements BillingService {
 					List<HCDetails> hcDetailsList = baseLineDao.getHCDetails(version);
 					for(HCDetails hcDetail: hcDetailsList) {
 						if(!billingListEmpIds.contains(hcDetail.getEmployeeId())) {
-							populateBillResFrmHCDetail(resp,hcDetail,versionDetList,portfolioMap);
+							resp  = populateBillResFrmHCDetail(resp,hcDetail,versionDetList,portfolioMap);
 							respList.add(resp);
 						}
 					}
@@ -526,7 +576,7 @@ public class BillingServiceImpl implements BillingService {
 			} else {
 				if(isCurrentMonthAndyear(req)) {
 					replicateBillingPrevMonthToCurrentMonth(req);
-					getBillingDetailsForOthers(req);
+					return getBillingDetailsForOthers(req);
 				}
 			}
 			
@@ -537,10 +587,11 @@ public class BillingServiceImpl implements BillingService {
 			resp.addError("Exception Occurred");
 			respList.add(resp);
 			}
+		System.out.println("Size of the list containing other employees is" + respList.size());
 		return respList;
 	}
 
-	private void populateBillResFrmHCDetail(BillingDetailsResp resp, HCDetails hcDetail, List<BillingVersion> versionDetList, Map<Integer, String> portfolioMap) {
+	private BillingDetailsResp populateBillResFrmHCDetail(BillingDetailsResp resp, HCDetails hcDetail, List<BillingVersion> versionDetList, Map<Integer, String> portfolioMap) {
 		
 		resp = new BillingDetailsResp();
         resp.setBillableDays(0.0d);
@@ -565,6 +616,7 @@ public class BillingServiceImpl implements BillingService {
         resp.setStoName("");
         resp.setWonNumber(hcDetail.getProjectID());
         resp.setBillRate("0");
+        return resp;
 		
 	}
 
@@ -594,6 +646,26 @@ public class BillingServiceImpl implements BillingService {
 		}
 
 		return billingVersion;
+	}
+
+	@Override
+	public List<DMDetails> getDMDetails() {
+		List<Portfolio> portfolioList = baseLineDao.getPortfolio();
+		List<DMDetails> dmDetails = new ArrayList<DMDetails>();
+		List<String> dmIdList = new ArrayList<String>();
+		if(portfolioList != null && portfolioList.size() > 0) {
+			portfolioList.forEach(p -> {
+				if(!dmIdList.contains(String.valueOf(p.getDm_emp_id()))) {
+				DMDetails dmDetail = new DMDetails();
+				dmDetail.setDmId(String.valueOf(p.getDm_emp_id()));
+				dmDetail.setDmName(p.getBrmname());
+				dmDetails.add(dmDetail);
+				dmIdList.add(dmDetail.getDmId());
+				}
+			});
+		}
+		return dmDetails;
+
 	}
 
 }

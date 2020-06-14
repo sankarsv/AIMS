@@ -15,6 +15,6 @@ public interface BillingDataRepository extends JpaRepository<Billing, Integer> {
 
 	public List<Billing> findByVersion(int version);
 	
-	@Query(value = "SELECT u FROM User u WHERE u.version IN :versions")
+	@Query(value = "SELECT b FROM Billing b WHERE b.version IN :versions")
 	public List<Billing> findByVersionList(@Param("versions") Collection<Integer> versions);
 }

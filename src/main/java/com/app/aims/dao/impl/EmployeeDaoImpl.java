@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.app.aims.beans.BillingFileData;
+import com.app.aims.beans.ClarityFileData;
 import com.app.aims.beans.Employee;
 import com.app.aims.beans.FileData;
 import com.app.aims.beans.Portfolio;
@@ -178,6 +179,22 @@ public class EmployeeDaoImpl implements EmployeeDao {
 			allocationRepository.deleteEmployees(empIds);
 			searchRepository.deleteEmployees(empIds);
 		}
+
+		@Override
+		public boolean uploadClFile(ClarityFileData clarityFileData) {
+	        // TODO Auto-generated method stub
+	        try {
+	        	Session session = sessionFactory.getCurrentSession();
+	        	truncateTable(clarityFileData.getClass().getSimpleName(),session);
+		        session.save(clarityFileData);
+		        
+			} catch (Exception e) {
+				e.printStackTrace();
+				return false;
+			}
+	    	return true;
+	        
+	    }
 	    
 		
 }

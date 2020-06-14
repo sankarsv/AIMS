@@ -99,7 +99,7 @@ public class BaseLineDaoImpl implements BaseLineDao {
 	@Override
 	public int getMaxHacVersion() {
 		Session session = sessionFactory.getCurrentSession();
-        String queryStr1 = "select max(versionNo) from VersionInfo";
+        String queryStr1 = "select max(versionNo) from HCDetails";
         Query query = session.createQuery(queryStr1);
         query.setMaxResults(1);
        return (Integer) query.uniqueResult(); 

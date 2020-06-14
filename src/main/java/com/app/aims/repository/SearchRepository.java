@@ -15,18 +15,18 @@ import com.app.aims.beans.EmployeeAllocation;
 public interface SearchRepository extends JpaRepository<Employee,String>{
 	
     
-	@Query("SELECT DISTINCT e,pr,ea FROM Employee e,Project pr,EmployeeAllocation ea WHERE e.employeeId = :empId")
+	@Query("SELECT DISTINCT e,pr,ea FROM Employee e,Project pr,EmployeeAllocation ea WHERE e.employeeId = :empId and e.employeeId=ea.empId and pr.projectId=ea.project")
 	List<Employee> fetchDataLeftJoin(@Param("empId")  Integer empId);
 	
-	@Query("SELECT  DISTINCT e,pr,ea FROM Employee e,Project pr, EmployeeAllocation ea WHERE e.dm = :dmName")
-	List<Employee> fetchDataLeftJoinByDm(@Param("dmName")  String dmName);
+	@Query("SELECT  DISTINCT e,pr,ea FROM Employee e,Project pr, EmployeeAllocation ea WHERE e.dm = :dmId and e.employeeId=ea.empId and pr.projectId=ea.project")
+	List<Employee> fetchDataLeftJoinByDm(@Param("dmId")  String dmId);
 	
 
 	//@Query("SELECT e,pr,ea FROM Employee e,Project pr, EmployeeAllocation ea WHERE e.dm = :dmId")
 	//List<Employee> fetchDataLeftJoinByDm(@Param("dmEmpId")  Integer dmId);
 	
-	@Query("SELECT e,pr,ea FROM Employee e,Project pr, EmployeeAllocation ea WHERE e.brm = :brmName")
-	List<Employee> fetchDataLeftJoinByBrm(@Param("brmName")  String brmEmpName);
+	@Query("SELECT e,pr,ea FROM Employee e,Project pr, EmployeeAllocation ea WHERE e.brm = :brmEmpId and e.employeeId=ea.empId and pr.projectId=ea.project")
+	List<Employee> fetchDataLeftJoinByBrm(@Param("brmEmpId")  String brmEmpId);
 	
 	//@Query("SELECT e,pr,ea FROM Employee e,Project pr, EmployeeAllocation ea WHERE e.brm = :brmEmpId")
 	//List<Employee> fetchDataLeftJoinByBrm(@Param("brmEmpId")  Integer brmEmpId);

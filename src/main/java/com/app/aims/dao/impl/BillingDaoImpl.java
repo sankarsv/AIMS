@@ -82,7 +82,7 @@ public class BillingDaoImpl implements BillingDao {
 			try {
 				BillingVersion billingVersion = new BillingVersion();
 			if(StringUtils.hasText(req.getMonth()))billingVersion.setPeriodMonth(req.getMonth());
-			if(StringUtils.hasText(req.getBrmName()))billingVersion.setBrm_EmpNo(req.getBrmName());
+			if(req.getBrmId() != 0) billingVersion.setBrm_EmpNo(req.getBrmId().toString());
 				if(StringUtils.hasText(req.getYear()))billingVersion.setYear(new Integer(req.getYear()).intValue());
 				if(StringUtils.hasText(req.getVersion()))billingVersion.setVersion((new Integer(req.getVersion()).intValue()));
 				Example<BillingVersion> billingVersionEx = Example.of(billingVersion);

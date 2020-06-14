@@ -14,31 +14,31 @@ public class DateUtil {
 	public static Map<Integer,String> monthValueMap = new HashMap<Integer,String>();
 	
 	static {
-		monthMap.put("JAN", 1);
-		monthMap.put("FEB", 2);
-		monthMap.put("MAR", 3);
-		monthMap.put("APR", 4);
+		monthMap.put("JANUARY", 1);
+		monthMap.put("FEBRUARY", 2);
+		monthMap.put("MARCH", 3);
+		monthMap.put("APRIL", 4);
 		monthMap.put("MAY", 5);
-		monthMap.put("JUN", 6);
-		monthMap.put("JUL", 7);
-		monthMap.put("AUG", 8);
-		monthMap.put("SEP", 9);
-		monthMap.put("OCT", 10);
-		monthMap.put("NOV", 11);
-		monthMap.put("DEC", 12);
+		monthMap.put("JUNE", 6);
+		monthMap.put("JULY", 7);
+		monthMap.put("AUGUST", 8);
+		monthMap.put("SEPTEMBER", 9);
+		monthMap.put("OCTOBER", 10);
+		monthMap.put("NOVEMBER", 11);
+		monthMap.put("DECEMBER", 12);
 		
-		monthValueMap.put(1,"JAN");
-		monthValueMap.put(2,"FEB");
-		monthValueMap.put(3,"MAR");
-		monthValueMap.put(4,"APR");
+		monthValueMap.put(1,"JANUARY");
+		monthValueMap.put(2,"FEBRUARY");
+		monthValueMap.put(3,"MARCH");
+		monthValueMap.put(4,"APRIL");
 		monthValueMap.put(5,"MAY");
-		monthValueMap.put(6,"JUN");
-		monthValueMap.put(7,"JUL");
-		monthValueMap.put(8,"AUG");
-		monthValueMap.put(9,"SEP");
-		monthValueMap.put(10,"OCT");
-		monthValueMap.put(11,"NOV");
-		monthValueMap.put(12,"DEC");
+		monthValueMap.put(6,"JUNE");
+		monthValueMap.put(7,"JULY");
+		monthValueMap.put(8,"AUGUST");
+		monthValueMap.put(9,"SEPTEMBER");
+		monthValueMap.put(10,"OCTOBER");
+		monthValueMap.put(11,"NOVEMBER");
+		monthValueMap.put(12,"DECEMBER");
 		
 	}
 

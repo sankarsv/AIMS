@@ -27,6 +27,7 @@ import com.app.aims.beans.Billing;
 import com.app.aims.beans.BillingDiscrepancy;
 import com.app.aims.beans.BillingVersion;
 import com.app.aims.beans.Clarity;
+import com.app.aims.beans.DMDetails;
 import com.app.aims.beans.Employee;
 
 import com.app.aims.service.BillingDiscrepancyService;
@@ -184,8 +185,16 @@ public class BillingController {
 		return new ResponseEntity<Object>(brmDetails, HttpStatus.OK);
 
 	}
+	
+	@GetMapping(value = "/getDMDetails", headers = "Accept=application/json")
+	public ResponseEntity<Object> getDmDetails() {
 
-	@PostMapping(value = "/updateFreeze", headers = "Accept=application/json")
+		List<DMDetails> dmDetails = billingService.getDMDetails();
+		return new ResponseEntity<Object>(dmDetails, HttpStatus.OK);
+
+	}
+
+	@PostMapping(value = "/updateFreezeOld", headers = "Accept=application/json")
 	public ResponseEntity<Object> updateFreezeInd(@RequestBody BillingVersion billingVersion)
 			throws InvalidRequestException {
 
@@ -207,10 +216,10 @@ public class BillingController {
 					billingDetails = billingService.getBillingDetailsByBrmId(billingDetailReq);
 				} else if("all".equalsIgnoreCase(billingDetailReq.getFilterBy())){
 					billingDetails = billingService.getBillingDetailsByMonth(billingDetailReq);
-				} else if("others".equalsIgnoreCase(billingDetailReq.getFilterBy())){
+				} else if("other".equalsIgnoreCase(billingDetailReq.getFilterBy())){
 					billingDetails = billingService.getBillingDetailsForOthers(billingDetailReq);
 				}
-			if (billingDetails != null) {
+			if (billingDetails != null && billingDetails.size()>0) {
 				if (!(billingDetails.get(0).getErrorList().size() > 0)) {
 					return new ResponseEntity<Object>(billingDetails, HttpStatus.OK);
 				} else if ("NOT FOUND".equalsIgnoreCase(billingDetails.get(0).getErrorList().get(0))) {
@@ -245,9 +254,10 @@ public class BillingController {
 		return new ResponseEntity<>("Bad Request", HttpStatus.BAD_REQUEST);
 	}
 
-	@PostMapping(value = "/updateFreezeNew", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = "/updateFreeze", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> updateFreezeInd(@RequestBody BillingDetailsReq billingDetailReq) {
-		if (validReq(billingDetailReq) && billingDetailReq.getFreezeInd() != null) {
+		if (StringUtils.hasText(billingDetailReq.getMonth()) && StringUtils.hasText(billingDetailReq.getYear()) 
+				&& StringUtils.hasText(billingDetailReq.getFreezeInd())&& billingDetailReq.getBrmId() != null ) {
 			BaseResponse resp = billingService.updateFreezeInd(billingDetailReq);
 			if (resp == null) {
 				return new ResponseEntity<Object>(HttpStatus.ACCEPTED);
@@ -266,8 +276,7 @@ public class BillingController {
 	@PostMapping(value = "/downloadBilling")
 	public ResponseEntity<byte[]> exportHCData(@RequestBody BillingDetailsReq billingDetailReq) throws Exception {
 		if (!((StringUtils.hasText(billingDetailReq.getVersion()))
-				|| (StringUtils.hasText(billingDetailReq.getBrmName())
-						&& StringUtils.hasText(billingDetailReq.getMonth())
+				|| (StringUtils.hasText(billingDetailReq.getMonth())
 						&& StringUtils.hasText(billingDetailReq.getYear())))) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
@@ -292,10 +301,10 @@ public class BillingController {
 
 	private boolean validReq(BillingDetailUpdateReq req) {
 		try {
-			if (req != null && req.getVersion() != null && req.getBillingDetailsList() != null
-					&& req.getBillingDetailsList().size() > 0) {
-				int parseInt = Integer.parseInt(req.getVersion());
-				System.out.println("Version To be updated --> " + parseInt);
+			if (req != null && req.getBillingDetailsList() != null
+					&& req.getBillingDetailsList().size() > 0 && (req.getVersion() != null || 
+							((StringUtils.hasText(req.getMonth())) && (StringUtils.hasText(req.getYear()))))) {
+				System.out.println("Version To be updated --> " + req.getVersion());
 				return true;
 			} else {
 				return false;
