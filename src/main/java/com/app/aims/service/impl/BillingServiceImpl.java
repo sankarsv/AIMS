@@ -56,6 +56,13 @@ public class BillingServiceImpl implements BillingService {
 
 		return billingDao.retrieveBRMInfo();
 	}
+	
+	@Override
+	public List<BillingVersion> getBillingVersionByClaritydescrepancyVersion(BillingDetailsReq req){
+		
+		return billingDao.getBillingVersionByClaritydescrepancyVersion(req);
+		
+	}
 
 	@Override
 	public List<BillingDetailsResp> getBillingDetails(BillingDetailsReq req) {

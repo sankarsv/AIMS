@@ -22,6 +22,7 @@ import com.app.aims.beans.VersionInfo;
 import com.app.aims.dao.EmployeeDao;
 import com.app.aims.repository.BatchRepository;
 import com.app.aims.repository.FileDataRepository;
+import com.app.aims.repository.SearchRepository;
 
 @Transactional
 @Repository
@@ -37,6 +38,9 @@ public class EmployeeDaoImpl implements EmployeeDao {
 	    @Autowired
 	    private BatchRepository batchRepository;
 	    
+	    @Autowired
+	    private SearchRepository employeeRepository;
+	    
 	    @Override
 	    public void addUser(Employee user) {
 	        // TODO Auto-generated method stub
@@ -51,6 +55,14 @@ public class EmployeeDaoImpl implements EmployeeDao {
 	        @SuppressWarnings("unchecked")
 	        List<Employee> list= session.createCriteria(Employee.class).list();
 	        return list;
+	    }
+	    
+	    @Override
+	    public List<Employee> getEmployeeDetailsByBrmId(String brm){
+	    	Session session = sessionFactory.getCurrentSession();
+	    	List<Employee> list = employeeRepository.getEmployeeListByBrmId(brm);
+	    	return list;
+	    	
 	    }
 
 	    
@@ -138,10 +150,13 @@ public class EmployeeDaoImpl implements EmployeeDao {
 	    @Override
 		public List<Employee> getEmployeeDetails() {
 			
+	    	System.out.println("Test1");
 			// TODO Auto-generated method stub
 			Session session = sessionFactory.getCurrentSession();
+			System.out.println("Test2");
 			String queryStr1 = "FROM Employee";
 			Query query = session.createQuery(queryStr1);
+			System.out.println("Test3");
 			//query.setParameter("createdAt", date);
 			return query.list();    
 		}

@@ -68,6 +68,12 @@ public class EmployeeServiceImpl implements EmployeeService {
         // TODO Auto-generated method stub
         return userDao.findById(id);
     }
+    
+    @Override
+    public List<Employee>  getEmployeeListByBrmId(String brm){
+    	 List<Employee> emplistByBrmId = userDao.getEmployeeDetailsByBrmId(brm);
+    	 return emplistByBrmId;
+    }
 
     @Override
     public void createUser(Employee user) {

@@ -25,6 +25,8 @@ import com.app.aims.repository.BillingDataRepository;
 import com.app.aims.repository.BillingVersionRespository;
 import com.app.aims.vo.BillingDetailUpdateReq;
 import com.app.aims.vo.BillingDetailsReq;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Transactional
 @Repository
@@ -85,6 +87,23 @@ public class BillingDaoImpl implements BillingDao {
 			return billingVersionResList;
 
 		}
+		
+		
+		//
+		@Override
+		public List<BillingVersion> getBillingVersionByClaritydescrepancyVersion(BillingDetailsReq req) {
+			BillingVersion billingVersion = new BillingVersion();
+			if(StringUtils.hasText(req.getMonth()))billingVersion.setPeriodMonth(req.getMonth());
+			if(StringUtils.hasText(req.getBrmName()))billingVersion.setBrm_EmpNo(req.getBrmName());
+			if(StringUtils.hasText(req.getYear()))billingVersion.setYear(new Integer(req.getYear()).intValue());
+			if(StringUtils.hasText(req.getVersion()))billingVersion.setDiscrerpancyVersion(req.getVersion());
+			Example<BillingVersion> billingVersionEx = Example.of(billingVersion);
+			List<BillingVersion> billingVersionResList = billingVerRepo.findAll(billingVersionEx);
+			
+			return billingVersionResList;
+
+		}
+		
 
 		@Override
 		public List<Billing> getBillingDetails(int version) {

@@ -17,6 +17,8 @@ public interface BillingService {
     
     public List<BillingDetailsResp> getBillingDetails(BillingDetailsReq req);
     
+    public List<BillingVersion> getBillingVersionByClaritydescrepancyVersion(BillingDetailsReq req);
+    
     public boolean updateFreeze(BillingVersion req);
 
     public BaseResponse updateBillingDetails(BillingDetailUpdateReq req);
