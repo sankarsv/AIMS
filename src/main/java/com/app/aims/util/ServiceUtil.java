@@ -45,4 +45,14 @@ public class ServiceUtil {
 		return portFolioMap;
 	}
 	
+	public  Map<String,Integer> getPortfolioInvMap() {
+		Map<String,Integer> portFolioMap = new HashMap<String,Integer>();
+		List<Portfolio> portfolioList = baseLineDao.getPortfolio();
+		portfolioList.stream().forEach(p -> {
+			portFolioMap.put(p.getBrmname(),p.getBrmEmpId());
+			portFolioMap.put(p.getDm_name(),p.getDm_emp_id() );
+		});
+		return portFolioMap;
+	}
+	
 }

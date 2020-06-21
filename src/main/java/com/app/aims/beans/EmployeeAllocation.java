@@ -35,13 +35,13 @@ public class EmployeeAllocation implements Serializable{
 //	@JoinColumn(name = "employee_id",insertable = false, updatable = false)
 //	@Fetch(FetchMode.JOIN)
 	
-	@ManyToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="employee_id", nullable=false, insertable = false, updatable = false)
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="employee_id",referencedColumnName = "employee_id")
     private Employee empId;
 	
 	
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name="project_id" ,insertable = false, updatable = false )	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="project_id")	
     private Project project;
 	
 	/*

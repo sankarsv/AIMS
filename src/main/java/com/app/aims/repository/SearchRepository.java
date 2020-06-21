@@ -7,12 +7,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import com.app.aims.beans.Employee;
 import com.app.aims.beans.EmployeeAllocation;
 
-public interface SearchRepository extends JpaRepository<Employee,String>{
+@Repository
+public interface SearchRepository extends JpaRepository<Employee,Integer>{
 	
     
 	@Query("SELECT DISTINCT e,pr,ea FROM Employee e,Project pr,EmployeeAllocation ea WHERE e.employeeId = :empId and e.employeeId=ea.empId and pr.projectId=ea.project")
@@ -35,5 +37,9 @@ public interface SearchRepository extends JpaRepository<Employee,String>{
 	
 	@Modifying(clearAutomatically = true, flushAutomatically = true)
 	@Query("DELETE FROM Employee e WHERE e.employeeId IN :employeeIds")
-	int deleteEmployees(@Param("employeeIds") Collection<String> employeeIds);
+	int deleteEmployees(@Param("employeeIds") Collection<Integer> employeeIds);
+	
+//	@Modifying(clearAutomatically = true, flushAutomatically = true)
+//	@Query("DELETE FROM Employee e WHERE e.employeeId=:employeeId")
+//	int deleteEmployee(@Param("employeeId") Integer employeeId);
 }

@@ -1,14 +1,13 @@
 package com.app.aims.service;
 
-import com.app.aims.Exceptions.InvalidRequestException;
-import com.app.aims.beans.ClarityDescrepancyExportXlsRequest;
-import com.app.aims.beans.Employee;
 import com.app.aims.beans.ExportXlsRequest;
+import com.app.aims.vo.BillingDetailsReq;
+import com.app.aims.vo.DownloadXlsResponse;
 
 public interface ExportXlsService   {
 
 	public byte[] downloadXlsReportOfEmployees ( ExportXlsRequest exportXlsRequest) throws Exception;
 	
-	public byte[] downloadXlsReportOfClarityDescrepancy ( ClarityDescrepancyExportXlsRequest exportXlsRequest) throws Exception;
+	public DownloadXlsResponse downloadXlsDiscrepancyReport(BillingDetailsReq req);
 	
 }

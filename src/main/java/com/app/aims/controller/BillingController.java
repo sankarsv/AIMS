@@ -2,12 +2,7 @@ package com.app.aims.controller;
 
 import java.time.YearMonth;
 import java.util.ArrayList;
-import java.util.HashMap;
-
 import java.util.List;
-import java.util.Map;
-
-import javax.websocket.server.PathParam;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -16,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,25 +19,23 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.app.aims.Exceptions.InvalidRequestException;
 import com.app.aims.beans.BRMDetails;
-import com.app.aims.beans.Billing;
 import com.app.aims.beans.BillingDiscrepancy;
+import com.app.aims.beans.BillingDiscrepancyResponse;
 import com.app.aims.beans.BillingVersion;
 import com.app.aims.beans.Clarity;
+import com.app.aims.beans.ClarityResponse;
 import com.app.aims.beans.DMDetails;
-import com.app.aims.beans.Employee;
-
+import com.app.aims.dao.BillingDiscrepancyDao;
 import com.app.aims.service.BillingDiscrepancyService;
-import com.app.aims.beans.GenerateBaseLineRequest;
 import com.app.aims.service.BillingService;
 import com.app.aims.service.ClarityService;
+import com.app.aims.service.ExportXlsService;
 import com.app.aims.service.UpdateBillingService;
-import com.app.aims.util.DateUtil;
 import com.app.aims.service.impl.BillingServiceImpl;
-
+import com.app.aims.util.DateUtil;
 import com.app.aims.util.ServiceUtil;
 import com.app.aims.vo.BaseResponse;
 import com.app.aims.vo.BillingDetailUpdateReq;
-
 import com.app.aims.vo.BillingDetailsReq;
 import com.app.aims.vo.BillingDetailsResp;
 import com.app.aims.vo.DownloadXlsResponse;
@@ -54,9 +48,9 @@ public class BillingController {
 	BillingService billingService;
 
 	@Autowired
-        UpdateBillingService updateBillingService;
+    UpdateBillingService updateBillingService;
 	
-        @Autowired
+    @Autowired
 	BillingDiscrepancyService billingDiscrepancyingService;
 
 	@Autowired
@@ -67,93 +61,106 @@ public class BillingController {
 
 	@Autowired
 	ServiceUtil util;
+	
+	@Autowired
+	BillingDiscrepancyDao billingDiscrepancyDao;
+	
+	@Autowired
+    ExportXlsService exportXlsService;
 
 	@GetMapping(value = "/getBillingDiscrepancy/{month}/{year}/{BrmId}", headers = "Accept=application/json")
-	public ResponseEntity<Object> getBillingDiscrepancy(@PathParam("month") String month,
-			@PathParam("year") String year, @PathParam("BrmId") String BrmId) {
+	public ResponseEntity<Object> getBillingDiscrepancy(@PathVariable("month") String month,
+			@PathVariable("year") String year, @PathVariable("BrmId") String BrmId) {
 		String clarityVersion = null;
-		List<Clarity> clarityDetailsList = null;
+		String discrepancyVersion = null;
+		Integer newDiscrepancyVersion = null;
+		boolean isNewDiscrepancy = false;
+		List<ClarityResponse> clarityDetailsList = null;
 		List<BillingVersion> billingVersionList = null;
-		List<BillingDiscrepancy> billdecrresultset = null;
-		List<BillingDetailsResp> populateBillingDtlsResp = null;
-		List<Billing> MergedbillingDetails = new ArrayList<Billing>();
+		List<BillingDiscrepancyResponse> billdecrresultset = null;
 		List<BillingDetailsResp> mergedpopulateBillingDtlsResp = new ArrayList<BillingDetailsResp>();
 		List<BillingDiscrepancy> billingDecsrList = new ArrayList<BillingDiscrepancy>();
-		List<Billing> billingList = null;
-		Map<Integer, Employee> employeeDetailsMap = util.getEmployeeDetailMap();
-		Map<Integer, String> portfolioMap = util.getPortfolioMap();
-		HashMap<String, Integer> brmversionIDMap = new HashMap<String, Integer>();
 		BillingDetailsReq billingDetailReq = new BillingDetailsReq();
+		if(StringUtils.hasText(month)) {
+			try {
+			month = DateUtil.monthValueMap.get(Integer.parseInt(month));
+			}catch(NumberFormatException e) {
+				System.out.println("Entered incorrect value for month" + month);
+				return new ResponseEntity<>("Bad Request", HttpStatus.BAD_REQUEST);
+			}
+		}
 		billingDetailReq.setMonth(month);
 		billingDetailReq.setYear(year);
-		if (billingDetailReq != null) {
 			billingVersionList = billingService.getBillingVersion(billingDetailReq);
 			if (billingVersionList != null) {
 				clarityVersion = billingVersionList.get(0).getClarityVersion();
+				discrepancyVersion = billingVersionList.get(0).getDiscrerpancyVersion();
 			}
 			if (clarityVersion != null) {
 				Integer ClarityVersionInt = Integer.valueOf(clarityVersion);
 
 				clarityDetailsList = clarityService.getClarityDetailsByBillingVersionID(ClarityVersionInt);
 			}
-
-		}
-
-		for (BillingVersion billingVersion : billingVersionList) {
-
-			brmversionIDMap.put(billingVersion.getBrm_EmpNo(), billingVersion.getVersion());
-		}
-
-		if (brmversionIDMap != null) {
-
-			for (Map.Entry<String, Integer> entry : brmversionIDMap.entrySet()) {
-				BillingDetailsReq billingDetailReqforMaster = new BillingDetailsReq();
-				billingDetailReqforMaster.setMonth(month);
-				billingDetailReqforMaster.setYear(year);
-				billingDetailReqforMaster.setVersion(Integer.toString(entry.getValue()));
-				billingList = billingService.RetriveBillingDetailsListByBillingVersion(entry.getValue());
-				MergedbillingDetails.addAll(billingList);
-
-			}
-
-			for (BillingVersion billingVersionresp : billingVersionList) {
-
-				populateBillingDtlsResp = billingServiceImpl.populateBillingDetailsList(MergedbillingDetails,
-						billingVersionresp, employeeDetailsMap, portfolioMap);
-				mergedpopulateBillingDtlsResp.addAll(populateBillingDtlsResp);
-
-			}
-
-			for (Clarity claritydtl : clarityDetailsList) {
+		
+			mergedpopulateBillingDtlsResp = billingService.getBillingDetailsByMonth(billingDetailReq);
+			if(mergedpopulateBillingDtlsResp.size() > 0) {
+			if (!StringUtils.hasText(discrepancyVersion)) {
+				isNewDiscrepancy = true;
+				newDiscrepancyVersion = billingDiscrepancyDao.getMaxDescripancyVersion();
+				if (newDiscrepancyVersion == null) {
+					newDiscrepancyVersion = 1;
+				} else {
+					newDiscrepancyVersion = newDiscrepancyVersion + 1;
+				}
+			} else {
+				 newDiscrepancyVersion = Integer.parseInt(discrepancyVersion);
+			 }
+			 
+			for (ClarityResponse claritydtl : clarityDetailsList) {
 				int testcheck = 0;
 				for (BillingDetailsResp billingMasterdtl : mergedpopulateBillingDtlsResp) {
 					if (claritydtl.getOfficeId().equals(billingMasterdtl.getOfficeId())) {
-						int comparehours = Integer.compare(Integer.valueOf(claritydtl.getSumOfHours()),
-								billingMasterdtl.getBillableHrs());
-						if (comparehours > 0 || comparehours < 0) {
-							int actualdiff = Integer.valueOf(claritydtl.getSumOfHours())
-									- billingMasterdtl.getBillableHrs();
-							String actualdiffstr = Integer.toString(actualdiff);
+						boolean billRateDifference = false;
+						double comparehours = Double.compare(Double.valueOf(claritydtl.getSumOfHours()),
+								Double.valueOf(billingMasterdtl.getEffortHrs()));
+						double clarityBillingRate = parseBills(claritydtl.getRateWithoutTax());
+						double tsBillingRate = parseBills(billingMasterdtl.getBillRate());
+						double compareBillingRate = Double.compare(clarityBillingRate,tsBillingRate);
+						if (compareBillingRate > 0 || compareBillingRate < 0) {
+							billRateDifference = true;
+						}
+						if (comparehours > 0 || comparehours < 0 || billRateDifference) {
+							double actualdiff = Double.valueOf(claritydtl.getSumOfHours())
+									- billingMasterdtl.getEffortHrs();
+							String actualdiffstr = Double.toString(actualdiff);
 							BillingDiscrepancy billingDiscrepancy = new BillingDiscrepancy();
-							billingDiscrepancy.setVersion(Integer.valueOf(billingMasterdtl.getVersion()));
+							billingDiscrepancy.setVersion(newDiscrepancyVersion);
 							billingDiscrepancy.setBillingVersionId(Integer.valueOf(billingMasterdtl.getVersion()));
-							billingDiscrepancy.setFileName("Filename");
+							billingDiscrepancy.setFileName("");
 							billingDiscrepancy.setBrm(billingMasterdtl.getBrmId());
 							billingDiscrepancy.setDm(billingMasterdtl.getDmName());
 							billingDiscrepancy.setLocation(billingMasterdtl.getLocationId());
-							billingDiscrepancy.setCurrency("Currency");
-							billingDiscrepancy.setProjectNo("projectNo");
-							billingDiscrepancy.setProjectName("projectName");
+							billingDiscrepancy.setCurrency("CAD");
+							billingDiscrepancy.setProjectNo(billingMasterdtl.getWonNumber());
+							billingDiscrepancy.setProjectName("");
 							billingDiscrepancy.setEmployeeId(billingMasterdtl.getEmpId());
 							billingDiscrepancy.setOfficeId(billingMasterdtl.getOfficeId());
 							billingDiscrepancy.setEmployeeName(billingMasterdtl.getEmpName());
 							billingDiscrepancy.setRateWithoutTax(claritydtl.getRateWithoutTax());
-							billingDiscrepancy.setAccruedHours("accruedHours");
-							billingDiscrepancy.setClarityHours("clarityHours");
+							String accruedHrs = "";
+							if(billingMasterdtl.getEffortHrs() != null) {
+								accruedHrs = billingMasterdtl.getEffortHrs().toString();
+							}
+							billingDiscrepancy.setAccruedHours(accruedHrs);
+							billingDiscrepancy.setClarityHours(claritydtl.getSumOfHours());
 							billingDiscrepancy.setDifference(actualdiffstr);
-							billingDiscrepancy.setCurrentInvoiceHours("Current invoice hours");
-							billingDiscrepancy.setRemarks("remarks");
-							billingDiscrepancy.setCleanupComments("Clean comments field");
+							billingDiscrepancy.setCurrentInvoiceHours(accruedHrs);
+							if(billRateDifference) {
+								billingDiscrepancy.setRemarks("Discrepancy in Bill Rate");
+							}else {
+								billingDiscrepancy.setRemarks(billingMasterdtl.getRemarks1());
+							}
+							billingDiscrepancy.setCleanupComments(billingMasterdtl.getRemarks2());
 							billingDecsrList.add(billingDiscrepancy);
 							testcheck = 1;
 						}
@@ -169,13 +176,33 @@ public class BillingController {
 			}
 
 		}
+		if(isNewDiscrepancy) {
+			billingDiscrepancyDao.updateDiscrepancyVersionInBillingVersion(billingDetailReq, newDiscrepancyVersion.toString());
+		}
 
 		billingDiscrepancyingService.createBillingDiscrepancyDetailsList(billingDecsrList);
 
-		billdecrresultset = billingDiscrepancyingService.getBillingDescrepancyByBillingVersionID(BrmId);
+		billdecrresultset = billingDiscrepancyingService.getBillingDescrepancyByVersion(BrmId,newDiscrepancyVersion);
 
 		return new ResponseEntity<Object>(billdecrresultset, HttpStatus.OK);
 
+	}
+
+	private double parseBills(String rates) {
+		if(StringUtils.hasText(rates)) {
+			if(rates.contains("$")) {
+				rates = rates.replace("$", "");
+				System.out.println(rates);
+				try {
+					double doubleBill = Double.valueOf(rates);
+					return doubleBill;
+				} catch (Exception e) {
+					e.printStackTrace();
+					return 0;
+				}
+			}
+		}
+		return 0;
 	}
 
 	@GetMapping(value = "/getBRMDetails", headers = "Accept=application/json")
@@ -295,6 +322,36 @@ public class BillingController {
 		responseHeaders.setContentType(MediaType.valueOf("text/html"));
 		responseHeaders.setContentLength(output.length);
 		responseHeaders.set("Content-disposition", "attachment; filename=BillingDetails.xls");
+		return new ResponseEntity<byte[]>(output, responseHeaders, HttpStatus.OK);
+
+	}
+	
+	@GetMapping(value = "/downloadDiscrepancy/{month}/{year}/{BrmId}")
+	public ResponseEntity<byte[]> exportDiscrepancyData(@PathVariable("month") String month,
+			@PathVariable("year") String year, @PathVariable("BrmId") String BrmId) throws Exception {
+		if (!StringUtils.hasText(month)
+						|| !StringUtils.hasText(year) || !StringUtils.hasText(BrmId)) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+		BillingDetailsReq billingDetailReq = new BillingDetailsReq();
+		billingDetailReq.setMonth(DateUtil.monthValueMap.get(Integer.parseInt(month)));
+		billingDetailReq.setYear(year);
+		billingDetailReq.setBrmId(Integer.valueOf(BrmId));
+		DownloadXlsResponse response = exportXlsService.downloadXlsDiscrepancyReport(billingDetailReq);
+		if (response == null || response.getErrorList().size() > 0) {
+			if ("NOT FOUND".equalsIgnoreCase(response.getErrorList().get(0))) {
+				System.out.println("Value not in DB");
+				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+			} else {
+				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+		}
+		byte[] output = response.getByteArray();
+		HttpHeaders responseHeaders = new HttpHeaders();
+		responseHeaders.set("charset", "utf-8");
+		responseHeaders.setContentType(MediaType.valueOf("text/html"));
+		responseHeaders.setContentLength(output.length);
+		responseHeaders.set("Content-disposition", "attachment; filename=Clarity_AccruedHrs_Discrepancy_report.xls");
 		return new ResponseEntity<byte[]>(output, responseHeaders, HttpStatus.OK);
 
 	}

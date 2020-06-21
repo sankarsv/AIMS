@@ -49,6 +49,9 @@ public class BillingDiscrepancyDaoImpl implements BillingDiscrepancyDao {
 	    @Autowired
 	    private BillingDiscrepancyDataRepository billingDiscrepancyDataRepository;
 	    
+	    @Autowired
+	    private BillingVersionRespository billingVersionRepository;
+	    
 	    @Override
 	    public void addBillingDiscrepancyDetails(BillingDiscrepancy billingDiscrDetails) {
 	        // TODO Auto-generated method stub
@@ -57,10 +60,9 @@ public class BillingDiscrepancyDaoImpl implements BillingDiscrepancyDao {
 	    }
 	    
 		@Override
-		public List<BillingDiscrepancy> retriveBillingDescrepancyByBillingVersionID(String brm){
+		public List<BillingDiscrepancy> retriveBillingDescrepancyByBrmAndVersion(String brm, Integer version){
 		    // TODO Auto-generated method stub
-	        Session session = sessionFactory.getCurrentSession();
-	        List<BillingDiscrepancy> billingDiscrepancyDetails = billingDiscrepancyDataRepository.findBillingDescrepancyVyBillingVersionId(brm);
+	        List<BillingDiscrepancy> billingDiscrepancyDetails = billingDiscrepancyDataRepository.findBillingDescrepancyByBillingVersionId(brm,version);
 	        return billingDiscrepancyDetails;
 		}
 		
@@ -72,9 +74,10 @@ public class BillingDiscrepancyDaoImpl implements BillingDiscrepancyDao {
 			System.out.println("Enter in to addBillingDiscrepancyDetailsList in  BillingdicrepancyDaoImpl-->"+billingDiscrDetailsList);
 			if(billingDiscrDetailsList!=null) {
 	        Session session = sessionFactory.getCurrentSession();
-	        String hql = String.format("delete from %s","BillingDiscrepancy");
+	        /*String hql = String.format("delete from %s","BillingDiscrepancy");
 	        Query query = session.createQuery(hql);
-	        query.executeUpdate();
+	        query.executeUpdate();*/
+	        billingDiscrepancyDataRepository.deleteByVersion(billingDiscrDetailsList.get(0).getVersion());
 	        for(BillingDiscrepancy billingDiscrDetails : billingDiscrDetailsList) {
 	        	
 	        	session.saveOrUpdate(billingDiscrDetails);
@@ -85,7 +88,32 @@ public class BillingDiscrepancyDaoImpl implements BillingDiscrepancyDao {
 	        
 		}
 		
-		
+		@Override
+		public Integer getMaxDescripancyVersion() {
+			Session session = sessionFactory.getCurrentSession();
+	        String queryStr1 = "select max(version) from BillingDiscrepancy";
+	        Query query = session.createQuery(queryStr1);
+	        query.setMaxResults(1);
+	       return (Integer) query.uniqueResult(); 
+		}
 
-
+		@Override
+		public int updateDiscrepancyVersionInBillingVersion(BillingDetailsReq billingDetailReq,String discrepancyVersion) {
+//			Session session = sessionFactory.getCurrentSession();
+//			String query = "UPDATE BillingVersion bv SET bv.discrerpancyVersion=:discrepancyVersion WHERE bv.periodMonth=:month and bv.year=:year";
+//			int result = session.createQuery(query)
+//				.setString("month", billingDetailReq.getMonth())
+//				.setString("year", billingDetailReq.getYear())
+//				.setString(discrepancyVersion, discrepancyVersion)
+//				.executeUpdate();
+//			session.close();
+			Integer year = null;
+			if(StringUtils.hasText(billingDetailReq.getYear())) {
+				year = Integer.parseInt(billingDetailReq.getYear());
+			}
+			int result = billingVersionRepository.updateDiscrepancyVersion(discrepancyVersion,billingDetailReq.getMonth(),year);
+			
+			return result;
+			
+		}
 }

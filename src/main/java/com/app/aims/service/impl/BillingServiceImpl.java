@@ -29,14 +29,18 @@ import org.springframework.util.StringUtils;
 
 import com.app.aims.beans.BRMDetails;
 import com.app.aims.beans.Billing;
+import com.app.aims.beans.BillingDiscrepancy;
 import com.app.aims.beans.BillingVersion;
 import com.app.aims.beans.DMDetails;
 import com.app.aims.beans.Employee;
+import com.app.aims.beans.EmployeeAllocation;
 import com.app.aims.beans.HCDetails;
 import com.app.aims.beans.Portfolio;
 import com.app.aims.dao.BaseLineDao;
 import com.app.aims.dao.BillingDao;
+import com.app.aims.dao.BillingDiscrepancyDao;
 import com.app.aims.dao.EmployeeDao;
+import com.app.aims.repository.AllocationRepository;
 import com.app.aims.service.BillingService;
 import com.app.aims.util.DateUtil;
 import com.app.aims.util.ServiceUtil;
@@ -58,6 +62,12 @@ public class BillingServiceImpl implements BillingService {
 
     @Autowired
     BaseLineDao baseLineDao;
+    
+    @Autowired
+	BillingDiscrepancyDao billingDiscrepancyDao;
+    
+    @Autowired
+	private AllocationRepository allocationRepository;
     
 	@Override
 	public List<BRMDetails> getBRMDetails() {
@@ -160,8 +170,8 @@ public class BillingServiceImpl implements BillingService {
 		billingNew.setDmName(billing.getDmName());
 		billingNew.setEffortHrs(billing.getEffortHrs());
 		billingNew.setEmpId(billing.getEmpId());
-		billingNew.setExtraBilling(billing.getExtraBilling());
-		billingNew.setExtraHrs(billing.getExtraHrs());
+		billingNew.setExtraBilling(0.0d);
+		billingNew.setExtraHrs(0.0d);
 		billingNew.setLocationId(billing.getLocationId());
 		billingNew.setRemarks1(billing.getRemarks1());
 		billingNew.setRemarks2(billing.getRemarks2());
@@ -559,7 +569,8 @@ public class BillingServiceImpl implements BillingService {
 		try {
 			List<BillingVersion> versionDetList = billingDao.getBillingVersionByMonth(req,false);
 			if (versionDetList != null && versionDetList.size() > 0) {
-				Map<Integer,String> portfolioMap = util.getPortfolioMap();
+				//Map<String,Integer> portfolioMap = util.getPortfolioInvMap();
+				Map<Integer,String> portfolioActMap = util.getPortfolioMap();//either one to be used
 				for (BillingVersion versionDet : versionDetList) {
 					int version = versionDet.getVersion();
 					versions.add(version);
@@ -570,16 +581,23 @@ public class BillingServiceImpl implements BillingService {
 				}).collect(Collectors.toList());
 				
 				//Getting HCVersion
-				Integer version = baseLineDao.getMaxHacVersion();
-				if(version != null && version > 0) {
-					List<HCDetails> hcDetailsList = baseLineDao.getHCDetails(version);
-					for(HCDetails hcDetail: hcDetailsList) {
-						if(!billingListEmpIds.contains(hcDetail.getEmployeeId())) {
-							resp  = populateBillResFrmHCDetail(resp,hcDetail,versionDetList,portfolioMap);
+				//Integer version = baseLineDao.getMaxHacVersion();
+				//if(version != null && version > 0) {
+					//List<HCDetails> hcDetailsList = baseLineDao.getHCDetails(version);
+					List<EmployeeAllocation> allocationList = allocationRepository.findAll();//either one to be used
+					for(EmployeeAllocation empDetail: allocationList) {
+						if(!billingListEmpIds.contains(empDetail.getEmpId().getEmployeeId())) {
+							resp  = populateBillResFrmEmpDetail(resp,empDetail,versionDetList,portfolioActMap);
 							respList.add(resp);
 						}
-					}
-				}
+					}//either one to be used
+//					for(HCDetails hcDetail: hcDetailsList) {
+//						if(!billingListEmpIds.contains(hcDetail.getEmployeeId())) {
+//							resp  = populateBillResFrmHCDetail(resp,hcDetail,versionDetList,portfolioMap);
+//							respList.add(resp);
+//						}
+//					}
+				//}
 			} else {
 				if(isCurrentMonthAndyear(req)) {
 					replicateBillingPrevMonthToCurrentMonth(req);
@@ -598,34 +616,63 @@ public class BillingServiceImpl implements BillingService {
 		return respList;
 	}
 
-	private BillingDetailsResp populateBillResFrmHCDetail(BillingDetailsResp resp, HCDetails hcDetail, List<BillingVersion> versionDetList, Map<Integer, String> portfolioMap) {
-		
+	private BillingDetailsResp populateBillResFrmEmpDetail(BillingDetailsResp resp, EmployeeAllocation empDetail,
+			List<BillingVersion> versionDetList, Map<Integer, String> portfolioMap) {
 		resp = new BillingDetailsResp();
         resp.setBillableDays(0.0d);
         resp.setBillableHrs(0);
         resp.setBillingAmount(0.0d);
-        resp.setBrmId(hcDetail.getBrm());
-        resp.setBrmName(portfolioMap.get(Integer.getInteger(hcDetail.getBrm())));
-        resp.setDmId(hcDetail.getDm());
-        resp.setDmName(portfolioMap.get(Integer.getInteger(hcDetail.getDm())));
+        resp.setBrmId(empDetail.getEmpId().getBrm());
+        resp.setBrmName(portfolioMap.get(Integer.valueOf(empDetail.getEmpId().getBrm())));
+        resp.setDmId(empDetail.getEmpId().getDm());
+        resp.setDmName(portfolioMap.get(Integer.valueOf(empDetail.getEmpId().getDm())));
         resp.setEffortHrs(0.0d);
-        resp.setEmpId(String.valueOf(hcDetail.getEmployeeId()));
-        resp.setEmpName(hcDetail.getEmpName());
+        resp.setEmpId(String.valueOf(empDetail.getEmpId().getEmployeeId()));
+        String lastName = StringUtils.hasText(empDetail.getEmpId().getLastName()) ? empDetail.getEmpId().getLastName():"";
+        resp.setEmpName(empDetail.getEmpId().getFirstName()+" "+lastName);
         resp.setExtraBilling(0.0d);
         resp.setExtraHrs(0.0d);
         resp.setFreezeInd("N");
-        resp.setVersion(String.valueOf(versionDetList.get(0).getVersion()));
-        resp.setLocationId(hcDetail.getProjectLoc());
+        resp.setVersion("");
+        resp.setLocationId(empDetail.getProject().getProjectLocation());
         resp.setOfficeId("");
-        resp.setProjectId(hcDetail.getProjectID());
+        resp.setProjectId(String.valueOf(empDetail.getProject().getProjectId()));
         resp.setRemarks1("");
         resp.setRemarks2("");
         resp.setStoName("");
-        resp.setWonNumber(hcDetail.getProjectID());
+        resp.setWonNumber(String.valueOf(empDetail.getProject().getProjectId()));
         resp.setBillRate("0");
         return resp;
-		
 	}
+
+//	private BillingDetailsResp populateBillResFrmHCDetail(BillingDetailsResp resp, HCDetails hcDetail, List<BillingVersion> versionDetList, Map<String,Integer> portfolioMap) {
+//		
+//		resp = new BillingDetailsResp();
+//        resp.setBillableDays(0.0d);
+//        resp.setBillableHrs(0);
+//        resp.setBillingAmount(0.0d);
+//        resp.setBrmId(String.valueOf(portfolioMap.get(hcDetail.getBrm1())));
+//        resp.setBrmName(hcDetail.getBrm1());
+//        resp.setDmId(String.valueOf(portfolioMap.get(hcDetail.getDm())));
+//        resp.setDmName(hcDetail.getDm());
+//        resp.setEffortHrs(0.0d);
+//        resp.setEmpId(String.valueOf(hcDetail.getEmployeeId()));
+//        resp.setEmpName(hcDetail.getEmpName());
+//        resp.setExtraBilling(0.0d);
+//        resp.setExtraHrs(0.0d);
+//        resp.setFreezeInd("N");
+//        resp.setVersion("");
+//        resp.setLocationId(hcDetail.getProjectLoc());
+//        resp.setOfficeId("");
+//        resp.setProjectId(hcDetail.getProjectID());
+//        resp.setRemarks1("");
+//        resp.setRemarks2("");
+//        resp.setStoName("");
+//        resp.setWonNumber(hcDetail.getProjectID());
+//        resp.setBillRate("0");
+//        return resp;
+//		
+//	}
 
 	@Override
 	public List<Billing> RetriveBillingDetailsListByBillingVersion(Integer billingVersion) {
@@ -674,5 +721,6 @@ public class BillingServiceImpl implements BillingService {
 		return dmDetails;
 
 	}
+
 
 }
