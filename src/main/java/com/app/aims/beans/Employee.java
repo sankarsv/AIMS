@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -13,6 +14,9 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 
 
@@ -29,10 +33,10 @@ public class Employee implements Serializable{
 	@Id 
 	@Column(name="employee_id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int employeeId;
+	private Integer employeeId;
 	
 	
-	@OneToMany(targetEntity=EmployeeAllocation.class, mappedBy = "empId",orphanRemoval = false, fetch = FetchType.LAZY)
+	@OneToMany(targetEntity=EmployeeAllocation.class, mappedBy = "empId", orphanRemoval = true, cascade=CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<EmployeeAllocation> employeeAllocations;
 	
 //	@OneToOne(fetch = FetchType.LAZY, mappedBy = "employeeId")
@@ -168,11 +172,11 @@ public class Employee implements Serializable{
  	@Column(name="expired_ind")
  	private String expiredInd;
 
-	public int getEmployeeId() {
+	public Integer getEmployeeId() {
 		return employeeId;
 	}
 
-	public void setEmployeeId(int employeeId) {
+	public void setEmployeeId(Integer employeeId) {
 		this.employeeId = employeeId;
 	}
 

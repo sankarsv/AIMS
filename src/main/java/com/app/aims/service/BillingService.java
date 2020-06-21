@@ -38,5 +38,5 @@ public interface BillingService {
 	
 	//it gives BillingVersion for Clarity descrepancy
 	public List<BillingVersion> getBillingVersion(BillingDetailsReq req);
-    
+
 }

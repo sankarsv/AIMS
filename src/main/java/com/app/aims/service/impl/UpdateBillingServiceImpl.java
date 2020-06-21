@@ -49,7 +49,7 @@ public class UpdateBillingServiceImpl implements UpdateBillingService{
 		try {
 			List<Billing> billingDetailNewList = new ArrayList<Billing>();
 			List<Billing> billingDetailDelList = new ArrayList<Billing>();
-			List<String> empDelList = new ArrayList<String>();
+			List<Integer> empDelList = new ArrayList<Integer>();
 			List<BillingDetails> billingDetailupdateList = new ArrayList<BillingDetails>();
 			req.getBillingDetailsList().forEach(bd -> {
 				if("A".equalsIgnoreCase(bd.getAction())) {
@@ -61,7 +61,8 @@ public class UpdateBillingServiceImpl implements UpdateBillingService{
 					}
 				}
 				if("D".equalsIgnoreCase(bd.getAction())) {
-					empDelList.add(bd.getEmpId());
+					if(StringUtils.hasText(bd.getEmpId())) {
+					empDelList.add(Integer.parseInt(bd.getEmpId()));
 					Billing billing = new Billing();
 					int version = Integer.parseInt(req.getVersion());
 					billing.setVersion(version);
@@ -70,6 +71,7 @@ public class UpdateBillingServiceImpl implements UpdateBillingService{
 					billingRate.setBilling(billing);
 					billing.setBilingRate(billingRate);
 					billingDetailDelList.add(billing);
+					}
 					
 				}
 				if("U".equalsIgnoreCase(bd.getAction())) {

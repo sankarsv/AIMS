@@ -1,5 +1,6 @@
 package com.app.aims.dao.impl;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.hibernate.Session;
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.app.aims.beans.BillingFileData;
 import com.app.aims.beans.ClarityFileData;
 import com.app.aims.beans.Employee;
+import com.app.aims.beans.EmployeeAllocation;
 import com.app.aims.beans.FileData;
 import com.app.aims.beans.Portfolio;
 import com.app.aims.beans.VersionInfo;
@@ -190,9 +192,29 @@ public class EmployeeDaoImpl implements EmployeeDao {
 	    }
 
 		@Override
-		public void deleteDetails(List<String> empIds) {
+		public void deleteDetails(List<Integer> empIds) {
 			allocationRepository.deleteEmployees(empIds);
 			searchRepository.deleteEmployees(empIds);
+			
+			//allocationRepository.deleteEmployees(empIds);
+			//allocationRepository.deleteEmployee(empId);
+//			Session session = sessionFactory.getCurrentSession();
+//			for(Integer empId : empIds) {
+//			//searchRepository.deleteEmployee(empId);
+////			 Serializable id = empId;
+////			 Object persistentInstance = session.load(Employee.class,id);
+////			 if(persistentInstance != null) {
+////				 session.delete(persistentInstance);
+////			 }
+////			  Employee e = new Employee();
+////			  e.setEmployeeId(empId);
+////			  EmployeeAllocation ea = new EmployeeAllocation();
+////			  ea.setEmpId(e);
+////			  session.delete(ea);
+//			  //session.delete(e);
+//				allocationRepository.deleteEmployee(empId);
+//				searchRepository.deleteEmployee(empId);
+//			}
 		}
 
 		@Override

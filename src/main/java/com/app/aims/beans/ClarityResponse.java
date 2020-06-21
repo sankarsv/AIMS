@@ -1,65 +1,31 @@
 package com.app.aims.beans;
 
-import java.io.Serializable;
+public class ClarityResponse {
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-
-import javax.persistence.Table;
-
-@Entity
-@Table(name = "claritymaster", schema = "aims")
-public class Clarity implements Serializable {
-
-	public Clarity() {
-		super();
-	}
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -4423840919843137706L;
-
-	// Clarity table properties Starts
-	@Id
-	@Column(name = "clarity_id")
 	private Integer clarityId;
 
-	@Column(name = "version")
 	private Integer version;
 
-	@Column(name = "transactionclass")
 	private String transactionClass;
 
-	@Column(name = "cccio")
 	private String cccio;
 
-	@Column(name = "resourcemanager")
 	private String resourceManager;
 
-	@Column(name = "timesheetdepartment")
 	private String timesheetDepartment;
 
-	@Column(name = "lastnamefirstname")
 	private String lastNameFirstName;
 
-	@Column(name = "resourceid")
 	private String resourceId;
 
-	@Column(name = "officeid")
 	private String officeId;
 
-	@Column(name = "cin")
 	private String cin;
 
-	@Column(name = "sumofhours")
 	private String sumOfHours;
 
-	@Column(name = "averagerate")
 	private String averageRate;
 
-	@Column(name = "ratewithouttax")
 	private String rateWithoutTax;
 
 	public Integer getClarityId() {
@@ -165,11 +131,5 @@ public class Clarity implements Serializable {
 	public void setRateWithoutTax(String rateWithoutTax) {
 		this.rateWithoutTax = rateWithoutTax;
 	}
-
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
-
-	// Clarity table properties Ends
 
 }

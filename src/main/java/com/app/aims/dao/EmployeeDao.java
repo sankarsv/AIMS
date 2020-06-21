@@ -22,7 +22,7 @@ public interface EmployeeDao {
 	    public List<VersionInfo> getVersionInfo();
 	    public boolean uploadFile(FileData  fileData);
 		public boolean uploadBrFile(BillingFileData billingFileData);
-		public void deleteDetails(List<String> empIds);
+		public void deleteDetails(List<Integer> empDelList);
 		public boolean uploadClFile(ClarityFileData clarityFileData);
 		
 }

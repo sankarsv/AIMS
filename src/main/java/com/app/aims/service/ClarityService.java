@@ -2,9 +2,9 @@ package com.app.aims.service;
 
 import java.util.List;
 
-import com.app.aims.beans.Clarity;
+import com.app.aims.beans.ClarityResponse;
 
 public interface ClarityService {
 
-	public List<Clarity> getClarityDetailsByBillingVersionID(Integer versionID);
+	public List<ClarityResponse> getClarityDetailsByBillingVersionID(Integer versionID);
 }

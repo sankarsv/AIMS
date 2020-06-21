@@ -8,7 +8,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -18,17 +21,17 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import com.app.aims.Exceptions.InvalidRequestException;
 import com.app.aims.beans.Billing;
 import com.app.aims.beans.BillingDiscrepancy;
-import com.app.aims.beans.BillingMasterDescMergedBean;
 import com.app.aims.beans.BillingVersion;
-import com.app.aims.beans.Clarity;
-import com.app.aims.beans.ClarityDescrepancyExportXlsRequest;
 import com.app.aims.beans.Employee;
 import com.app.aims.beans.ExportXlsRequest;
 import com.app.aims.beans.HCDetails;
+import com.app.aims.dao.BillingDao;
+import com.app.aims.dao.BillingDiscrepancyDao;
 import com.app.aims.dao.EmployeeMergedDetailsDao;
 import com.app.aims.service.BillingDiscrepancyService;
 import com.app.aims.service.BillingService;
@@ -36,9 +39,7 @@ import com.app.aims.service.ClarityService;
 import com.app.aims.service.ExportXlsService;
 import com.app.aims.util.ServiceUtil;
 import com.app.aims.vo.BillingDetailsReq;
-import com.app.aims.vo.BillingDetailsResp;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.app.aims.vo.DownloadXlsResponse;
 
 @Service
 @Transactional
@@ -61,6 +62,12 @@ public class ExportXlsServiceImpl implements ExportXlsService {
 
 	@Autowired
 	BillingDiscrepancyService billingDiscrepancyingService;
+	
+	@Autowired
+	BillingDiscrepancyDao billingDiscrepancyDao;
+	
+	@Autowired
+	BillingDao billingDao;
 
 	@Override
 	public byte[] downloadXlsReportOfEmployees(ExportXlsRequest exportXlsRequest) throws Exception {
@@ -210,73 +217,117 @@ public class ExportXlsServiceImpl implements ExportXlsService {
 		return null;
 	}
 
-	public byte[] downloadXlsReportOfClarityDescrepancy(ClarityDescrepancyExportXlsRequest clarityExportXlsRequest)
-			throws Exception {
-
-		List<BillingDiscrepancy> billdecrresultset = null;
-		List<BillingVersion> billingVerList = null;
-		List<Billing> billingMasterList = null;
-		List<BillingMasterDescMergedBean> BillingDescMasterMergeList = new ArrayList<>();
-		BillingMasterDescMergedBean billMasDescbean = null;
-
-		billdecrresultset = billingDiscrepancyingService
-				.getBillingDescrepancyByBillingVersionID(clarityExportXlsRequest.getBrmId());
-		System.out.println("Printing the Billing and Clarity List --> " + billdecrresultset);
-		BillingDetailsReq req = new BillingDetailsReq();
-		req.setMonth(clarityExportXlsRequest.getMonth());
-		req.setYear(clarityExportXlsRequest.getYear());
-		req.setBrmName(clarityExportXlsRequest.getBrmId());
-		System.out.println("Decsrepancy Version--> " + Integer.toString(billdecrresultset.get(0).getVersion()));
-		req.setVersion(Integer.toString(billdecrresultset.get(0).getVersion()));
-		System.out.println("Month --> " + req.getMonth());
-		System.out.println("Year--> " + req.getYear());
-		System.out.println("BRM ID--> " + req.getBrmName());
-		System.out.println("Version--> " + req.getVersion());
-		billingVerList = billingService.getBillingVersionByClaritydescrepancyVersion(req);
-		System.out.println("Printing the billingVerList --> " + billingVerList);
-		System.out.println("Printing the billingVerList Version --> " + billingVerList.get(0).getVersion());
-		//billingMasterList = billingService.RetriveBillingDetailsListByBillingVersion(billingVerList.get(0).getVersion());
-		billingMasterList = billingService.RetriveBillingDetailsListByBillingVersion(2);
-		System.out.println("Printing the billingVerList billingMasterList --> " + billingMasterList);
-		for(BillingDiscrepancy billingDiscrepancy:billdecrresultset) {
-			System.out.println("Printing the Employee Id from discrepancy --> " + billingDiscrepancy.getEmployeeId());
-			String empId_des = billingDiscrepancy.getEmployeeId();
-			for(Billing billingMaster :billingMasterList) {
-				System.out.println("Printing the Employee Id from billing Master --> " + billingMaster.getEmpId());
-				String empId_master = billingMaster.getEmpId();
-				if(empId_master.equals(empId_des) ){
-					System.out.println("Inside if Block --> ");
-					billMasDescbean = new BillingMasterDescMergedBean();
-					billMasDescbean.setBrm(billingDiscrepancy.getBrm());
-					billMasDescbean.setDm(billingDiscrepancy.getDm());
-					billMasDescbean.setLocation(billingDiscrepancy.getLocation());
-					billMasDescbean.setProjectNo(billingDiscrepancy.getProjectNo());
-					billMasDescbean.setProjectName(billingDiscrepancy.getProjectName());
-					billMasDescbean.setEmployeeId(billingDiscrepancy.getEmployeeId());
-					billMasDescbean.setEmployeeName(billingDiscrepancy.getEmployeeName());
-					billMasDescbean.setOfficeId(billingDiscrepancy.getOfficeId());
-					billMasDescbean.setBillableHrs(billingMaster.getBillableHrs());
-					billMasDescbean.setBillableDays(billingMaster.getBillableDays());
-					billMasDescbean.setEffortHrs(billingMaster.getEffortHrs());
-					billMasDescbean.setExtraHrs(billingMaster.getExtraHrs());
-					billMasDescbean.setExtraBilling(billingMaster.getExtraBilling());
-					billMasDescbean.setBillingAmount(billingMaster.getBillingAmount());
-					billMasDescbean.setRemarks1(billingMaster.getRemarks1());
-					billMasDescbean.setRemarks2(billingMaster.getRemarks2());
-					billMasDescbean.setDifference(billingDiscrepancy.getDifference());
-					BillingDescMasterMergeList.add(billMasDescbean);
-					
+	@Override
+	public DownloadXlsResponse downloadXlsDiscrepancyReport(BillingDetailsReq req) {
+		DownloadXlsResponse response = null;
+		List<BillingVersion> versionDetList = null;
+		List<Billing> billingList= null;
+		List<BillingDiscrepancy> billingDiscrepancyList = null;
+		Map<String,BillingDiscrepancy> billingDiscrepancyMap = new HashMap<String,BillingDiscrepancy>();
+		if(req.getBrmId() != null && req.getBrmId() !=0) {
+			versionDetList = billingDao.getBillingVersion(req);
+		} 
+		if (versionDetList != null && versionDetList.size() > 0) {
+			billingList = new ArrayList<Billing>();
+			Map<Integer, Employee> employeeDetailsMap = util.getEmployeeDetailMap();
+			Map<Integer, String> portfolioMap = util.getPortfolioMap();
+			for (BillingVersion billingVersion : versionDetList) {
+				billingList = billingDao.getBillingDetails(billingVersion.getVersion());
+				if (StringUtils.hasText(billingVersion.getDiscrerpancyVersion())) {
+					billingDiscrepancyList = billingDiscrepancyDao
+							.retriveBillingDescrepancyByBrmAndVersion(req.getBrmId().toString(),
+									Integer.valueOf(billingVersion.getDiscrerpancyVersion()));
+				} else {
+					throw new NoSuchElementException();
 				}
-				
 			}
 			
+			if(billingDiscrepancyList != null && billingDiscrepancyList.size() > 0 && billingList != null && billingList.size() > 0) {
+				
+				for(BillingDiscrepancy bd:billingDiscrepancyList) {
+					billingDiscrepancyMap.put(bd.getOfficeId(), bd);
+				}
+				
+				try {
+					Resource resource = new ClassPathResource("DiscrepancyTemplate.xlsx");
+					InputStream input = resource.getInputStream();
+					Workbook workbook = WorkbookFactory.create(input);
+					Sheet sheet = workbook.getSheetAt(0);
+					CellStyle cs = workbook.createCellStyle();
+					DataFormat df = workbook.createDataFormat();
+					cs.setDataFormat(df.getFormat("$#,##0.00"));
+
+					int rowNum = 1;
+					for (Billing billingDetails : billingList) {
+						
+						String officeId ="";
+						Integer empId = Integer.parseInt(billingDetails.getEmpId());
+						Employee emp = employeeDetailsMap.get(empId);
+						if(emp != null) {
+						officeId = employeeDetailsMap.get(Integer.parseInt(billingDetails.getEmpId())).getOfficeId();
+						}
+						BillingDiscrepancy bd = billingDiscrepancyMap.get(officeId);
+						
+						if(bd != null) {
+						Row row = sheet.createRow(rowNum++);
+
+						int cellNum = 0;
+						row.createCell(cellNum).setCellValue(bd.getFileName());
+						row.createCell(++cellNum).setCellValue(portfolioMap.get(Integer.parseInt(bd.getBrm())));
+						row.createCell(++cellNum).setCellValue(billingDetails.getDmName());
+						row.createCell(++cellNum).setCellValue(billingDetails.getLocationId());
+						row.createCell(++cellNum).setCellValue(bd.getCurrency());
+						row.createCell(++cellNum).setCellValue(billingDetails.getWonNumber());
+						row.createCell(++cellNum).setCellValue(billingDetails.getWonNumber());// Project Name
+						row.createCell(++cellNum).setCellValue(billingDetails.getEmpId());
+						row.createCell(++cellNum).setCellValue(bd.getOfficeId());
+						row.createCell(++cellNum).setCellValue(bd.getEmployeeName());
+						row.createCell(++cellNum).setCellValue(billingDetails.getBilingRate().getBillRate());
+						row.createCell(++cellNum).setCellValue(billingDetails.getBillableHrs());
+						row.createCell(++cellNum).setCellValue(billingDetails.getBillableDays());
+						row.createCell(++cellNum).setCellValue(billingDetails.getEffortHrs());
+						row.createCell(++cellNum).setCellValue(billingDetails.getExtraHrs());
+						row.createCell(++cellNum).setCellValue("");
+						row.createCell(++cellNum).setCellValue(bd.getAccruedHours());
+						row.createCell(++cellNum).setCellValue(bd.getClarityHours());
+						row.createCell(++cellNum).setCellValue(bd.getDifference());
+						row.createCell(++cellNum).setCellValue(""); //calculate corrected hours
+						row.createCell(++cellNum).setCellValue(bd.getRemarks());
+						row.createCell(++cellNum).setCellValue(bd.getCleanupComments());
+						}
+					}
+					// Resize all columns to fit the content size
+					for (int i = 0; i < 21; i++) {
+						sheet.autoSizeColumn(i);
+					}
+
+					File f = File.createTempFile("discrepancyDetails", ".xls");
+					FileOutputStream fileOut = new FileOutputStream(f);
+					workbook.write(fileOut);
+					fileOut.close();
+					workbook.close();
+					response = new DownloadXlsResponse();
+					response.setByteArray(Files.readAllBytes(f.toPath()));
+					return response;
+				} catch (NoSuchElementException ex) {
+					ex.printStackTrace();
+					response = new DownloadXlsResponse();
+					response.addError("NOT FOUND");
+
+				} catch (Exception e) {
+					e.printStackTrace();
+					response = new DownloadXlsResponse();
+					response.addError("Exception Occurred");
+				}
+				
+			} else {
+				throw new NoSuchElementException();
+			}
+		} else {
+			throw new NoSuchElementException();
 		}
 		
-		System.out.println("Printing Merged List--> "+BillingDescMasterMergeList);
-		System.out.println("Printing Merged List--> "+BillingDescMasterMergeList.size());
-		
-		return null;
-
+		return response;
 	}
 
 }
