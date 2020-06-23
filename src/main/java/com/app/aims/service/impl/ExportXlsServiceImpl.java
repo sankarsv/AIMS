@@ -261,10 +261,10 @@ public class ExportXlsServiceImpl implements ExportXlsService {
 					for (Billing billingDetails : billingList) {
 						
 						String officeId ="";
-						Integer empId = Integer.parseInt(billingDetails.getEmpId());
+						Integer empId = Integer.parseInt(billingDetails.getId().getEmployee_id());
 						Employee emp = employeeDetailsMap.get(empId);
 						if(emp != null) {
-						officeId = employeeDetailsMap.get(Integer.parseInt(billingDetails.getEmpId())).getOfficeId();
+						officeId = employeeDetailsMap.get(Integer.parseInt(billingDetails.getId().getEmployee_id())).getOfficeId();
 						}
 						BillingDiscrepancy bd = billingDiscrepancyMap.get(officeId);
 						
@@ -279,7 +279,7 @@ public class ExportXlsServiceImpl implements ExportXlsService {
 						row.createCell(++cellNum).setCellValue(bd.getCurrency());
 						row.createCell(++cellNum).setCellValue(billingDetails.getWonNumber());
 						row.createCell(++cellNum).setCellValue(billingDetails.getWonNumber());// Project Name
-						row.createCell(++cellNum).setCellValue(billingDetails.getEmpId());
+						row.createCell(++cellNum).setCellValue(billingDetails.getId().getEmployee_id());
 						row.createCell(++cellNum).setCellValue(bd.getOfficeId());
 						row.createCell(++cellNum).setCellValue(bd.getEmployeeName());
 						row.createCell(++cellNum).setCellValue(billingDetails.getBilingRate().getBillRate());

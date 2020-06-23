@@ -30,6 +30,8 @@ public interface BillingDao {
 		
 		public void addBillingDetails(List<Billing> billingList);
 		
+		public void addBillingVersion(BillingVersion billingVer);
+		
 		public void deleteDetails(List<Billing> billingList);
 		
 		public List<Billing> getBillingDetailsWithVersions(List<Integer> versions);

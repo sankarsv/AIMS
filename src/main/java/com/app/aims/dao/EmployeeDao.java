@@ -24,5 +24,6 @@ public interface EmployeeDao {
 		public boolean uploadBrFile(BillingFileData billingFileData);
 		public void deleteDetails(List<Integer> empDelList);
 		public boolean uploadClFile(ClarityFileData clarityFileData);
+		public boolean updateOfficeId(String empId,String officeId);
 		
 }

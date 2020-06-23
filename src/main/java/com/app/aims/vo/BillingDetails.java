@@ -18,6 +18,7 @@ public class BillingDetails {
 	private String stoName;
 	private String locationId;
 	private String wonNumber;
+	private String officeId;
 	
 	public String getEmpId() {
 		return empId;
@@ -108,6 +109,12 @@ public class BillingDetails {
 	}
 	public void setBrm(int brm) {
 		this.brm = brm;
+	}
+	public String getOfficeId() {
+		return officeId;
+	}
+	public void setOfficeId(String officeId) {
+		this.officeId = officeId;
 	}
 	
 }

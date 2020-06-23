@@ -121,8 +121,9 @@ public class BillingController {
 				for (BillingDetailsResp billingMasterdtl : mergedpopulateBillingDtlsResp) {
 					if (claritydtl.getOfficeId().equals(billingMasterdtl.getOfficeId())) {
 						boolean billRateDifference = false;
+						Double totalBillableHrs = billingMasterdtl.getEffortHrs() + billingMasterdtl.getExtraHrs();
 						double comparehours = Double.compare(Double.valueOf(claritydtl.getSumOfHours()),
-								Double.valueOf(billingMasterdtl.getEffortHrs()));
+								Double.valueOf(totalBillableHrs));
 						double clarityBillingRate = parseBills(claritydtl.getRateWithoutTax());
 						double tsBillingRate = parseBills(billingMasterdtl.getBillRate());
 						double compareBillingRate = Double.compare(clarityBillingRate,tsBillingRate);
@@ -149,7 +150,7 @@ public class BillingController {
 							billingDiscrepancy.setRateWithoutTax(claritydtl.getRateWithoutTax());
 							String accruedHrs = "";
 							if(billingMasterdtl.getEffortHrs() != null) {
-								accruedHrs = billingMasterdtl.getEffortHrs().toString();
+								accruedHrs = totalBillableHrs.toString();
 							}
 							billingDiscrepancy.setAccruedHours(accruedHrs);
 							billingDiscrepancy.setClarityHours(claritydtl.getSumOfHours());
@@ -201,7 +202,10 @@ public class BillingController {
 					return 0;
 				}
 			}
-		}
+			else {
+				return Double.valueOf(rates);
+			}
+		} 
 		return 0;
 	}
 
@@ -251,7 +255,7 @@ public class BillingController {
 					return new ResponseEntity<Object>(billingDetails, HttpStatus.OK);
 				} else if ("NOT FOUND".equalsIgnoreCase(billingDetails.get(0).getErrorList().get(0))) {
 					System.out.println("Value not in DB");
-					return new ResponseEntity<>("Value not in DB", HttpStatus.BAD_REQUEST);
+					return new ResponseEntity<>(new ArrayList<BillingDetailsResp>(), HttpStatus.OK);
 				} else {
 					return new ResponseEntity<>("Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
 				}
@@ -301,7 +305,7 @@ public class BillingController {
 	}
 
 	@PostMapping(value = "/downloadBilling")
-	public ResponseEntity<byte[]> exportHCData(@RequestBody BillingDetailsReq billingDetailReq) throws Exception {
+	public ResponseEntity<byte[]> downloadBilling(@RequestBody BillingDetailsReq billingDetailReq) throws Exception {
 		if (!((StringUtils.hasText(billingDetailReq.getVersion()))
 				|| (StringUtils.hasText(billingDetailReq.getMonth())
 						&& StringUtils.hasText(billingDetailReq.getYear())))) {
