@@ -1,5 +1,6 @@
 package com.app.aims.controller;
 
+import java.text.DecimalFormat;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
@@ -122,8 +123,12 @@ public class BillingController {
 					if (claritydtl.getOfficeId().equals(billingMasterdtl.getOfficeId())) {
 						boolean billRateDifference = false;
 						Double totalBillableHrs = billingMasterdtl.getEffortHrs() + billingMasterdtl.getExtraHrs();
-						double comparehours = Double.compare(Double.valueOf(claritydtl.getSumOfHours()),
-								Double.valueOf(totalBillableHrs));
+						double clarityHours=0;
+						if(claritydtl.getSumOfHours() != null)clarityHours = Math.round(Double.valueOf(claritydtl.getSumOfHours()) * 100.0) / 100.0;
+						double tsEffortHours=0;
+						if(billingMasterdtl.getEffortHrs() != null)tsEffortHours = Math.round(Double.valueOf(billingMasterdtl.getEffortHrs()) * 100.0) / 100.0;
+						double comparehours = Double.compare(Double.valueOf(clarityHours),
+								Double.valueOf(tsEffortHours));
 						double clarityBillingRate = parseBills(claritydtl.getRateWithoutTax());
 						double tsBillingRate = parseBills(billingMasterdtl.getBillRate());
 						double compareBillingRate = Double.compare(clarityBillingRate,tsBillingRate);
@@ -131,8 +136,7 @@ public class BillingController {
 							billRateDifference = true;
 						}
 						if (comparehours > 0 || comparehours < 0 || billRateDifference) {
-							double actualdiff = Double.valueOf(claritydtl.getSumOfHours())
-									- billingMasterdtl.getEffortHrs();
+							double actualdiff = clarityHours - tsEffortHours;
 							String actualdiffstr = Double.toString(actualdiff);
 							BillingDiscrepancy billingDiscrepancy = new BillingDiscrepancy();
 							billingDiscrepancy.setVersion(newDiscrepancyVersion);
@@ -151,9 +155,10 @@ public class BillingController {
 							String accruedHrs = "";
 							if(billingMasterdtl.getEffortHrs() != null) {
 								accruedHrs = totalBillableHrs.toString();
+								accruedHrs = String.valueOf(tsEffortHours);
 							}
 							billingDiscrepancy.setAccruedHours(accruedHrs);
-							billingDiscrepancy.setClarityHours(claritydtl.getSumOfHours());
+							billingDiscrepancy.setClarityHours(String.valueOf(clarityHours));
 							billingDiscrepancy.setDifference(actualdiffstr);
 							billingDiscrepancy.setCurrentInvoiceHours(accruedHrs);
 							if(billRateDifference) {
@@ -195,12 +200,15 @@ public class BillingController {
 				rates = rates.replace("$", "");
 				System.out.println(rates);
 				try {
-					double doubleBill = Double.valueOf(rates);
+					double doubleBill = Math.round(Double.valueOf(rates) * 100.0) / 100.0;
 					return doubleBill;
 				} catch (Exception e) {
 					e.printStackTrace();
 					return 0;
 				}
+			} else {
+				double doubleBill = Math.round(Double.valueOf(rates) * 100.0) / 100.0;
+				return doubleBill;
 			}
 			else {
 				return Double.valueOf(rates);
