@@ -11,6 +11,6 @@ public interface BaseLineDao {
 
 	public  BaseLine getMaxBaseLineDetails(Date date);
 	public  List<Portfolio> getPortfolio();
-	public int getMaxHacVersion();
 	public List<HCDetails> getHCDetails(Integer version);
+	public int getMaxBillingVersion();
 }

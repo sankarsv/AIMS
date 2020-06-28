@@ -30,6 +30,7 @@ import org.springframework.util.StringUtils;
 import com.app.aims.beans.BRMDetails;
 import com.app.aims.beans.Billing;
 import com.app.aims.beans.BillingDiscrepancy;
+import com.app.aims.beans.BillingId;
 import com.app.aims.beans.BillingVersion;
 import com.app.aims.beans.DMDetails;
 import com.app.aims.beans.Employee;
@@ -169,7 +170,7 @@ public class BillingServiceImpl implements BillingService {
 		billingNew.setBillingAmount(billing.getBillingAmount());
 		billingNew.setDmName(billing.getDmName());
 		billingNew.setEffortHrs(billing.getEffortHrs());
-		billingNew.setEmpId(billing.getEmpId());
+		billingNew.setId(billing.getId());
 		billingNew.setExtraBilling(0.0d);
 		billingNew.setExtraHrs(0.0d);
 		billingNew.setLocationId(billing.getLocationId());
@@ -177,7 +178,6 @@ public class BillingServiceImpl implements BillingService {
 		billingNew.setRemarks2(billing.getRemarks2());
 		billingNew.setStoName(billing.getStoName());
 		billingNew.setWonNumber(billing.getWonNumber());
-		billingNew.setVersion(currMonVersionNo);
 		return billingNew;
 	}
 
@@ -239,11 +239,11 @@ public class BillingServiceImpl implements BillingService {
 			String empName = "";
 			String dmId="";
 			String officeId = "";
-			if (employeeDetailsMap.get(Integer.parseInt(bl.getEmpId())) != null){
-				dmId = employeeDetailsMap.get(Integer.parseInt(bl.getEmpId())).getDm();
-				String lastName = StringUtils.hasText(employeeDetailsMap.get(Integer.parseInt(bl.getEmpId())).getLastName()) ? employeeDetailsMap.get(Integer.parseInt(bl.getEmpId())).getLastName():"";
-				empName = employeeDetailsMap.get(Integer.parseInt(bl.getEmpId())).getFirstName() + " "+ lastName;
-				officeId = employeeDetailsMap.get(Integer.parseInt(bl.getEmpId())).getOfficeId();
+			if (employeeDetailsMap.get(Integer.parseInt(bl.getId().getEmployee_id())) != null){
+				dmId = employeeDetailsMap.get(Integer.parseInt(bl.getId().getEmployee_id())).getDm();
+				String lastName = StringUtils.hasText(employeeDetailsMap.get(Integer.parseInt(bl.getId().getEmployee_id())).getLastName()) ? employeeDetailsMap.get(Integer.parseInt(bl.getId().getEmployee_id())).getLastName():"";
+				empName = employeeDetailsMap.get(Integer.parseInt(bl.getId().getEmployee_id())).getFirstName() + " "+ lastName;
+				officeId = employeeDetailsMap.get(Integer.parseInt(bl.getId().getEmployee_id())).getOfficeId();
 			}
 			resp.setBillableDays(bl.getBillableDays());
 			resp.setBillableHrs(bl.getBillableHrs());
@@ -255,7 +255,7 @@ public class BillingServiceImpl implements BillingService {
 			if(StringUtils.hasText(resp.getDmId()))
 				resp.setDmName(portfolioMap.get(Integer.parseInt(resp.getDmId())));
 			resp.setEffortHrs(bl.getEffortHrs());
-			resp.setEmpId(bl.getEmpId());
+			resp.setEmpId(bl.getId().getEmployee_id());
 			resp.setEmpName(empName);
 			resp.setExtraBilling(bl.getExtraBilling());
 			resp.setExtraHrs(bl.getExtraHrs());
@@ -577,7 +577,7 @@ public class BillingServiceImpl implements BillingService {
 				}
 				List<Billing> billingList = billingDao.getBillingDetailsWithVersions(versions); //to test
 				billingListEmpIds = billingList.stream().map(p -> {
-					return (Integer.parseInt(p.getEmpId()));
+					return (Integer.parseInt(p.getId().getEmployee_id()));
 				}).collect(Collectors.toList());
 				
 				//Getting HCVersion

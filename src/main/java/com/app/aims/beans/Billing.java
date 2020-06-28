@@ -5,6 +5,7 @@ import com.app.aims.beans.BillingId;
 import java.io.Serializable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
@@ -14,7 +15,6 @@ import javax.persistence.UniqueConstraint;
 
 @Entity
 @Table(name="billingmaster",schema="aims",uniqueConstraints=@UniqueConstraint(columnNames= {"version", "employee_id"}))
-@IdClass(BillingId.class)
 public class Billing  implements Serializable{
 	
 	public Billing() {
@@ -26,14 +26,8 @@ public class Billing  implements Serializable{
 	 */
 	private static final long serialVersionUID = -4423840919843137706L;
 	
-	@Id
-	@Column(name="version")
-	private Integer version;
-	
-	
-	@Id
-	@Column(name="employee_id")
-	private String empId;
+	@EmbeddedId
+	private BillingId id;
 		
 	
 	@Column(name="dmname")
@@ -74,15 +68,9 @@ public class Billing  implements Serializable{
 	@Column(name="remarks2")
 	private String remarks2;
 	
-	@OneToOne(mappedBy = "billing", cascade = CascadeType.ALL)
+	@OneToOne(mappedBy = "billing",cascade = CascadeType.ALL)
     private BillingRate bilingRate;
 	
-	public String getEmpId() {
-		return empId;
-	}
-	public void setEmpId(String empId) {
-		this.empId = empId;
-	}
 	public String getDmName() {
 		return dmName;
 	}
@@ -162,8 +150,11 @@ public class Billing  implements Serializable{
 	public void setBilingRate(BillingRate bilingRate) {
 		this.bilingRate = bilingRate;
 	}
-	public void setVersion(Integer version) {
-		this.version = version;
+	public BillingId getId() {
+		return id;
+	}
+	public void setId(BillingId id) {
+		this.id = id;
 	}
 
 }

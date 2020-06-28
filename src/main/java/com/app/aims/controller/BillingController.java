@@ -122,6 +122,7 @@ public class BillingController {
 				for (BillingDetailsResp billingMasterdtl : mergedpopulateBillingDtlsResp) {
 					if (claritydtl.getOfficeId().equals(billingMasterdtl.getOfficeId())) {
 						boolean billRateDifference = false;
+						Double totalBillableHrs = billingMasterdtl.getEffortHrs() + billingMasterdtl.getExtraHrs();
 						double clarityHours=0;
 						if(claritydtl.getSumOfHours() != null)clarityHours = Math.round(Double.valueOf(claritydtl.getSumOfHours()) * 100.0) / 100.0;
 						double tsEffortHours=0;
@@ -153,6 +154,7 @@ public class BillingController {
 							billingDiscrepancy.setRateWithoutTax(claritydtl.getRateWithoutTax());
 							String accruedHrs = "";
 							if(billingMasterdtl.getEffortHrs() != null) {
+								accruedHrs = totalBillableHrs.toString();
 								accruedHrs = String.valueOf(tsEffortHours);
 							}
 							billingDiscrepancy.setAccruedHours(accruedHrs);
@@ -208,7 +210,10 @@ public class BillingController {
 				double doubleBill = Math.round(Double.valueOf(rates) * 100.0) / 100.0;
 				return doubleBill;
 			}
-		}
+			else {
+				return Double.valueOf(rates);
+			}
+		} 
 		return 0;
 	}
 
@@ -258,7 +263,7 @@ public class BillingController {
 					return new ResponseEntity<Object>(billingDetails, HttpStatus.OK);
 				} else if ("NOT FOUND".equalsIgnoreCase(billingDetails.get(0).getErrorList().get(0))) {
 					System.out.println("Value not in DB");
-					return new ResponseEntity<>("Value not in DB", HttpStatus.BAD_REQUEST);
+					return new ResponseEntity<>(new ArrayList<BillingDetailsResp>(), HttpStatus.OK);
 				} else {
 					return new ResponseEntity<>("Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
 				}
@@ -308,7 +313,7 @@ public class BillingController {
 	}
 
 	@PostMapping(value = "/downloadBilling")
-	public ResponseEntity<byte[]> exportHCData(@RequestBody BillingDetailsReq billingDetailReq) throws Exception {
+	public ResponseEntity<byte[]> downloadBilling(@RequestBody BillingDetailsReq billingDetailReq) throws Exception {
 		if (!((StringUtils.hasText(billingDetailReq.getVersion()))
 				|| (StringUtils.hasText(billingDetailReq.getMonth())
 						&& StringUtils.hasText(billingDetailReq.getYear())))) {

@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import com.app.aims.beans.Billing;
+import com.app.aims.beans.BillingId;
 import com.app.aims.beans.BillingRate;
 import com.app.aims.beans.BillingVersion;
 import com.app.aims.dao.BaseLineDao;
@@ -53,36 +54,47 @@ public class UpdateBillingServiceImpl implements UpdateBillingService{
 			List<BillingDetails> billingDetailupdateList = new ArrayList<BillingDetails>();
 			req.getBillingDetailsList().forEach(bd -> {
 				if("A".equalsIgnoreCase(bd.getAction())) {
-					int version = getBillingVersion(req,bd);
-					if (version != 0) {
+					Integer version = getBillingVersion(req,bd);
+					if (version == null || version == 0) {
+						version = createBillingVersion(req,bd);
+					} 
 					billingDetailNewList.add(populateBillingTableDetails(bd,version));
-					} else {
-						throw new NoSuchElementException();
+					if(StringUtils.hasText(bd.getOfficeId())) {
+						employeeDao.updateOfficeId(bd.getEmpId(), bd.getOfficeId());
 					}
 				}
 				if("D".equalsIgnoreCase(bd.getAction())) {
 					if(StringUtils.hasText(bd.getEmpId())) {
 					empDelList.add(Integer.parseInt(bd.getEmpId()));
+					if(StringUtils.hasText(req.getVersion())){
 					Billing billing = new Billing();
 					int version = Integer.parseInt(req.getVersion());
-					billing.setVersion(version);
-					billing.setEmpId(bd.getEmpId());
 					BillingRate billingRate = new BillingRate();
+					BillingId id = new BillingId();
+					id.setVersion(version);
+					id.setEmployee_id(bd.getEmpId());
+					billing.setId(id);
 					billingRate.setBilling(billing);
+					billingRate.setId(id);;
 					billing.setBilingRate(billingRate);
 					billingDetailDelList.add(billing);
 					}
-					
+				   }
 				}
 				if("U".equalsIgnoreCase(bd.getAction())) {
 					billingDetailupdateList.add(bd);
+					if(StringUtils.hasText(bd.getOfficeId())) {
+						employeeDao.updateOfficeId(bd.getEmpId(), bd.getOfficeId());
+					}
 				}
 			});
 			if(billingDetailupdateList.size() > 0) {
 			billingDao.fetchAndUpdateBillingDetails(req.getVersion(),billingDetailupdateList);
 			}
-			if(billingDetailDelList.size() > 0) {
+			if(empDelList.size() > 0) {
 				employeeDao.deleteDetails(empDelList);
+			}
+			if(billingDetailDelList.size() > 0) {
 				billingDao.deleteDetails(billingDetailDelList);
 			}
 			if(billingDetailNewList.size() > 0) {
@@ -104,31 +116,64 @@ public class UpdateBillingServiceImpl implements UpdateBillingService{
 
 
 
+	private Integer createBillingVersion(BillingDetailUpdateReq updateReq, BillingDetails bd) {
+		BillingVersion billVer = new BillingVersion();
+		BillingDetailsReq req = new BillingDetailsReq();
+		req.setMonth(updateReq.getMonth());
+		req.setYear(updateReq.getYear());
+		List<BillingVersion> versionDetList = billingDao.getBillingVersionByMonth(req,false);
+		if(versionDetList != null && versionDetList.size() > 0) {
+			int maxVer = baseLineDao.getMaxBillingVersion();
+			maxVer = maxVer+1;
+			billVer.setBillingComments("");
+			billVer.setBrm_EmpNo(String.valueOf(bd.getBrm()));
+			billVer.setClarityVersion(versionDetList.get(0).getClarityVersion());
+			billVer.setDiscrerpancyVersion(versionDetList.get(0).getDiscrerpancyVersion());
+			billVer.setDraftIndicator(null);
+			billVer.setFreezeInd("N");
+			billVer.setLocation(null);
+			billVer.setPeriodMonth(versionDetList.get(0).getPeriodMonth());
+			billVer.setYear(versionDetList.get(0).getYear());
+			billVer.setVersion(maxVer);
+			billingDao.addBillingVersion(billVer);
+		} else {
+			throw new NoSuchElementException("No Version for the requested month");
+		}
+		return billVer.getVersion();
+	}
+
+
+
 	private Billing populateBillingTableDetails(BillingDetails bd, int version) {
 		Billing billing = new Billing();
+		BillingId id = new BillingId();
 		BillingRate billingRate = new BillingRate();
 		billing.setBillableDays(bd.getBillableDays());
 		billing.setBillableHrs(bd.getBillableHrs());
 		billing.setBillingAmount(bd.getBillingAmount());
 		billing.setEffortHrs(bd.getEffortHrs());
-		billing.setEmpId(bd.getEmpId());
 		billing.setExtraBilling(bd.getExtraBilling());
 		billing.setExtraHrs(bd.getExtraHrs());
 		billing.setRemarks1(bd.getRemarks1());
 		billing.setRemarks2(bd.getRemarks2());
 		billing.setStoName(bd.getStoName());
 		billing.setLocationId(bd.getLocationId());
-		billing.setVersion(version);
+		id.setEmployee_id(bd.getEmpId());
+		id.setVersion(version);
+		billing.setId(id);
 		billing.setWonNumber(bd.getWonNumber());
 		billingRate.setBillRate(bd.getBillRate());
 		billingRate.setStartDate(new Date());
+		billingRate.setCurrency("CAD");
+		billingRate.setId(id);;
+		billingRate.setBilling(billing);
 		billing.setBilingRate(billingRate);
-		return null;
+		return billing;
 	}
 	
-	private int getBillingVersion(BillingDetailUpdateReq req,BillingDetails bd) {
+	private Integer getBillingVersion(BillingDetailUpdateReq req,BillingDetails bd) {
 		BillingDetailsReq billingDetailReq = new BillingDetailsReq();
-		int version = 0;
+		Integer version = 0;
 		billingDetailReq.setBrmId(bd.getBrm());
 		billingDetailReq.setMonth(req.getMonth());
 		billingDetailReq.setYear(req.getYear());

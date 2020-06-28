@@ -13,8 +13,9 @@ import com.app.aims.beans.Billing;
 @Repository
 public interface BillingDataRepository extends JpaRepository<Billing, Integer> {
 
-	public List<Billing> findByVersion(int version);
+	@Query(value = "SELECT b FROM Billing b WHERE b.id.version=:version")
+	public List<Billing> findByVersion(@Param("version")int version);
 	
-	@Query(value = "SELECT b FROM Billing b WHERE b.version IN :versions")
+	@Query(value = "SELECT b FROM Billing b WHERE b.id.version IN :versions")
 	public List<Billing> findByVersionList(@Param("versions") Collection<Integer> versions);
 }

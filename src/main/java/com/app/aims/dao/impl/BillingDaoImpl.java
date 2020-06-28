@@ -20,6 +20,7 @@ import org.springframework.util.StringUtils;
 
 import com.app.aims.beans.BRMDetails;
 import com.app.aims.beans.Billing;
+import com.app.aims.beans.BillingId;
 import com.app.aims.beans.BillingVersion;
 import com.app.aims.dao.BillingDao;
 import com.app.aims.repository.BillingDataRepository;
@@ -146,13 +147,21 @@ public class BillingDaoImpl implements BillingDao {
 			
 		}
 		
+		public void updateBillingVersionDetails(BillingVersion billingVer) {
+			Session session = sessionFactory.getCurrentSession();
+			session.update(billingVer);
+			
+		}
+		
 		@Override
 		public void fetchAndUpdateBillingDetails(String ver, List<BillingDetails> billingDetailsList) {
 			int version = Integer.parseInt(ver);
 			billingDetailsList.stream().forEach(bd -> {
 				Billing billing = new Billing();
-				billing.setVersion(version);
-				billing.setEmpId(bd.getEmpId());
+				BillingId id = new BillingId();
+				id.setVersion(version);
+				id.setEmployee_id(bd.getEmpId());
+				billing.setId(id);
 				Example<Billing> billingEx = Example.of(billing);
 				Optional<Billing> optBilling = billingDataRepo.findOne(billingEx);
 				if(optBilling != null) {
@@ -160,6 +169,7 @@ public class BillingDaoImpl implements BillingDao {
 					currBilling.setBillableHrs(bd.getBillableHrs());
 					currBilling.setBillableDays(bd.getBillableDays());
 					currBilling.setEffortHrs(bd.getEffortHrs());
+					currBilling.setExtraHrs(bd.getExtraHrs());
 					currBilling.setExtraBilling(bd.getExtraBilling());
 					currBilling.setBillingAmount(bd.getBillingAmount());
 					currBilling.setRemarks1(bd.getRemarks1());
@@ -168,12 +178,27 @@ public class BillingDaoImpl implements BillingDao {
 				} else {
 					throw new NoSuchElementException();
 				}
+				BillingVersion bv = billingVerRepo.findByVersion(version);
+				if(bv != null && Integer.valueOf(bv.getBrm_EmpNo()) != bd.getBrm()) {
+					BillingVersion billVer = new BillingVersion();
+					billVer.setBillingComments(bv.getBillingComments());
+					billVer.setBrm_EmpNo(String.valueOf(bd.getBrm()));
+					billVer.setClarityVersion(bv.getClarityVersion());
+					billVer.setDiscrerpancyVersion(bv.getDiscrerpancyVersion());
+					billVer.setDraftIndicator(bv.getDraftIndicator());
+					billVer.setFreezeInd(bv.getFreezeInd());
+					billVer.setLocation(bv.getLocation());
+					billVer.setPeriodMonth(bv.getPeriodMonth());
+					billVer.setYear(bv.getYear());
+					billVer.setVersion(bv.getVersion());
+					updateBillingVersionDetails(billVer);
+				}
 			});
 		}
 		
 		@Override
 		public void updateFreezeInd(BillingDetailsReq req) {
-			int res = billingVerRepo.updateFreezeIndicator(req.getFreezeInd(), req.getBrmName(), req.getMonth(), Integer.parseInt(req.getYear()));
+			int res = billingVerRepo.updateFreezeIndicator(req.getFreezeInd(), String.valueOf(req.getBrmId()), req.getMonth(), Integer.parseInt(req.getYear()));
 			if(!(res > 0)) {
 				throw new NoSuchElementException();
 			}
@@ -222,6 +247,12 @@ public class BillingDaoImpl implements BillingDao {
 		@Override
 		public List<Billing> getBillingDetailsWithVersions(List<Integer> versions) {
 			return billingDataRepo.findByVersionList(versions);
+		}
+
+		@Override
+		public void addBillingVersion(BillingVersion billingVer) {
+			billingVerRepo.save(billingVer);
+			
 		}
 
 

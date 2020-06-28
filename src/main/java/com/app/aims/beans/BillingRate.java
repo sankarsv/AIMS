@@ -6,12 +6,14 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.OneToMany;
@@ -35,9 +37,15 @@ public class BillingRate implements Serializable{
 	private static final long serialVersionUID = 1L;
 
 
-	@Id
-	@OneToOne
+	@EmbeddedId
+	private BillingId id;
+	
 	@MapsId
+	@JoinColumns({
+        @JoinColumn(name="employee_id", referencedColumnName="employee_id"),
+        @JoinColumn(name="version", referencedColumnName="version")
+    })
+	@OneToOne(cascade = CascadeType.ALL)
 	private Billing billing;
 
 	@Column(name = "BILLRATE")
@@ -53,14 +61,6 @@ public class BillingRate implements Serializable{
 	@Column(name = "ENDDATE")
 	private Date endDate;
 
-
-	public Billing getBilling() {
-		return billing;
-	}
-
-	public void setBilling(Billing billing) {
-		this.billing = billing;
-	}
 
 	public String getBillRate() {
 		return billRate;
@@ -93,6 +93,21 @@ public class BillingRate implements Serializable{
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
 	}
-	
 
+	public BillingId getId() {
+		return id;
+	}
+
+	public void setId(BillingId id) {
+		this.id = id;
+	}
+
+	public Billing getBilling() {
+		return billing;
+	}
+
+	public void setBilling(Billing billing) {
+		this.billing = billing;
+	}
+	
 }

@@ -3,6 +3,10 @@ package com.app.aims.beans;
 import java.io.Serializable;
 import java.util.Objects;
 
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+
+@Embeddable
 public class BillingId implements Serializable{
 	
 	/**
@@ -10,19 +14,24 @@ public class BillingId implements Serializable{
 	 */
 	private static final long serialVersionUID = 5656532316206560404L;
 	
+	@Column(name="version")
 	private Integer version;
-	private String empId;
 	
-	public String getEmpId() {
-		return empId;
+	@Column(name="employee_id")
+	private String employee_id;
+	
+	
+	public String getEmployee_id() {
+		return employee_id;
 	}
-	public void setEmpId(String empId) {
-		this.empId = empId;
+	public void setEmployee_id(String employee_id) {
+		this.employee_id = employee_id;
 	}
-	public int getVersion() {
+	
+	public Integer getVersion() {
 		return version;
 	}
-	public void setVersion(int version) {
+	public void setVersion(Integer version) {
 		this.version = version;
 	}
 	
@@ -31,7 +40,7 @@ public class BillingId implements Serializable{
 	}
 	
 	public BillingId(String empId, int version) {
-		this.empId = empId;
+		this.employee_id = empId;
 		this.version = version;
 	}
 	
@@ -44,11 +53,11 @@ public class BillingId implements Serializable{
             return false;
         }
 		BillingId id = (BillingId) o;
-		return id.getEmpId().equalsIgnoreCase(this.empId) && (id.getVersion() == this.version);
+		return id.getEmployee_id().equalsIgnoreCase(this.employee_id) && (id.getVersion() == this.version);
 	}
 	
 	@Override
 	public int hashCode() {
-		return Objects.hash(empId, version);
+		return Objects.hash(getEmployee_id(), version);
 	}
 }

@@ -232,6 +232,30 @@ public class EmployeeDaoImpl implements EmployeeDao {
 	    	return true;
 	        
 	    }
+
+		@Override
+		public boolean updateOfficeId(String empId, String officeId) {
+			       
+			        Session session = sessionFactory.getCurrentSession();
+			        //Transaction transaction = session.beginTransaction();
+			        
+			        String queryStr1 = "UPDATE Employee set office_id = :officeId where employee_id = :empId";
+			        
+			        Query query1 = session.createQuery(queryStr1);
+			        query1.setParameter("officeId", officeId);
+			        query1.setParameter("empId", Integer.valueOf(empId));
+			        
+			        System.out.println("Before Updating the Table");
+			        int status = query1.executeUpdate();
+			        if (status == 1)
+			        {
+			        	System.out.println("Office Id Updated successfully");
+			        	return true;
+			        }
+			        return false;
+
+			
+		}
 	    
 		
 }
