@@ -52,7 +52,8 @@ public class DashboardServiceImpl implements DashboardService {
 		List<TraineeRatioBean> trList = new ArrayList();
 		List<BARatioBean> baList = new ArrayList();
 		List<BillTypeBean> billTypeList = new ArrayList();
-		List<LocationBean> locationList = new ArrayList();
+		List<BRMDetails> brmWiseLocationList = new ArrayList();
+		
 		
 		for (BRMDetails brmDetail : brmlist) {
 			empList = employeeService.leftJoinDataByGL(brmDetail.getBrmId());	
@@ -177,13 +178,16 @@ public class DashboardServiceImpl implements DashboardService {
 				Map<String, Integer> onlocationMap = (Map)locationWiseMap.get("onsiteMap");
 				Map<String, Integer> offlocationMap = (Map)locationWiseMap.get("offsiteMap");
 				
+				List<LocationBean> locationList = new ArrayList();
+				BRMDetails brmDetails = new BRMDetails();
+				brmDetails.setBrmId(brmDetail.getBrmId());
+				brmDetails.setBrmName(brmDetail.getBrmName());
+				
 				if (onlocationMap != null && !onlocationMap.isEmpty())
 				{
 					for(Map.Entry<String, Integer> entry : onlocationMap.entrySet())
 					{
 						LocationBean locationBean = new LocationBean();
-						locationBean.setBrmName(brmDetail.getBrmName());;
-						locationBean.setBrmNo(brmDetail.getBrmId());
 						locationBean.setGeography("Onsite");
 						locationBean.setLocation(entry.getKey());
 						locationBean.setCount(entry.getValue().toString());
@@ -196,8 +200,6 @@ public class DashboardServiceImpl implements DashboardService {
 					for(Map.Entry<String, Integer> entry : offlocationMap.entrySet())
 					{
 						LocationBean locationBean = new LocationBean();
-						locationBean.setBrmName(brmDetail.getBrmName());;
-						locationBean.setBrmNo(brmDetail.getBrmId());
 						locationBean.setGeography("Offsite");
 						locationBean.setLocation(entry.getKey());
 						locationBean.setCount(entry.getValue().toString());
@@ -205,9 +207,10 @@ public class DashboardServiceImpl implements DashboardService {
 						locationList.add(locationBean);
 					}
 				}
-				
+				brmDetails.setLocationDetails(locationList);
+				brmWiseLocationList.add(brmDetails);
 			}
-		
+			
 		}
 		
 		
@@ -229,7 +232,7 @@ public class DashboardServiceImpl implements DashboardService {
 			 return billTypeList;
 			 
 		 case "locationwisecount" :
-			 return locationList;
+			 return brmWiseLocationList;
 			 
 			 default :
 				 return null;
@@ -628,7 +631,7 @@ private Map<String, Object> getLocationWiseCount(List<SearchResponse> empList) {
 				{
 					Integer count = (Integer)offLocationMap.get(searchResponse.getWorkLocation());
 					
-					offLocationMap.put(searchResponse.getWorkLocation(), count++);
+					offLocationMap.put(searchResponse.getWorkLocation(), ++count);
 				}
 				else
 				{
@@ -644,7 +647,7 @@ private Map<String, Object> getLocationWiseCount(List<SearchResponse> empList) {
 			if (onlocationMap.containsKey(searchResponse.getWorkLocation()))
 			{
 				Integer count = (Integer)onlocationMap.get(searchResponse.getWorkLocation());
-				onlocationMap.put(searchResponse.getWorkLocation(), count++);
+				onlocationMap.put(searchResponse.getWorkLocation(), ++count);
 			}
 			else
 			{
@@ -653,9 +656,10 @@ private Map<String, Object> getLocationWiseCount(List<SearchResponse> empList) {
 		
 	}
 	
-		locationMap.put("onsiteMap", onlocationMap);
-		locationMap.put("offsiteMap", offLocationMap);
 	}
+	locationMap.put("onsiteMap", onlocationMap);
+	locationMap.put("offsiteMap", offLocationMap);
+	
 		return locationMap;
 }
 }

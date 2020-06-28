@@ -2,7 +2,7 @@ package com.app.aims.beans;
 
 import java.io.Serializable;
 
-public class LocationBean extends AbstractReportBean implements Serializable {
+public class LocationBean implements Serializable {
 
 	private String geography;
 	private String location;
