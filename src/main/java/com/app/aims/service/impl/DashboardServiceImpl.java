@@ -3,17 +3,21 @@ package com.app.aims.service.impl;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.app.aims.beans.BARatioBean;
 import com.app.aims.beans.BRMDetails;
+import com.app.aims.beans.BillTypeBean;
 import com.app.aims.beans.BillingReportBean;
 import com.app.aims.beans.EmployeeRatioBean;
 import com.app.aims.beans.HCReportBean;
+import com.app.aims.beans.LocationBean;
 import com.app.aims.beans.ReportBean;
 import com.app.aims.beans.SearchResponse;
 import com.app.aims.beans.TraineeRatioBean;
@@ -21,6 +25,7 @@ import com.app.aims.service.BillingService;
 import com.app.aims.service.DashboardService;
 import com.app.aims.service.EmployeeService;
 import com.app.aims.vo.BillingDetailsReq;
+
 
 @Service
 public class DashboardServiceImpl implements DashboardService {
@@ -46,6 +51,8 @@ public class DashboardServiceImpl implements DashboardService {
 		List<HCReportBean> hcList = new ArrayList();
 		List<TraineeRatioBean> trList = new ArrayList();
 		List<BARatioBean> baList = new ArrayList();
+		List<BillTypeBean> billTypeList = new ArrayList();
+		List<LocationBean> locationList = new ArrayList();
 		
 		for (BRMDetails brmDetail : brmlist) {
 			empList = employeeService.leftJoinDataByGL(brmDetail.getBrmId());	
@@ -140,7 +147,68 @@ public class DashboardServiceImpl implements DashboardService {
 				
 				baList.add(baratioBean);
 			}
+			if ("billingType".equalsIgnoreCase(reportBean.getReportType())) {
+				
+				
+				Map billableMap = getBillTypeBean(empList);
+			
+				BillTypeBean billBean = new BillTypeBean();
+				billBean.setBrmName(brmDetail.getBrmName());;
+				billBean.setBrmNo(brmDetail.getBrmId());
+				billBean.setFpCountTotal(format.format(((Double)billableMap.get("fpcounttotal"))));
+				billBean.setTmCountTotal(format.format(((Double)billableMap.get("tmcounttotal"))));
+				billBean.setOnFPCountTotal(format.format(((Double)billableMap.get("onfpcounttotal"))));
+				billBean.setOnTMCountTotal(format.format(((Double)billableMap.get("ontmcounttotal"))));
+				billBean.setOffFPCountTotal(format.format(((Double)billableMap.get("offfpcounttotal"))));
+				billBean.setOffTMCountTotal(format.format(((Double)billableMap.get("offtmcounttotal"))));
+				billBean.setOnfpCountPerc(format.format(((Double)billableMap.get("onfpPerc"))));
+				billBean.setOfffpCountPerc(format.format(((Double)billableMap.get("offfpPerc"))));
+				billBean.setOntmCountPerc(format.format(((Double)billableMap.get("ontmPerc"))));
+				billBean.setOfftmCountPerc(format.format(((Double)billableMap.get("offtmPerc"))));
+				billBean.setFpCountPerc(format.format(((Double)billableMap.get("fpcountperc"))));
+				billBean.setTmCountPerc(format.format(((Double)billableMap.get("tmcountperc"))));
+				
+				billTypeList.add(billBean);
 			}
+		if ("locationwisecount".equalsIgnoreCase(reportBean.getReportType())) {
+				
+				
+				Map locationWiseMap = getLocationWiseCount(empList);
+				Map<String, Integer> onlocationMap = (Map)locationWiseMap.get("onsiteMap");
+				Map<String, Integer> offlocationMap = (Map)locationWiseMap.get("offsiteMap");
+				
+				if (onlocationMap != null && !onlocationMap.isEmpty())
+				{
+					for(Map.Entry<String, Integer> entry : onlocationMap.entrySet())
+					{
+						LocationBean locationBean = new LocationBean();
+						locationBean.setBrmName(brmDetail.getBrmName());;
+						locationBean.setBrmNo(brmDetail.getBrmId());
+						locationBean.setGeography("Onsite");
+						locationBean.setLocation(entry.getKey());
+						locationBean.setCount(entry.getValue().toString());
+						
+						locationList.add(locationBean);
+					}
+				}
+				if (offlocationMap != null && !offlocationMap.isEmpty())
+				{
+					for(Map.Entry<String, Integer> entry : offlocationMap.entrySet())
+					{
+						LocationBean locationBean = new LocationBean();
+						locationBean.setBrmName(brmDetail.getBrmName());;
+						locationBean.setBrmNo(brmDetail.getBrmId());
+						locationBean.setGeography("Offsite");
+						locationBean.setLocation(entry.getKey());
+						locationBean.setCount(entry.getValue().toString());
+						
+						locationList.add(locationBean);
+					}
+				}
+				
+			}
+		
+		}
 		
 		
 		}
@@ -157,6 +225,11 @@ public class DashboardServiceImpl implements DashboardService {
 		 
 		 case "baratio" :
 			 return baList;
+		 case "billingType" :
+			 return billTypeList;
+			 
+		 case "locationwisecount" :
+			 return locationList;
 			 
 			 default :
 				 return null;
@@ -166,6 +239,7 @@ public class DashboardServiceImpl implements DashboardService {
 		 
 	}
 
+	
 private Map<String, Object> getBAList(List<SearchResponse> empList) {
 		
 		double bacountperc  = 0.0;
@@ -398,72 +472,192 @@ private Map<String, Object> getTRList(List<SearchResponse> empList) {
 				return empRatioMap;
 	}
 
-private Map<String, Object> getBillableCount(List<SearchResponse> empList) {
+private Map<String, Object> getBillTypeBean(List<SearchResponse> empList) {
 		
-		double onsiteBillableCount = 0;
-		double onsiteNBillableCount = 0;
-		double offsiteBillableCount = 0;
-		double offsiteNBillableCount = 0;
-		double onsiteBillablePerc =0.0;
-		double offsiteBillablePerc = 0.0;
-		double totalBillablePerc = 0.0;
-		double totalNBillablePerc = 0.0;
-		double totalBillableCnt = 0;
-		double totalNBillableCnt = 0;
-		double totalCount;
 		
-		Map<String, Object> billableRepMap = new HashMap<>();
+		double tmCountPerc = 0;
+		double fpCountPerc = 0;
+		double offTMCountTotal =0.0;
+		double offFPCountTotal = 0.0;
+		double onTMCountTotal = 0.0;
+		double onFPCountTotal = 0.0;
+		double tmCountTotal = 0;
+		double fpCountTotal = 0;
+		double totalCount = 0;
+		double onfpPerc = 0;
+		double ontmPerc = 0;
+		double offfpPerc = 0;
+		double offtmPerc = 0;
+		
+		Map<String, Object> billTypeMap = new HashMap<>();
 		for (SearchResponse searchResponse : empList) {
 			
 			if ("Onsite".equalsIgnoreCase(searchResponse.getProjectLocation()))
 			{
-				if ("CC".equalsIgnoreCase(searchResponse.getCcIndicator())) {
-					onsiteBillableCount++;
+				if ("TurnKey".equalsIgnoreCase(searchResponse.getProjectType())) {
+					onFPCountTotal++;
 				} 
-				else if ("NCC".equalsIgnoreCase(searchResponse.getCcIndicator())) {
-					onsiteNBillableCount++;
-				}
-				
+				if ("Time and Material".equalsIgnoreCase(searchResponse.getProjectType())) {
+					onTMCountTotal++;
+				} 
 			}
-			else if ("Offsite".equalsIgnoreCase(searchResponse.getProjectLocation()))
+			if ("Offsite".equalsIgnoreCase(searchResponse.getProjectLocation()))
 			{
-				if ("CC".equalsIgnoreCase(searchResponse.getCcIndicator())) {
-					offsiteBillableCount++;
+				if ("TurnKey".equalsIgnoreCase(searchResponse.getProjectType())) {
+					offFPCountTotal++;
 				} 
-				else if ("NCC".equalsIgnoreCase(searchResponse.getCcIndicator())) {
-					offsiteNBillableCount++;
-				}
+				if ("Time and Material".equalsIgnoreCase(searchResponse.getProjectType())) {
+					offTMCountTotal++;
+				} 
 			}
 		}
 		
-		totalBillableCnt = onsiteBillableCount+offsiteBillableCount;
-		totalNBillableCnt = onsiteNBillableCount+offsiteNBillableCount;
+		fpCountTotal = onFPCountTotal+offFPCountTotal;
+		tmCountTotal = onTMCountTotal+offTMCountTotal;
 		
-		totalCount = totalBillableCnt + totalNBillableCnt;
+		totalCount = fpCountTotal + tmCountTotal;
 		
 		if (totalCount > 0) {
-			totalBillablePerc = (totalBillableCnt/totalCount)*100;
-			totalNBillablePerc = (totalNBillableCnt/totalCount)*100;
+			fpCountPerc = (fpCountTotal/totalCount)*100;
+			tmCountPerc = (tmCountTotal/totalCount)*100;
 		}
-		if ((onsiteBillableCount+onsiteNBillableCount) > 0)
-			onsiteBillablePerc = (onsiteBillableCount/(onsiteBillableCount+onsiteNBillableCount))*100;
-		if ((offsiteBillableCount+offsiteNBillableCount) > 0)
-			offsiteBillablePerc = (offsiteBillableCount/(offsiteBillableCount+offsiteNBillableCount))*100;
+		if ((onFPCountTotal+onTMCountTotal) > 0)
+			onfpPerc = (onFPCountTotal/(onFPCountTotal+onTMCountTotal))*100;
+		if ((offFPCountTotal+offTMCountTotal) > 0)
+			offfpPerc = (offFPCountTotal/(offFPCountTotal+offTMCountTotal))*100;
+
+		if ((onFPCountTotal+onTMCountTotal) > 0)
+			ontmPerc = (onTMCountTotal/(onFPCountTotal+onTMCountTotal))*100;
+		if ((offFPCountTotal+offTMCountTotal) > 0)
+			offtmPerc = (offTMCountTotal/(offFPCountTotal+offTMCountTotal))*100;
 		
-		 billableRepMap.put("billabletotal", totalBillableCnt);
-		billableRepMap.put("nbtotal", totalNBillableCnt);
-		billableRepMap.put("billableperc", totalBillablePerc);
-		billableRepMap.put("nbperc", totalNBillablePerc);
-		billableRepMap.put("onsitebillablecnt", onsiteBillableCount);
-		billableRepMap.put("onsitebillableperc", onsiteBillablePerc);
-		billableRepMap.put("onsitenbillablecnt", onsiteNBillableCount);
-		billableRepMap.put("offsitenbillablecnt", offsiteNBillableCount);
-		billableRepMap.put("offsitebillablecnt", offsiteBillableCount);		
-		billableRepMap.put("offsitebillableperc", offsiteBillablePerc);
-		return billableRepMap;
+		
+		billTypeMap.put("fpcounttotal", fpCountTotal);
+		billTypeMap.put("tmcounttotal", tmCountTotal);
+		billTypeMap.put("fpcountperc", fpCountPerc);
+		billTypeMap.put("tmcountperc", tmCountPerc);
+		
+		billTypeMap.put("onfpcounttotal", onFPCountTotal);
+		billTypeMap.put("ontmcounttotal", onTMCountTotal);
+		billTypeMap.put("offfpcounttotal", offFPCountTotal);
+		billTypeMap.put("offtmcounttotal", offTMCountTotal);
+		billTypeMap.put("onfpPerc", onfpPerc);		
+		billTypeMap.put("offfpPerc", offfpPerc);
+		billTypeMap.put("ontmPerc", ontmPerc);		
+		billTypeMap.put("offtmPerc", offtmPerc);
+		return billTypeMap;
 	}
 	
-
+private Map<String, Object> getBillableCount(List<SearchResponse> empList) {
 	
+	double onsiteBillableCount = 0;
+	double onsiteNBillableCount = 0;
+	double offsiteBillableCount = 0;
+	double offsiteNBillableCount = 0;
+	double onsiteBillablePerc =0.0;
+	double offsiteBillablePerc = 0.0;
+	double totalBillablePerc = 0.0;
+	double totalNBillablePerc = 0.0;
+	double totalBillableCnt = 0;
+	double totalNBillableCnt = 0;
+	double totalCount;
+	
+	Map<String, Object> billableRepMap = new HashMap<>();
+	for (SearchResponse searchResponse : empList) {
+		
+		if ("Onsite".equalsIgnoreCase(searchResponse.getProjectLocation()))
+		{
+			if ("CC".equalsIgnoreCase(searchResponse.getCcIndicator())) {
+				onsiteBillableCount++;
+			} 
+			else if ("NCC".equalsIgnoreCase(searchResponse.getCcIndicator())) {
+				onsiteNBillableCount++;
+			}
+			
+		}
+		else if ("Offsite".equalsIgnoreCase(searchResponse.getProjectLocation()))
+		{
+			if ("CC".equalsIgnoreCase(searchResponse.getCcIndicator())) {
+				offsiteBillableCount++;
+			} 
+			else if ("NCC".equalsIgnoreCase(searchResponse.getCcIndicator())) {
+				offsiteNBillableCount++;
+			}
+		}
+	}
+	
+	totalBillableCnt = onsiteBillableCount+offsiteBillableCount;
+	totalNBillableCnt = onsiteNBillableCount+offsiteNBillableCount;
+	
+	totalCount = totalBillableCnt + totalNBillableCnt;
+	
+	if (totalCount > 0) {
+		totalBillablePerc = (totalBillableCnt/totalCount)*100;
+		totalNBillablePerc = (totalNBillableCnt/totalCount)*100;
+	}
+	if ((onsiteBillableCount+onsiteNBillableCount) > 0)
+		onsiteBillablePerc = (onsiteBillableCount/(onsiteBillableCount+onsiteNBillableCount))*100;
+	if ((offsiteBillableCount+offsiteNBillableCount) > 0)
+		offsiteBillablePerc = (offsiteBillableCount/(offsiteBillableCount+offsiteNBillableCount))*100;
+	
+	 billableRepMap.put("billabletotal", totalBillableCnt);
+	billableRepMap.put("nbtotal", totalNBillableCnt);
+	billableRepMap.put("billableperc", totalBillablePerc);
+	billableRepMap.put("nbperc", totalNBillablePerc);
+	billableRepMap.put("onsitebillablecnt", onsiteBillableCount);
+	billableRepMap.put("onsitebillableperc", onsiteBillablePerc);
+	billableRepMap.put("onsitenbillablecnt", onsiteNBillableCount);
+	billableRepMap.put("offsitenbillablecnt", offsiteNBillableCount);
+	billableRepMap.put("offsitebillablecnt", offsiteBillableCount);		
+	billableRepMap.put("offsitebillableperc", offsiteBillablePerc);
+	return billableRepMap;
 }
 
+private Map<String, Object> getLocationWiseCount(List<SearchResponse> empList) {
+	
+	Map onlocationMap = new HashMap<>();
+	Map offLocationMap = new HashMap<>();
+	
+	Map<String, Object> locationMap = new HashMap<>();
+	for (SearchResponse searchResponse : empList) {
+		
+		if ("Offsite".equalsIgnoreCase(searchResponse.getProjectLocation()))
+		{
+			
+				if (offLocationMap.containsKey(searchResponse.getWorkLocation()))
+				{
+					Integer count = (Integer)offLocationMap.get(searchResponse.getWorkLocation());
+					
+					offLocationMap.put(searchResponse.getWorkLocation(), count++);
+				}
+				else
+				{
+					offLocationMap.put(searchResponse.getWorkLocation(), new Integer(1));
+				}
+			
+
+			
+		}
+		else if ("Onsite".equalsIgnoreCase(searchResponse.getProjectLocation()))
+		{
+			
+			if (onlocationMap.containsKey(searchResponse.getWorkLocation()))
+			{
+				Integer count = (Integer)onlocationMap.get(searchResponse.getWorkLocation());
+				onlocationMap.put(searchResponse.getWorkLocation(), count++);
+			}
+			else
+			{
+				onlocationMap.put(searchResponse.getWorkLocation(), new Integer(1));
+			}
+		
+	}
+	
+		locationMap.put("onsiteMap", onlocationMap);
+		locationMap.put("offsiteMap", offLocationMap);
+	}
+		return locationMap;
+}
+}
+
+	
